@@ -29,9 +29,8 @@ dependencies {
 
 TODO
 
+For a full example, check out the demo app
+
 ### Improvements
 * Layouts look already very good, but can be improved. If you have good ideas, contribute or contact me
 * Additional setting types can be added as well
-
-### Examples
-Check out the demo app
