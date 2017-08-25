@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">RecyclervViewPreferences</string>
+
+    <string name="color">Color</string>
+    <string name="setting_info_is_using_default">Default value</string>
+    <string name="info_enable_setting_to_change_it">Enable setting to change its value!</string>
+    <string name="info">Info</string>
+
+    <string name="number_dialog_info">Values between %1$d and %2$d are allowed (Step size: %3$d)</string>
+</resources>

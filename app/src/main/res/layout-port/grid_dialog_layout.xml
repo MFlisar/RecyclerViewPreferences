@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/md_dialog_frame_margin">
+
+    <com.michaelflisar.recyclerviewpreferences.demo.gridpicker.GridPreviewView
+        android:id="@+id/grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/npRows" />
+
+    <com.shawnlin.numberpicker.NumberPicker
+        android:id="@+id/npRows"
+        android:layout_width="48dp"
+        app:np_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/grid"
+        android:layout_alignTop="@+id/grid"
+        android:paddingRight="8dp"
+        app:np_dividerColor="?attr/colorAccent"
+        app:np_selectedTextColor="?attr/colorAccent"
+        app:np_orientation="vertical"
+        app:np_selectedTextSize="22sp"
+        app:np_textSize="18sp" />
+
+    <com.shawnlin.numberpicker.NumberPicker
+        android:id="@+id/npCols"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        app:np_height="48dp"
+        android:layout_alignLeft="@+id/grid"
+        android:layout_alignRight="@+id/grid"
+        android:layout_below="@+id/grid"
+        android:paddingTop="8dp"
+        app:np_dividerColor="?attr/colorAccent"
+        app:np_selectedTextColor="?attr/colorAccent"
+        app:np_orientation="horizontal"
+        app:np_selectedTextSize="22sp"
+        app:np_textSize="18sp" />
+</RelativeLayout>

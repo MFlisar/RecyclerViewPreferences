@@ -1,0 +1,119 @@
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+
+    <com.michaelflisar.recyclerviewpreferences.views.SettingsRootView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/SettCardView">
+
+        <LinearLayout
+            android:orientation="vertical"
+            style="@style/SettRowContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/llRow1"
+                android:orientation="horizontal"
+                style="@style/SettRow1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.mikepenz.iconics.view.IconicsImageView
+                    style="@style/SettImage"
+                    android:id="@+id/ivIcon" />
+
+                <com.michaelflisar.recyclerviewpreferences.views.FixedSwitch
+                    android:id="@+id/swEnable"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:id="@+id/llCustomValueContainer"
+                    android:orientation="horizontal"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    style="@style/SettContainerCustomValue"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/llTitle"
+                        style="@style/SettContainerTitle"
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tvTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/SettTitle"
+                            tools:text="Einstellungsname" />
+
+                        <TextView
+                            android:id="@+id/tvSubTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/SettSubTitle"
+                            tools:text="Details..." />
+
+                    </LinearLayout>
+
+                    <com.michaelflisar.recyclerviewpreferences.views.FixedSwitch
+                        android:id="@+id/swValueTop"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/btInfo"
+                    style="@style/SettButtonInfo"
+                    android:layout_gravity="center_vertical" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/vDividerRow"
+                android:layout_width="match_parent"
+                style="@style/SettItemInnerDivider" />
+
+            <LinearLayout
+                android:id="@+id/llRow2"
+                style="@style/SettRow2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvIsUsingDefault"
+                    style="@style/SettDefaultValueTitle"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="@string/setting_info_is_using_default" />
+
+                <com.michaelflisar.recyclerviewpreferences.views.FixedSwitch
+                    android:id="@+id/swValueBottom"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.michaelflisar.recyclerviewpreferences.views.SettingsRootView>
+
+</layout>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_use_view_pager"
+        android:title="Use ViewPager"
+        android:checkable="true"
+        android:checked="false"/>
+
+    <item
+        android:id="@+id/menu_use_expandable_headers"
+        android:title="Use expandable headers"
+        android:checkable="true"
+        android:checked="false"/>
+
+    <item
+        android:id="@+id/menu_use_compact_settings"
+        android:title="Use compact settings"
+        android:checkable="true"
+        android:checked="false"/>
+
+</menu>
