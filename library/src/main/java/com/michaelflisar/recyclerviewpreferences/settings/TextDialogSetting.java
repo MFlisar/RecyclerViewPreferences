@@ -8,16 +8,15 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.michaelflisar.recyclerviewpreferences.R;
+import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.TextSettingItem;
-import com.michaelflisar.recyclerviewpreferences.fragments.dialogs.NumberSettingsDialogFragmentBundleBuilder;
-import com.michaelflisar.recyclerviewpreferences.fragments.dialogs.TextSettingsDialogFragmentBundleBuilder;
+import com.michaelflisar.recyclerviewpreferences.fragments.TextSettingsDialogFragmentBundleBuilder;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
-import com.michaelflisar.recyclerviewpreferences.utils.SettingsFragmentInstanceManager;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.iconics.typeface.IIcon;
@@ -42,8 +41,8 @@ public class TextDialogSetting<CLASS, SettData extends ISettData<String, CLASS, 
     }
 
     @Override
-    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, CLASS customSettingsObject) {
-        String text = getValue(customSettingsObject, global);
+    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
+        String text = getValue((CLASS)callback.getCustomSettingsObject(), global);
         ((TextView) v).setText(text);
     }
 
@@ -64,7 +63,7 @@ public class TextDialogSetting<CLASS, SettData extends ISettData<String, CLASS, 
                 getTitle().getText()
         )
                 .createFragment()
-                .show(((FragmentActivity)activity).getSupportFragmentManager(), null);
+                .show(((FragmentActivity) activity).getSupportFragmentManager(), null);
     }
 
     @Override
@@ -86,7 +85,7 @@ public class TextDialogSetting<CLASS, SettData extends ISettData<String, CLASS, 
     @Override
     public void updateView(int id, Activity activity, boolean global, String newValue, boolean dialogClosed, Object event) {
         if (dialogClosed) {
-            SettingsFragmentInstanceManager.get().dispatchHandleTextChanged(id, activity, newValue, global);
+            SettingsManager.get().dispatchTextChanged(id, activity, newValue, global);
         }
     }
 

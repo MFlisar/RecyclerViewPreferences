@@ -1,8 +1,6 @@
 package com.michaelflisar.recyclerviewpreferences.base;
 
 
-import android.graphics.drawable.Drawable;
-
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
@@ -74,6 +72,16 @@ public class SettingsGroup {
         return this;
     }
 
+    public SettingsGroup add(boolean shouldAdd, BaseSetting... setting) {
+        if (!shouldAdd) {
+            return this;
+        }
+        for (BaseSetting s : setting) {
+            mSettings.add(s);
+        }
+        return this;
+    }
+
     public boolean check(int id) {
         if (getGroupId() == id) {
             return true;
@@ -114,7 +122,12 @@ public class SettingsGroup {
     }
 
     public List<BaseSettingsItem> getSettingItems(boolean global, boolean compact, ISettCallback settingCallback, boolean withBottomDivider) {
-        return Util.convertList(mSettings, setting -> setting.createItem(global, compact, settingCallback, withBottomDivider));
+        List<BaseSettingsItem> items = Util.convertList(mSettings, setting -> setting.createItem(global, compact, settingCallback, withBottomDivider));
+        if (global) {
+            return Util.filterList(items, item -> !item.getSettings().supportsCustomOnly());
+        } else {
+            return items;
+        }
     }
 
     public SettingsText getTitle() {

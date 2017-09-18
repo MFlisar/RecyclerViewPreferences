@@ -38,8 +38,8 @@ public class BooleanSetting<CLASS, SettData extends ISettData<Boolean, CLASS, Se
     }
 
     @Override
-    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, CLASS customSettingsObject) {
-        ((FixedSwitch) v).setChecked(getValue(customSettingsObject, global));
+    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
+        ((FixedSwitch) v).setChecked(getValue((CLASS)callback.getCustomSettingsObject(), global));
     }
 
     @Override

@@ -161,4 +161,16 @@
         <item name="android:ellipsize">start</item>
     </style>
 
+    <style name="SettMultiLevelText">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:minHeight">36dp</item>
+    </style>
+
+    <style name="SettCardViewMultiLevel" parent="SettCardView">
+        <item name="android:foreground">?selectableItemBackground</item>
+    </style>
+
 </resources>

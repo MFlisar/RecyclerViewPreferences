@@ -1,28 +1,22 @@
 package com.michaelflisar.recyclerviewpreferences.demo.custom;
 
 import android.app.Activity;
-import android.content.Context;
 import android.databinding.ViewDataBinding;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ViewUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.AbsListView;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 
+import com.michaelflisar.recyclerviewpreferences.SettingsFragment;
+import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.demo.R;
 import com.michaelflisar.recyclerviewpreferences.demo.gridpicker.GridPreviewView;
-import com.michaelflisar.recyclerviewpreferences.fragments.SettingsFragment;
 import com.michaelflisar.recyclerviewpreferences.interfaces.IDialogHandler;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
 import com.michaelflisar.recyclerviewpreferences.settings.BaseDialogSetting;
-import com.michaelflisar.recyclerviewpreferences.utils.SettingsFragmentInstanceManager;
+import com.michaelflisar.recyclerviewpreferences.utils.DialogUtil;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.mikepenz.iconics.typeface.IIcon;
 import com.shawnlin.numberpicker.NumberPicker;
@@ -110,7 +104,7 @@ public class CustomSetting {
 
             alert.setPositiveButton("Ok", (dialog, whichButton) -> {
                 Data newData = new Data(row.getValue(), column.getValue());
-                SettingsFragmentInstanceManager.get().dispatchHandleCustomDialogEvent(
+                SettingsManager.get().dispatchCustomDialogEvent(
                         getSettingId(),
                         activity,
                         newData,
@@ -145,16 +139,6 @@ public class CustomSetting {
 //                        );
 //                    }).show();
         }
-
-        private Data parseInput(CharSequence input) {
-            String[] splitted = input.toString().replaceAll("\\s+", "").split("x");
-            Data newData = new Data(Integer.parseInt(splitted[0]), Integer.parseInt(splitted[1]));
-            return newData;
-        }
-
-        private String toInput(Data data) {
-            return data.rows + "x" + data.cols;
-        }
     }
 
     // ----------------
@@ -174,18 +158,8 @@ public class CustomSetting {
         boolean handleCustomEvent(com.michaelflisar.recyclerviewpreferences.implementations.DialogHandler.DialogType type, SettingsFragment settingsFragment, int id, Activity activity, Data value,
                 boolean global, CLASS customSettingsObject) {
 
-            ISetting setting = Util.find(settingsFragment.getSettingsManager().getSettings(), sett -> sett.checkId(id));
-            if (setting != null) {
-                if (!setting.getValue(customSettingsObject, global).equals(value)) {
-                    setting.setValue(customSettingsObject, global, value);
-                    setting.onValueChanged(id, activity, global, customSettingsObject);
-                    settingsFragment.updateViews(id);
-                    return true;
-                }
-            }
-
-
-            return false;
+            // implement your own method, for the demo we use the default one... this one update the value and assumes that the event is equal to the data type which is the case here
+            return DialogUtil.handleCustomEvent(type, settingsFragment, id, activity, value, global, customSettingsObject);
         }
     }
 }

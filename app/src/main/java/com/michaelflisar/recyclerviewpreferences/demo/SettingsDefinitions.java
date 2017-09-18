@@ -45,12 +45,12 @@ public class SettingsDefinitions {
         SettingsGroup group1 = new SettingsGroup("Group 1")
                 .add(new SettingsGroup(GoogleMaterial.Icon.gmd_android, "Sub group 1.1 - Icons")
                         .add(new NumberSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref1_1", 1), "Icon Size (1-10) - Dialog Mode", GoogleMaterial.Icon.gmd_image,
-                                NumberSetting.Mode.Dialog, 1, 10, 1,
-                                R.string.unit_dp, true))
+                                NumberSetting.Mode.DialogSeekbar, 1, 10, 1,
+                                R.string.unit_dp))
                         .add(new NumberSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref1_2", 1), "Icon Padding (1-10) - Seekbar only mode",
                                 GoogleMaterial.Icon.gmd_border_all, NumberSetting.Mode.Seekbar, 1, 10,
                                 1,
-                                R.string.unit_dp, true))
+                                R.string.unit_dp))
                         .add(new SpinnerSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref1_3", IconStyle.Normal.getId()), "Icon Style",
                                 GoogleMaterial.Icon.gmd_image,
                                 new IconStyle.EnumHelper()))
@@ -61,11 +61,9 @@ public class SettingsDefinitions {
                 )
                 .add(new SettingsGroup(GoogleMaterial.Icon.gmd_android, "Sub group 1.2 - Sizes")
                         .add(new NumberSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref2_1", 6), "Rows (1-20) - Seekbar and dialog mode",
-                                GoogleMaterial.Icon.gmd_warning, NumberSetting.Mode.SeekbarAndDialog, 1, 20, 1, null,
-                                false))
+                                GoogleMaterial.Icon.gmd_warning, NumberSetting.Mode.SeekbarAndDialogInput, 1, 20, 1, null))
                         .add(new NumberSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref2_2", 4), "Cols (1-20) - Seekbar and dialog mode",
-                                GoogleMaterial.Icon.gmd_settings, NumberSetting.Mode.SeekbarAndDialog, 1, 20, 1, null,
-                                false))
+                                GoogleMaterial.Icon.gmd_settings, NumberSetting.Mode.SeekbarAndDialogInput, 1, 20, 1, null))
                 )
                 .add(new SettingsGroup(GoogleMaterial.Icon.gmd_android, "Sub group 1.3 - Colors")
                         .add(new BooleanSetting(GlobalSetting.class, SharedPreferenceSettData.createBoolData("pref3_1"), "Use custom color", GoogleMaterial.Icon.gmd_settings)
@@ -77,8 +75,7 @@ public class SettingsDefinitions {
                 .add(new SettingsGroup(GoogleMaterial.Icon.gmd_android, "Sub group 2.1 - Various")
                         .add(new NumberSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref4_1", 50), "Integer (0-100, steps 5) - Seekbar and dialog mode",
                                 GoogleMaterial.Icon.gmd_warning,
-
-                                NumberSetting.Mode.SeekbarAndDialog, 0, 100, 5, null, false))
+                                NumberSetting.Mode.SeekbarAndDialogInput, 0, 100, 5, null))
                         .add(new BooleanSetting(GlobalSetting.class, SharedPreferenceSettData.createBoolData("pref4_2"), "Switch", GoogleMaterial.Icon.gmd_settings) {
                         })
                         .add(new ColorSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref4_3", Color.RED), "Color", GoogleMaterial.Icon.gmd_settings))
@@ -95,8 +92,8 @@ public class SettingsDefinitions {
         // now settings do have ids, we can use SettingsManager.get().find(id) now and add dependencies easily like this
         // ---------------------------
 
-        SettingsManager.get().find(SETT_NEXT_SETTING.get()).setDependency(Dependency.getBooleanDependency(SettingsManager.get().find(SETT_ENABLE_NEXT_SETTING.get())));
-        SettingsManager.get().find(SETT_COLOR.get()).setDependency(Dependency.getBooleanDependency(SettingsManager.get().find(SETT_ENABLE_COLOR.get())));
+        SettingsManager.get().find(SETT_NEXT_SETTING.get()).setDependency(Dependency.getBooleanDependency(SettingsManager.get().find(SETT_ENABLE_NEXT_SETTING.get()), Dependency.Type.Disable));
+        SettingsManager.get().find(SETT_COLOR.get()).setDependency(Dependency.getBooleanDependency(SettingsManager.get().find(SETT_ENABLE_COLOR.get()), Dependency.Type.Hide));
 
         // ---------------------------
         // Remember group ids of this block
@@ -115,12 +112,12 @@ public class SettingsDefinitions {
         SettingsGroup group1 = new SettingsGroup("Group 1")
                 .add(new SettingsGroup(GoogleMaterial.Icon.gmd_android, "Folder Icons")
                         .add(new NumberSetting(GlobalSetting.class, CustomInMemoryOnlySettData.createIntData("pref1_1", 1), "Icon Size (1-10) - Dialog Mode", GoogleMaterial.Icon.gmd_image,
-                                NumberSetting.Mode.Dialog, 1, 10, 1,
-                                R.string.unit_dp, true))
+                                NumberSetting.Mode.DialogSeekbar, 1, 10, 1,
+                                R.string.unit_dp))
                         .add(new NumberSetting(GlobalSetting.class, CustomInMemoryOnlySettData.createIntData("pref1_2", 1), "Icon Padding (1-10) - Seekbar only mode",
                                 GoogleMaterial.Icon.gmd_border_all, NumberSetting.Mode.Seekbar, 1, 10,
                                 1,
-                                R.string.unit_dp, true))
+                                R.string.unit_dp))
                         .add(new SpinnerSetting(GlobalSetting.class, CustomInMemoryOnlySettData.createIntData("pref1_3", IconStyle.Normal.getId()), "Icon Style",
                                 GoogleMaterial.Icon.gmd_image,
                                 new IconStyle.EnumHelper()))
@@ -142,9 +139,9 @@ public class SettingsDefinitions {
         SettingsGroup group1 = new SettingsGroup("Group 1")
                 .add(new SettingsGroup(GoogleMaterial.Icon.gmd_folder, "Folder")
                         .add(new NumberSetting(DemoFolder.class, FolderSettData.createIntData("pref2_1", 48), "Size", GoogleMaterial.Icon.gmd_image, NumberSetting.Mode.Seekbar, 0, 100, 2,
-                                R.string.unit_dp, true))
+                                R.string.unit_dp))
                         .add(new NumberSetting(DemoFolder.class, FolderSettData.createIntData("pref2_2", 0), "Padding", GoogleMaterial.Icon.gmd_border_all, NumberSetting.Mode.Seekbar, 0, 64,
-                                1, R.string.unit_dp, true))
+                                1, R.string.unit_dp))
                         .add(new SpinnerSetting(DemoFolder.class, FolderSettData.createIntData("pref2_3", IconStyle.Normal.getId()), "Style", GoogleMaterial.Icon.gmd_image,
                                 new IconStyle.EnumHelper()))
                         .add(new ColorSetting(DemoFolder.class, FolderSettData.createIntData("pref2_4", Color.RED), "Color", GoogleMaterial.Icon.gmd_colorize))

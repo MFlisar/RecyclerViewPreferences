@@ -3,12 +3,10 @@ package com.michaelflisar.recyclerviewpreferences.demo;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.CompoundButton;
 
 import com.michaelflisar.recyclerviewpreferences.SettingsManager;
-import com.michaelflisar.recyclerviewpreferences.defaults.DefaultState;
+import com.michaelflisar.recyclerviewpreferences.defaults.Setup;
 import com.michaelflisar.recyclerviewpreferences.demo.activities.CustomGlobalPreferencesActivity;
 import com.michaelflisar.recyclerviewpreferences.demo.activities.GlobalAndCustomPreferencesActivityOverview;
 import com.michaelflisar.recyclerviewpreferences.demo.activities.GlobalSharedPreferencesActivity;
@@ -28,7 +26,7 @@ public class MainActivity extends BaseThemedActivity implements View.OnClickList
 
         binding.cbDarkTheme.setChecked(SettingsManager.get().getState().isDarkTheme());
         binding.cbDarkTheme.setOnCheckedChangeListener((compoundButton, b) -> {
-            ((DefaultState) SettingsManager.get().getState()).setIsDarkTheme(b);
+            ((Setup) SettingsManager.get().getState()).setIsDarkTheme(b);
             recreate();
         });
 

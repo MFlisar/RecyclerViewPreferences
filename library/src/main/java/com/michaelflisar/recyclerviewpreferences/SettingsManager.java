@@ -6,14 +6,13 @@ import android.content.Context;
 
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsGroup;
-import com.michaelflisar.recyclerviewpreferences.defaults.DefaultState;
+import com.michaelflisar.recyclerviewpreferences.defaults.Setup;
 import com.michaelflisar.recyclerviewpreferences.implementations.DialogHandler;
 import com.michaelflisar.recyclerviewpreferences.interfaces.IDialogHandler;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
-import com.michaelflisar.recyclerviewpreferences.interfaces.IStateManager;
+import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
 import com.michaelflisar.recyclerviewpreferences.utils.Definitions;
-import com.michaelflisar.recyclerviewpreferences.utils.SettingsFragmentInstanceManager;
 import com.michaelflisar.recyclerviewpreferences.utils.SettingsUtil;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 
@@ -37,7 +36,7 @@ public class SettingsManager {
     private List<BaseSetting> mSettings;
     private HashMap<Integer, BaseSetting> mSettingsMap;
     private Set<Integer> mCollapsedSettingIds;
-    private IStateManager mStateManager;
+    private ISetup mStateManager;
     private DialogHandler mDialogHandler = null;
 
     private SettingsManager() {
@@ -47,7 +46,7 @@ public class SettingsManager {
         mSettings = new ArrayList<>();
         mSettingsMap = new HashMap<>();
         mCollapsedSettingIds = new HashSet<>();
-        mStateManager = new DefaultState();
+        mStateManager = new Setup();
         mDialogHandler = new DialogHandler();
     }
 
@@ -58,9 +57,9 @@ public class SettingsManager {
         return instance;
     }
 
-    public void init(Context context, IStateManager stateManager, String sharedPreferenceName) {
+    public void init(Context context, ISetup stateManager, String sharedPreferenceName) {
         mContext = context.getApplicationContext();
-        mStateManager = stateManager == null ? new DefaultState() : stateManager;
+        mStateManager = stateManager == null ? new Setup() : stateManager;
 
         if (sharedPreferenceName != null) {
             new SessionManager.Builder()
@@ -71,7 +70,14 @@ public class SettingsManager {
     }
 
     public DialogHandler getDialogHandler() {
+        if (mDialogHandler == null) {
+            mDialogHandler = new DialogHandler();
+        }
         return mDialogHandler;
+    }
+
+    public void setDialogHandler(DialogHandler dialogHandler) {
+        mDialogHandler = dialogHandler;
     }
 
     public <T> void registerDialogHandler(IDialogHandler<T> handler) {
@@ -88,7 +94,7 @@ public class SettingsManager {
         }
     }
 
-    public IStateManager getState() {
+    public ISetup getState() {
         return mStateManager;
     }
 
@@ -122,9 +128,25 @@ public class SettingsManager {
         }
     }
 
+    public void dispatchNumberChanged(final int id, Activity activity, Integer number, boolean global) {
+        SettingsFragmentInstanceManager.get().dispatchNumberChanged(id, activity, number, global);
+    }
+
+    public void dispatchTextChanged(final int id, Activity activity, String value, boolean global) {
+        SettingsFragmentInstanceManager.get().dispatchTextChanged(id, activity, value, global);
+    }
+
+    public void dispatchColorSelected(final int id, Activity activity, int color, boolean global) {
+        SettingsFragmentInstanceManager.get().dispatchColorSelected(id, activity, color, global);
+    }
+
+    public void dispatchCustomDialogEvent(final int id, Activity activity, Object data, boolean global) {
+        SettingsFragmentInstanceManager.get().dispatchCustomDialogEvent(id, activity, data, global);
+    }
+
     public <S extends BaseSetting> void add(S setting) {
         // 1) create unique id in this manager ONLY if no manual id is not set yet
-        if (setting.getSettingId() != -1) {
+        if (setting.getSettingId() == -1) {
             mLastId += Definitions.IDS_PER_SETTING;
             setting.setSettingId(mLastId);
         }
@@ -194,7 +216,7 @@ public class SettingsManager {
         return mTopGroup;
     }
 
-    public List<Integer> getTopGroupIds() {
+    public ArrayList<Integer> getTopGroupIds() {
         return Util.convertList(mTopGroup, group -> group.getGroupId());
     }
 
@@ -205,12 +227,14 @@ public class SettingsManager {
     public List<ISetting> getSettingsByGroupId(int id) {
         List<ISetting> settings = new ArrayList<>();
         SettingsGroup group = getGroupById(id);
-        if (group.getGroups() != null) {
-            for (SettingsGroup g : group.getGroups()) {
-                settings.addAll(getSettingsByGroupId(g.getGroupId()));
+        if (group != null) {
+            if (group.getGroups() != null) {
+                for (SettingsGroup g : group.getGroups()) {
+                    settings.addAll(getSettingsByGroupId(g.getGroupId()));
+                }
+            } else {
+                settings.addAll(group.getSettings());
             }
-        } else {
-            settings.addAll(group.getSettings());
         }
         return settings;
     }
@@ -218,18 +242,6 @@ public class SettingsManager {
     public List<ISetting> getAllSettings() {
         List<ISetting> settings = SettingsUtil.getAllSettings(mTopGroup);
         return settings;
-    }
-
-    public enum SettingsStyle {
-        ViewPager,
-        List
-    }
-
-    // TODO: folgende Enums sollen useViewPager und compact ersetzen und frei kombinierbar sein!
-
-    public enum GroupingStyle {
-        Inline,
-        Hierarchical
     }
 
     public interface OnSettingsChangedListener {

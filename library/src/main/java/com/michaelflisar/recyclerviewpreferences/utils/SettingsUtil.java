@@ -8,8 +8,10 @@ import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsGroup;
 import com.michaelflisar.recyclerviewpreferences.classes.Dependency;
 import com.michaelflisar.recyclerviewpreferences.classes.SettingsSpaceDecorator;
+import com.michaelflisar.recyclerviewpreferences.defaults.Setup;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.header.SettingsAlternativeHeaderItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.header.SettingsHeaderItem;
+import com.michaelflisar.recyclerviewpreferences.fastadapter.header.SettingsMultilevelHeaderItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.EditTextSettingItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.NumberSettingItem;
@@ -18,6 +20,7 @@ import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.SwitchSett
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsItem;
+import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
@@ -29,72 +32,108 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SettingsUtil {
 
-    public static List<IItem> getAllSettingItems(boolean global, Object customSettingsObject, boolean compact, boolean viewPager, boolean expandableHeaders, ISettCallback settingsCallback, ArrayList<SettingsGroup> groups,
-            Set<Integer> collapsedIds) {
+    public static List<IItem> getAllSettingItems(boolean global, Object customSettingsObject, ISetup setup, ISettCallback settingsCallback, ArrayList<SettingsGroup> groups,
+            boolean forceNoHeaders, Set<Integer> collapsedIds) {
         List<Integer> ids = Util.convertList(groups, group -> group.getGroupId());
-        return getSettingItems(global, customSettingsObject, compact, viewPager, expandableHeaders, settingsCallback, groups, collapsedIds, ids.toArray(new Integer[ids.size()]));
+        return getSettingItems(global, customSettingsObject, setup, settingsCallback, groups, collapsedIds, forceNoHeaders, ids.toArray(new Integer[ids.size()]));
     }
 
-    public static List<IItem> getSettingItems(boolean global, Object customSettingsObject, boolean compact, boolean viewPager, boolean expandableHeaders, ISettCallback settingsCallback, Set<Integer> collapsedIds, Integer... settingGroupIds) {
-        return getSettingItems(global, customSettingsObject, compact, viewPager, expandableHeaders, settingsCallback, SettingsManager.get().getTopGroup(), collapsedIds, settingGroupIds);
-    }
-
-    private static List<IItem> getSettingItems(boolean global, Object customSettingsObject, boolean compact, boolean viewPager, boolean expandableHeaders, ISettCallback settingsCallback, List<SettingsGroup> groups, Set<Integer> collapsedIds,
+    public static List<IItem> getSettingItems(boolean global, Object customSettingsObject, ISetup setup, ISettCallback settingsCallback, Set<Integer> collapsedIds, boolean forceNoHeaders,
             Integer... settingGroupIds) {
+        return getSettingItems(global, customSettingsObject, setup, settingsCallback, SettingsManager.get().getTopGroup(), collapsedIds, forceNoHeaders, settingGroupIds);
+    }
+
+    private static List<IItem> getSettingItems(boolean global, Object customSettingsObject, ISetup setup, ISettCallback settingsCallback, List<SettingsGroup> groups, Set<Integer> collapsedIds,
+            boolean forceNoHeaders, Integer... settingGroupIds) {
         // Setup
-        boolean useViewPager = viewPager;
-        boolean addIfAnyParentIsInGroup = true;//global ? useViewPager : true;
-        boolean addTopHeaders = /*!global && */settingGroupIds.length > 1;
+        boolean addIfAnyParentIsInGroup = true;//setup.getSettingsStyle() != Setup.SettingsStyle.MultiLevelList;//global ? useViewPager : true;
+        boolean addTopHeaders = settingGroupIds.length > 1;
+        boolean showHeadersAsButtons = setup.getSettingsStyle() == Setup.SettingsStyle.MultiLevelList;
         AtomicInteger headerId = new AtomicInteger(-2);
 
         // Function
         List<IItem> items = new ArrayList<>();
         for (Integer settingGroupId : settingGroupIds) {
-            items.addAll(getSettingItems(global, customSettingsObject, compact, viewPager, expandableHeaders, settingsCallback, null, groups, settingGroupId, addIfAnyParentIsInGroup, addTopHeaders, headerId, collapsedIds,
-                    expandableHeaders));
+            items.addAll(getSettingItems(global, customSettingsObject, setup, settingsCallback, null, groups, settingGroupId, addIfAnyParentIsInGroup, addTopHeaders, showHeadersAsButtons, headerId,
+                    forceNoHeaders, collapsedIds));
         }
         return items;
     }
 
-    private static List<IItem> getSettingItems(boolean global, Object customSettingsObject, boolean compact, boolean viewPager, boolean expandableHeaders, ISettCallback settingsCallback, Boolean anyParentIsGroup, List<SettingsGroup> groups,
-            Integer settingGroupId, boolean addIfAnyParentIsInGroup, boolean addTopHeaders, AtomicInteger headerId, Set<Integer> collapsedIds, boolean expandableSettings) {
+    private static List<IItem> getSettingItems(boolean global, Object customSettingsObject, ISetup setup, ISettCallback settingsCallback, Boolean anyParentIsGroup, List<SettingsGroup> groups,
+            Integer settingGroupId, boolean addIfAnyParentIsInGroup, boolean addTopHeaders, boolean showHeadersAsButtons, AtomicInteger headerId, boolean forceNoHeaders, Set<Integer> collapsedIds) {
 
-        // Function
         List<IItem> items = new ArrayList<>();
         for (SettingsGroup group : groups) {
             boolean localAnyParentIsGroup = (anyParentIsGroup == null || !anyParentIsGroup) ? settingGroupId == group.getGroupId() : anyParentIsGroup;
             if (group.isGroupHolder()) {
-                if (addTopHeaders && localAnyParentIsGroup) {
-                    items.add(new SettingsAlternativeHeaderItem(group.getTitle(), headerId.getAndDecrement()));
+                if (!forceNoHeaders && addTopHeaders && localAnyParentIsGroup) {
+                    if (!SettingsManager.get().getState().isHideEmptyHeaders() || group.getGroups().size() > 0) {
+                        if (showHeadersAsButtons) {
+                            items.add(new SettingsHeaderItem(false, null /* no icon in headers of headers in multi level list */, group.getTitle(), headerId.getAndDecrement()));
+                        } else {
+                            items.add(new SettingsAlternativeHeaderItem(group.getTitle(), headerId.getAndDecrement()));
+                        }
+                    }
                 }
-                items.addAll(getSettingItems(global, customSettingsObject, compact, viewPager, expandableHeaders, settingsCallback, localAnyParentIsGroup, group.getGroups(), settingGroupId, addIfAnyParentIsInGroup, addTopHeaders,
-                        headerId, collapsedIds,
-                        expandableSettings));
+                items.addAll(getSettingItems(global, customSettingsObject, setup, settingsCallback, localAnyParentIsGroup, group.getGroups(), settingGroupId, addIfAnyParentIsInGroup, addTopHeaders,
+                        showHeadersAsButtons, headerId, forceNoHeaders, collapsedIds));
             } else {
                 if ((addIfAnyParentIsInGroup && localAnyParentIsGroup) || group.check(settingGroupId)) {
-                    SettingsHeaderItem header = new SettingsHeaderItem(expandableHeaders, group.getIcon(), group.getTitle(), headerId.getAndDecrement());
-                    if (collapsedIds.contains(group.getTitle())) {
-                        header.withIsExpanded(false);
-                    }
-                    items.add(header);
-                    List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, compact, settingsCallback, true);
-                    if (itemsOfHeader.size() > 0) {
-                        itemsOfHeader.get(itemsOfHeader.size() - 1).withBottomDivider(false);
-                    }
-                    if (expandableSettings && expandableHeaders) {
-                        header.withSubItems(itemsOfHeader);
+                    if (showHeadersAsButtons) {
+                        if (!forceNoHeaders) {
+                            List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, true);
+                            if (!SettingsManager.get().getState().isHideEmptyHeaders() || itemsOfHeader.size() > 0) {
+                                SettingsMultilevelHeaderItem header = new SettingsMultilevelHeaderItem(group.getIcon(), group.getTitle(), headerId.getAndDecrement())
+                                        .withOnItemClickListener((view, iAdapter, item, i) -> {
+                                            settingsCallback.showMultiLevelSetting(group.getGroupId());
+                                            return true;
+                                        });
+                                items.add(header);
+                            }
+                        }
                     } else {
-                        items.addAll(itemsOfHeader);
-                    }
+                        SettingsHeaderItem header = null;
+                        List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, true);
 
-                    // Update state of all items
-                    for (BaseSettingsItem item : itemsOfHeader) {
-                        Dependency dependency = item.getSettings().getDependency();
-                        if (dependency != null) {
-                            boolean enabled = dependency.isEnabled(global, customSettingsObject);
-                            boolean visible = dependency.isVisible(global, customSettingsObject);
-                            // TODO: setDependencyState mit CheckDependency(global, customSettingsObject) ersetzen
-                            item.setDependencyState(enabled, visible);
+                        if (SettingsManager.get().getState().isHideEmptyHeaders() && itemsOfHeader.size() == 0) {
+                            // skip, we don't need an empty header
+                        } else {
+                            if (!forceNoHeaders) {
+                                header = new SettingsHeaderItem(setup.isUseExpandableHeaders(), group.getIcon(), group.getTitle(), headerId.getAndDecrement());
+                                if (collapsedIds.contains(group.getGroupId())) {
+                                    header.withIsExpanded(false);
+                                }
+                                items.add(header);
+                            }
+
+
+                            if (itemsOfHeader.size() > 0) {
+                                itemsOfHeader.get(itemsOfHeader.size() - 1).withBottomDivider(false);
+                            }
+                            if (forceNoHeaders) {
+                                items.addAll(itemsOfHeader);
+                            } else {
+                                // we always use sub items to be able to switch between expandable and not expandable headers
+//                    if (setup.isUseExpandableHeaders()) {
+                                header.withSubItems(itemsOfHeader);
+//                    } else {
+//                        items.addAll(itemsOfHeader);
+//                    }
+
+                                header.setExpandable(setup.isUseExpandableHeaders());
+                            }
+
+                            // Update state of all items
+                            for (BaseSettingsItem item : itemsOfHeader) {
+                                Dependency dependency = item.getSettings().getDependency();
+                                if (dependency != null) {
+                                    boolean enabled = dependency.isEnabled(global, customSettingsObject);
+                                    boolean visible = dependency.isVisible(global, customSettingsObject);
+                                    // TODO: setDependencyState mit CheckDependency(global, customSettingsObject) ersetzen
+                                    item.setDependencyState(enabled, visible);
+                                }
+                            }
                         }
                     }
                 }
@@ -201,7 +240,7 @@ public class SettingsUtil {
                     ((SettingsHeaderItem) item).setExpandable(expanded);
                     ids.add(item.getIdentifier());
                 } else if (item instanceof IExpandable) {
-                    updateExpandableHeaders(((IExpandable)item).getSubItems(), expanded);
+                    updateExpandableHeaders(((IExpandable) item).getSubItems(), expanded);
                 }
             }
         }
@@ -213,13 +252,12 @@ public class SettingsUtil {
         if (items != null) {
             for (IItem item : items) {
                 if (item instanceof IExpandable) {
-                    updateCompactMode(((IExpandable)item).getSubItems(), compact);
+                    updateCompactMode(((IExpandable) item).getSubItems(), compact);
                 } else if (item instanceof ISettingsItem) {
-                    ((ISettingsItem)item).setCompactMode(compact);
+                    ((ISettingsItem) item).setCompactMode(compact);
                 }
             }
         }
         return ids;
     }
-
 }

@@ -1,0 +1,5 @@
+<resources>
+
+    <string name="number_dialog_info_no_steps">Bitte eine Zahl zwischen %1$d und %2$d eingeben</string>
+    <string name="number_dialog_info">Bitte eine Zahl zwischen %1$d und %2$d eingeben (In %3$der Schritten)</string>
+</resources>

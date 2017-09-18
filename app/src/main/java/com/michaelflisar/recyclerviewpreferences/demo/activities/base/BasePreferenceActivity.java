@@ -3,21 +3,21 @@ package com.michaelflisar.recyclerviewpreferences.demo.activities.base;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.michaelflisar.recyclerviewpreferences.SettingsFragment;
 import com.michaelflisar.recyclerviewpreferences.SettingsManager;
+import com.michaelflisar.recyclerviewpreferences.defaults.Setup;
 import com.michaelflisar.recyclerviewpreferences.demo.R;
 import com.michaelflisar.recyclerviewpreferences.demo.databinding.ActivityPreferencesBinding;
-import com.michaelflisar.recyclerviewpreferences.fragments.SettingsFragment;
-import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsActivity;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsFragment;
+import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsFragmentParent;
 
 import java.util.List;
 
-public abstract class BasePreferenceActivity extends BaseThemedActivity implements ISettingsActivity {
+public abstract class BasePreferenceActivity extends BaseThemedActivity implements ISettingsFragmentParent {
 
     // Setup
     protected boolean mGlobalSettings = true;
@@ -25,9 +25,7 @@ public abstract class BasePreferenceActivity extends BaseThemedActivity implemen
     protected ISettingsFragment mSettingsFragment;
 
     // State
-    protected boolean mUseViewPager = true;
-    protected boolean mUseExpandableHeaders = true;
-    protected boolean mCompact = false;
+    protected Setup mSetup = new Setup();
 
     protected abstract List<Integer> getPrefGroupIds();
 
@@ -37,13 +35,9 @@ public abstract class BasePreferenceActivity extends BaseThemedActivity implemen
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState != null) {
-            mUseViewPager = savedInstanceState.getBoolean("mUseViewPager");
-            mUseExpandableHeaders = savedInstanceState.getBoolean("mUseExpandableHeaders");
-            mCompact = savedInstanceState.getBoolean("mCompact");
+            mSetup = savedInstanceState.getParcelable("mSetup");
         } else {
-            mUseViewPager = SettingsManager.get().getState().isUseViewPager();
-            mUseExpandableHeaders = SettingsManager.get().getState().isUseExpandableHeaders();
-            mCompact = SettingsManager.get().getState().isUseCompact();
+            mSetup = (Setup) SettingsManager.get().getState();
         }
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_preferences);
@@ -58,15 +52,12 @@ public abstract class BasePreferenceActivity extends BaseThemedActivity implemen
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("mUseViewPager", mUseViewPager);
-        outState.putBoolean("mUseExpandableHeaders", mUseExpandableHeaders);
-        outState.putBoolean("mCompact", mCompact);
+        outState.putParcelable("mSetup", mSetup);
     }
 
     protected void updateView(Bundle savedInstanceState, boolean reset) {
         if (reset || savedInstanceState == null) {
-            mSettingsFragment = SettingsFragment.create(mUseViewPager, mGlobalSettings, mCompact, mUseExpandableHeaders,
-                    getPrefGroupIds().toArray(new Integer[getPrefGroupIds().size()]));
+            mSettingsFragment = SettingsFragment.create(mSetup, mGlobalSettings, getPrefGroupIds().toArray(new Integer[getPrefGroupIds().size()]));
             getSupportFragmentManager().beginTransaction().replace(R.id.placeholder, (Fragment) mSettingsFragment).commit();
         } else {
             mSettingsFragment = (SettingsFragment) getSupportFragmentManager().findFragmentById(R.id.placeholder);
@@ -77,12 +68,24 @@ public abstract class BasePreferenceActivity extends BaseThemedActivity implemen
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-        menu.findItem(R.id.menu_use_view_pager).setChecked(mUseViewPager);
-        menu.findItem(R.id.menu_use_expandable_headers).setChecked(mUseExpandableHeaders);
+        menu.findItem(R.id.menu_use_expandable_headers).setChecked(mSetup.isUseExpandableHeaders());
+        switch (mSetup.getSettingsStyle()) {
+            case ViewPager:
+                menu.findItem(R.id.menu_style_view_pager).setChecked(true);
+                break;
+            case List:
+                menu.findItem(R.id.menu_style_list).setChecked(true);
+                break;
+            case MultiLevelList:
+                menu.findItem(R.id.menu_style_list_multi_level).setChecked(true);
+                break;
+        }
+
+
         if (mGlobalSettings) {
             menu.findItem(R.id.menu_use_compact_settings).setVisible(false);
         } else {
-            menu.findItem(R.id.menu_use_compact_settings).setChecked(mCompact);
+            menu.findItem(R.id.menu_use_compact_settings).setChecked(mSetup.getLayoutStyle() == Setup.LayoutStyle.Compact);
         }
         return true;
     }
@@ -90,21 +93,30 @@ public abstract class BasePreferenceActivity extends BaseThemedActivity implemen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_use_view_pager:
-                mUseViewPager = !mUseViewPager;
-                item.setChecked(mUseViewPager);
+            case R.id.menu_style_view_pager:
+                mSetup.setSettingsStyle(Setup.SettingsStyle.ViewPager);
+                item.setChecked(true);
                 updateView(null, true);
-                //mSettingsFragment.setUseViewPager(mUseViewPager);
+                break;
+            case R.id.menu_style_list:
+                mSetup.setSettingsStyle(Setup.SettingsStyle.List);
+                item.setChecked(true);
+                updateView(null, true);
+                break;
+            case R.id.menu_style_list_multi_level:
+                mSetup.setSettingsStyle(Setup.SettingsStyle.MultiLevelList);
+                item.setChecked(true);
+                updateView(null, true);
                 break;
             case R.id.menu_use_expandable_headers:
-                mUseExpandableHeaders = !mUseExpandableHeaders;
-                item.setChecked(mUseExpandableHeaders);
-                mSettingsFragment.setUseExpandableHeaders(mUseExpandableHeaders);
+                mSetup.setUseExpandableHeaders(!mSetup.isUseExpandableHeaders());
+                item.setChecked(mSetup.isUseExpandableHeaders());
+                mSettingsFragment.setUseExpandableHeaders(mSetup.isUseExpandableHeaders());
                 break;
             case R.id.menu_use_compact_settings:
-                mCompact = !mCompact;
-                item.setChecked(mCompact);
-                mSettingsFragment.setUseCompactSettings(mCompact);
+                mSetup.setLayoutStyle(mSetup.getLayoutStyle() == Setup.LayoutStyle.Compact ? Setup.LayoutStyle.Normal : Setup.LayoutStyle.Compact);
+                item.setChecked(mSetup.getLayoutStyle() == Setup.LayoutStyle.Compact);
+                mSettingsFragment.setUseCompactSettings(mSetup.getLayoutStyle() == Setup.LayoutStyle.Compact);
                 break;
             case android.R.id.home:
                 onBackPressed();

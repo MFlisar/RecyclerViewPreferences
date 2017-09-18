@@ -15,16 +15,14 @@ import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.databinding.AdapterSettingItemNumberBinding;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.NumberSettingItem;
-import com.michaelflisar.recyclerviewpreferences.fragments.dialogs.NumberSettingsDialogFragmentBundleBuilder;
+import com.michaelflisar.recyclerviewpreferences.fragments.NumberSettingsDialogFragment;
+import com.michaelflisar.recyclerviewpreferences.fragments.NumberSettingsDialogFragmentBundleBuilder;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
-import com.michaelflisar.recyclerviewpreferences.utils.SettingsFragmentInstanceManager;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.iconics.typeface.IIcon;
-
-import java.util.Arrays;
 
 /**
  * Created by flisar on 16.05.2017.
@@ -34,16 +32,30 @@ public class NumberSetting<CLASS, SettData extends ISettData<Integer, CLASS, Set
         ISettingsViewHolder<Integer, CLASS, SettData, VH>> extends BaseSetting<Integer, CLASS, SettData, VH> {
 
     public enum Mode {
-        SeekbarAndDialog,
+        SeekbarAndDialogInput,
         Seekbar,
-        Dialog;
+        DialogInput,
+        DialogSeekbar;
 
         public int getSeekbarVisibility() {
-            return this == Dialog ? View.GONE : View.VISIBLE;
+            return (this == DialogInput || this == DialogSeekbar) ? View.GONE : View.VISIBLE;
         }
 
         public boolean getSupportsDialog() {
-            return this == SeekbarAndDialog || this == Dialog;
+            return this != Seekbar;
+        }
+
+        public NumberSettingsDialogFragment.Type getNumberPickerType() {
+            switch (this) {
+                case SeekbarAndDialogInput:
+                case DialogInput:
+                    return NumberSettingsDialogFragment.Type.Input;
+                case Seekbar:
+                    break;
+                case DialogSeekbar:
+                    return NumberSettingsDialogFragment.Type.Seekbar;
+            }
+            return null;
         }
     }
 
@@ -52,33 +64,31 @@ public class NumberSetting<CLASS, SettData extends ISettData<Integer, CLASS, Set
     private int mMax;
     private int mStepSize;
     private Integer mUnitRes;
-    private boolean mUseDpSizeDialog;
 
-    public NumberSetting(Class<CLASS> clazz, SettData settData, int title, IIcon icon, Mode mode, int min, int max, int stepSize, Integer unitRes, boolean useDpSizeDialog) {
-        this(clazz, settData, new SettingsText(title), icon, mode, min, max, stepSize, unitRes, useDpSizeDialog);
+    public NumberSetting(Class<CLASS> clazz, SettData settData, int title, IIcon icon, Mode mode, int min, int max, int stepSize, Integer unitRes) {
+        this(clazz, settData, new SettingsText(title), icon, mode, min, max, stepSize, unitRes);
     }
 
-    public NumberSetting(Class<CLASS> clazz, SettData settData, String title, IIcon icon, Mode mode, int min, int max, int stepSize, Integer unitRes, boolean useDpSizeDialog) {
-        this(clazz, settData, new SettingsText(title), icon, mode, min, max, stepSize, unitRes, useDpSizeDialog);
+    public NumberSetting(Class<CLASS> clazz, SettData settData, String title, IIcon icon, Mode mode, int min, int max, int stepSize, Integer unitRes) {
+        this(clazz, settData, new SettingsText(title), icon, mode, min, max, stepSize, unitRes);
     }
 
-    private NumberSetting(Class<CLASS> clazz, SettData settData, SettingsText title, IIcon icon, Mode mode, int min, int max, int stepSize, Integer unitRes, boolean useDpSizeDialog) {
+    private NumberSetting(Class<CLASS> clazz, SettData settData, SettingsText title, IIcon icon, Mode mode, int min, int max, int stepSize, Integer unitRes) {
         super(clazz, settData, title, icon);
         mMode = mode;
         mMin = min;
         mMax = max;
         mStepSize = stepSize;
         mUnitRes = unitRes;
-        mUseDpSizeDialog = useDpSizeDialog;
     }
 
     @Override
-    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, CLASS customSettingsObject) {
-        String text = mUnitRes == null ? String.valueOf(getValue(customSettingsObject, global)) : SettingsManager.get().getContext().getString(mUnitRes, getValue(customSettingsObject, global));
+    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
+        String text = mUnitRes == null ? String.valueOf(getValue((CLASS)callback.getCustomSettingsObject(), global)) : SettingsManager.get().getContext().getString(mUnitRes, getValue((CLASS)callback.getCustomSettingsObject(), global));
         ((TextView) v).setText(text);
 
         if (topView) {
-            int seekbarValue = (getValue(customSettingsObject, global) - getMin()) / getStepSize();
+            int seekbarValue = (getValue((CLASS)callback.getCustomSettingsObject(), global) - getMin()) / getStepSize();
             ((AdapterSettingItemNumberBinding) vh.getBinding()).sbTop.setProgress(seekbarValue);
         }
     }
@@ -97,18 +107,7 @@ public class NumberSetting<CLASS, SettData extends ISettData<Integer, CLASS, Set
     @Override
     public void onShowChangeSetting(VH vh, Activity activity, ViewDataBinding binding, SettData settData, boolean global, CLASS customSettingsObject) {
         if (mMode.getSupportsDialog()) {
-            new NumberSettingsDialogFragmentBundleBuilder(
-                    getSettingId(),
-                    global,
-                    getValue(customSettingsObject, global),
-                    getMin(),
-                    getStepSize(),
-                    getMax(),
-                    getTitle().getText(),
-                    getUseDpSizeDialog()
-            )
-                    .createFragment()
-                    .show(((FragmentActivity)activity).getSupportFragmentManager(), null);
+            SettingsManager.get().getDialogHandler().showNumberPicker(activity, mMode, this, global, customSettingsObject);
         }
     }
 
@@ -131,7 +130,7 @@ public class NumberSetting<CLASS, SettData extends ISettData<Integer, CLASS, Set
     @Override
     public void updateView(int id, Activity activity, boolean global, Integer newValue, boolean dialogClosed, Object event) {
         if (dialogClosed) {
-            SettingsFragmentInstanceManager.get().dispatchHandleNumberChanged(id, activity, Arrays.asList(newValue), global);
+            SettingsManager.get().dispatchNumberChanged(id, activity, newValue, global);
         }
     }
 
@@ -153,9 +152,5 @@ public class NumberSetting<CLASS, SettData extends ISettData<Integer, CLASS, Set
 
     public final Integer getUnitRes() {
         return mUnitRes;
-    }
-
-    public final boolean getUseDpSizeDialog() {
-        return mUseDpSizeDialog;
     }
 }

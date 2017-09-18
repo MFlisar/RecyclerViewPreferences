@@ -8,9 +8,6 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
-import com.michaelflisar.recyclerviewpreferences.settings.ColorSetting;
-import com.michaelflisar.recyclerviewpreferences.settings.NumberSetting;
-import com.michaelflisar.recyclerviewpreferences.settings.todo.MultiNumberSetting;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 

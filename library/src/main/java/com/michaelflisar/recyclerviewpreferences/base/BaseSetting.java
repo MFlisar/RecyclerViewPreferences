@@ -8,13 +8,12 @@ import android.view.View;
 import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.classes.Dependency;
 import com.michaelflisar.recyclerviewpreferences.interfaces.IIDSetCallback;
+import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
+import com.michaelflisar.recyclerviewpreferences.utils.SettingsId;
 import com.mikepenz.iconics.typeface.IIcon;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by flisar on 16.05.2017.
@@ -23,7 +22,7 @@ import java.util.List;
 public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
         ISettingsViewHolder<Value, CLASS, SettData, VH>> implements ISetting<Value, CLASS, SettData, VH> {
 
-    private int mId;
+    private SettingsId mId = null;
     private IIDSetCallback mIdSetCallback;
     private SettData mSettData;
 
@@ -35,7 +34,7 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
     private SettingsText mSubTitle;
     private SettingsText mInfo;
     private boolean mInfoIsHtml;
-    private List<MultiSettingData> mMultiDatas;
+    private boolean mSupportCustomOnly;
 
     private Dependency mDependency;
 
@@ -49,6 +48,7 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
         mInfoIsHtml = false;
         mIcon = icon;
         mIconPadding = 0;
+        mSupportCustomOnly = false;
     }
 
     public BaseSetting<Value, CLASS, SettData, VH> withIdCallback(IIDSetCallback callback) {
@@ -57,12 +57,14 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
     }
 
     public BaseSetting<Value, CLASS, SettData, VH> withId(int id) {
-        mId = id;
+        mId = new SettingsId(id);
         return this;
     }
 
     public BaseSetting<Value, CLASS, SettData, VH> withSubTitle(int subTitle) {
-        mSubTitle = new SettingsText(subTitle);
+        if (subTitle > 0) {
+            mSubTitle = new SettingsText(subTitle);
+        }
         return this;
     }
 
@@ -77,6 +79,30 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
         return this;
     }
 
+    public BaseSetting<Value, CLASS, SettData, VH> withInfo(int info, boolean isHtml) {
+        if (info > 0) {
+            mInfo = new SettingsText(info);
+        }
+        mInfoIsHtml = isHtml;
+        return this;
+    }
+
+    public BaseSetting<Value, CLASS, SettData, VH> withInfo(String info, boolean isHtml) {
+        mInfo = new SettingsText(info);
+        mInfoIsHtml = isHtml;
+        return this;
+    }
+
+    public BaseSetting<Value, CLASS, SettData, VH> withIconPadding(int iconPadding) {
+        mIconPadding = iconPadding;
+        return this;
+    }
+
+    public BaseSetting<Value, CLASS, SettData, VH> withSupportCustomOnly() {
+        mSupportCustomOnly = true;
+        return this;
+    }
+
     @Override
     public final SettData getSettData() {
         return mSettData;
@@ -84,12 +110,12 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
 
     @Override
     public final int getSettingId() {
-        return mId;
+        return mId == null ? -1 : mId.getId();
     }
 
     @Override
     public final void setSettingId(int id) {
-        mId = id;
+        mId = new SettingsId(id);
         if (mIdSetCallback != null) {
             mIdSetCallback.onIdSet(id);
         }
@@ -97,22 +123,27 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
 
     @Override
     public final int getParentId() {
-        return mId;
+        return mId == null ? -1 : mId.getId();
     }
 
     @Override
     public final int getDefaultId() {
-        return mId + 1;
+        return mId == null ? -1 : mId.getDefaultId();
     }
 
     @Override
     public final int getCustomId() {
-        return mId + 2;
+        return mId == null ? -1 : mId.getCustomId();
     }
 
     @Override
     public final int getUseCustomId() {
-        return mId + 3;
+        return mId == null ? -1 : mId.getUseCustomId();
+    }
+
+    @Override
+    public final int getViewHolderId() {
+        return mId == null ? -1 : mId.getViewHolderId();
     }
 
     @Override
@@ -136,6 +167,11 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
     }
 
     @Override
+    public final boolean supportsCustomOnly() {
+        return mSupportCustomOnly;
+    }
+
+    @Override
     public final boolean checkId(int id) {
         return getParentId() == id || getDefaultId() == id || getCustomId() == id || getUseCustomId() == id;
     }
@@ -154,7 +190,7 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
     // Getter/Setter
     // --------------------
 
-    public abstract void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, CLASS customSettingsObject);
+    public abstract void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback);
 
     public abstract void bind(VH vh);
 
@@ -202,37 +238,13 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
     }
 
     // --------------------
-    // Multi Setting
-    // --------------------
-
-    @Override
-    public boolean isMultiSetting() {
-        return mMultiDatas != null;
-    }
-
-    @Override
-    public int getMultiSettingCount() {
-        if (mMultiDatas == null) {
-            return 1;
-        }
-        return mMultiDatas.size();
-    }
-
-    @Override
-    public MultiSettingData getMultiSetting(int index) {
-        return mMultiDatas.get(index);
-    }
-
-    protected void addMultiTitle(int text, int defaultId, int customId) {
-        if (mMultiDatas == null) {
-            mMultiDatas = new ArrayList<>();
-        }
-        mMultiDatas.add(new MultiSettingData(defaultId, customId, text));
-    }
-
-    // --------------------
     // Events
     // --------------------
+
+    @Override
+    public void handleDialogEvent(int id, Activity activity, boolean global, CLASS customSettingsObject, Object event) {
+
+    }
 
     @Override
     public void updateView(int id, Activity activity, boolean global, Value newValue, boolean dialogClosed, Object event) {

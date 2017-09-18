@@ -11,7 +11,7 @@ import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.classes.Dependency;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.BaseSettingViewHolder;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.hooks.BaseCustomEventHook;
-import com.michaelflisar.recyclerviewpreferences.fragments.dialogs.InfoSettingsDialogFragmentBundleBuilder;
+import com.michaelflisar.recyclerviewpreferences.fragments.InfoSettingsDialogFragmentBundleBuilder;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
@@ -55,7 +55,11 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
         mData = data;
         mCallback = callback;
         mWithBottomDivider = withBottomDivider;
-        withIdentifier(data.getDefaultId());
+        withIdentifier(data.getViewHolderId());
+    }
+
+    public void setGlobal(boolean global) {
+        mGlobalSetting = global;
     }
 
     @Override
@@ -64,8 +68,7 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
     }
 
     @Override
-    public void checkDependency(boolean global, Object customSettingsObject)
-    {
+    public void checkDependency(boolean global, Object customSettingsObject) {
         Dependency dependency = mData.getDependency();
         if (dependency != null) {
             mStateEnabled = dependency.isEnabled(global, customSettingsObject);
@@ -101,13 +104,13 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
     @Override
     public void bindView(VH viewHolder, List<Object> payloads) {
         super.bindView(viewHolder, payloads);
-        viewHolder.updateCompactMode(mGlobalSetting, mCompact);
+        viewHolder.updateCompactMode(mGlobalSetting, mCompact || mData.supportsCustomOnly());
         viewHolder.updateIcon(mData, mGlobalSetting);
 
         // 1) Custom Value Switch + Info Global Value
         if (!mGlobalSetting) {
-            Util.setTextAppearance(viewHolder.getTitleTextView(), mCompact ? R.style.SettTitleCompactTextAppearance : R.style.SettTitleTextAppearance);
-            viewHolder.getUseCustomSwitch().setVisibility(View.VISIBLE);
+            Util.setTextAppearance(viewHolder.getTitleTextView(), (mCompact || mData.supportsCustomOnly()) ? R.style.SettTitleCompactTextAppearance : R.style.SettTitleTextAppearance);
+            viewHolder.getUseCustomSwitch().setVisibility(mData.supportsCustomOnly() ? View.GONE : View.VISIBLE);
 
             boolean customEnabled = mData.getCustomEnabled((CLASS) mCallback.getCustomSettingsObject());
             viewHolder.getUseCustomSwitch().setChecked(customEnabled);

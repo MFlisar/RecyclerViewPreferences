@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.michaelflisar.recyclerviewpreferences.defaults.Setup;
 import com.michaelflisar.recyclerviewpreferences.demo.SettingsDefinitions;
 import com.michaelflisar.recyclerviewpreferences.demo.activities.base.BasePreferenceActivity;
 import com.michaelflisar.recyclerviewpreferences.demo.classes.DemoFolder;
@@ -40,7 +41,7 @@ public class GlobalAndCustomActivity extends BasePreferenceActivity {
     @Override
     protected void updateSettings() {
         // we don't need the view pager here...
-        mUseViewPager = false;
+        mSetup.setSettingsStyle(Setup.SettingsStyle.List);// = false;
         mGlobalSettings = getIntent().getBooleanExtra("global", false);
 
         int index = getIntent().getIntExtra("index", -1);

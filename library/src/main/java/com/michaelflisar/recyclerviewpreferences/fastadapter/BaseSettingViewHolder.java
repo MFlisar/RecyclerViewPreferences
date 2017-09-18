@@ -3,7 +3,6 @@ package com.michaelflisar.recyclerviewpreferences.fastadapter;
 import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.michaelflisar.recyclerviewpreferences.views.SettingsRootView;
-import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.IIcon;
 import com.mikepenz.iconics.view.IconicsImageView;
 
@@ -61,10 +59,12 @@ public abstract class BaseSettingViewHolder<DB extends ViewDataBinding, Value, C
     @Override
     public void updateValues(BaseSetting<Value, CLASS, SettData, VH> data, boolean globalSetting, ISettCallback callback) {
         if (globalSetting) {
-            data.updateValueView(true, (VH) this, getValueTopView(), data.getSettData(), globalSetting, (CLASS) callback.getCustomSettingsObject());
+            data.updateValueView(true, (VH) this, getValueTopView(), data.getSettData(), globalSetting, callback);
         } else {
-            data.updateValueView(true, (VH) this, getValueTopView(), data.getSettData(), false, (CLASS) callback.getCustomSettingsObject());
-            data.updateValueView(false, (VH) this, getValueBottomView(), data.getSettData(), true, (CLASS) callback.getCustomSettingsObject());
+            data.updateValueView(true, (VH) this, getValueTopView(), data.getSettData(), false, callback);
+            if (!data.supportsCustomOnly()) {
+                data.updateValueView(false, (VH) this, getValueBottomView(), data.getSettData(), true, callback);
+            }
         }
     }
 
@@ -97,10 +97,9 @@ public abstract class BaseSettingViewHolder<DB extends ViewDataBinding, Value, C
     }
 
     @Override
-    public void updateState(boolean enabled, boolean visible)
-    {
+    public void updateState(boolean enabled, boolean visible) {
         // TODO: filter anstatt dieser Lösung, dies funktioniert auch mit Dekorator nicht gut zusammen
-        SettingsRootView root = (SettingsRootView)getBinding().getRoot();
+        SettingsRootView root = (SettingsRootView) getBinding().getRoot();
         root.setState(enabled, visible);
 //        if (enabled)
 //            getBinding().getRoot().setOnTouchListener(null);
@@ -113,7 +112,7 @@ public abstract class BaseSettingViewHolder<DB extends ViewDataBinding, Value, C
         IIcon icon = data.getIcon();
         if (icon != null) {
             getIconView().setVisibility(View.VISIBLE);
-            IconicsImageView iv = (IconicsImageView)getIconView();
+            IconicsImageView iv = (IconicsImageView) getIconView();
             iv.setIcon(icon);
             iv.setPaddingDp(data.getIconPaddingDp());
             iv.setColor(Util.getTextColor());
@@ -126,7 +125,7 @@ public abstract class BaseSettingViewHolder<DB extends ViewDataBinding, Value, C
         if (!globalSetting) {
             int dividerMarginLeft = (int) getInnerDivider().getContext().getResources().getDimension(icon == null ? R.dimen.divider_left_margin_no_image : R.dimen.divider_left_margin_with_image);
             int row2PaddingLeft = (int) getInnerDivider().getContext().getResources().getDimension(icon == null ? R.dimen.row2_left_padding_no_image : R.dimen.row2_left_padding_with_image);
-            ((ViewGroup.MarginLayoutParams)getInnerDivider().getLayoutParams()).leftMargin = dividerMarginLeft;
+            ((ViewGroup.MarginLayoutParams) getInnerDivider().getLayoutParams()).leftMargin = dividerMarginLeft;
             getRow2().setPadding(row2PaddingLeft, getRow2().getPaddingTop(), getRow2().getPaddingRight(), getRow2().getPaddingBottom());
         }
     }

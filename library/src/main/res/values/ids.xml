@@ -6,7 +6,8 @@
     <item name="id_adapter_setting_color_item" type="id" />
     <item name="id_adapter_setting_boolean_item" type="id" />
     <item name="id_adapter_setting_edittext_item" type="id" />
-    <item name="id_adapter_setting_header_item" type="id" />7
+    <item name="id_adapter_setting_header_item" type="id" />
+    <item name="id_adapter_setting_header_multi_level_item" type="id" />
     <item name="id_adapter_setting_alternative_header_item" type="id" />
 
 </resources>

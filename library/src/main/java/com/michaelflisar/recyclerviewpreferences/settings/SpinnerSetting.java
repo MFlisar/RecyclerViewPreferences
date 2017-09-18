@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.michaelflisar.recyclerviewpreferences.R;
+import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
@@ -50,7 +51,7 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
     }
 
     @Override
-    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, CLASS customSettingsObject) {
+    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
         Runnable runnable = null;
         if (topView) {
             runnable = mRunnableTop;
@@ -67,7 +68,7 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
             ((Spinner) v).setOnItemSelectedListener(null);
 
             if (((Spinner) v).getAdapter() == null) {
-                boolean highlightSelected = true;
+                boolean highlightSelected = SettingsManager.get().getState().supportSpinnerDropDownHighlighting();
                 int layout = R.layout.spinner_main_view;
                 if (v.getId() == R.id.spValueBottom) {
                     layout = R.layout.spinner_main_view_not_bold;
@@ -79,11 +80,12 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
                     public View getDropDownView(int position, View convertView, ViewGroup parent) {
                         View v = super.getDropDownView(position, convertView, parent);
                         if (fHighlightSelected) {
-                            final int selectedIndex = getListIndex(getValue(customSettingsObject, global));
+                            final int selectedIndex = getListIndex(getValue((CLASS) callback.getCustomSettingsObject(), global));
                             // this automatic highlighting only works with a root TextView currently
-                            if (position == selectedIndex && v instanceof TextView) {
+                            if (v instanceof TextView) {
                                 TextView text = (TextView) v;
-                                text.setTypeface(null, Typeface.BOLD);
+                                text.setTypeface(null, position == selectedIndex ? Typeface.BOLD : Typeface.NORMAL);
+//                                text.setTextColor(Util.getAccentColor(v.getContext()));
                             }
                         }
                         return v;
@@ -94,7 +96,7 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
                 ((Spinner) v).setAdapter(adapter);
             }
 
-            final int selectedIndex = getListIndex(getValue(customSettingsObject, global));
+            final int selectedIndex = getListIndex(getValue((CLASS) callback.getCustomSettingsObject(), global));
             ((Spinner) v).setSelection(selectedIndex, false);
 
             ((Spinner) v).setOnItemSelectedListener(listener);

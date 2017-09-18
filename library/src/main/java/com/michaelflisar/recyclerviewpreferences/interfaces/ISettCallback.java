@@ -10,5 +10,7 @@ public interface ISettCallback {
 
     Activity getParentActivity();
     ViewDataBinding getBinding();
+    boolean handlesGlobalSetting();
     Object getCustomSettingsObject();
+    void showMultiLevelSetting(int groupId);
 }

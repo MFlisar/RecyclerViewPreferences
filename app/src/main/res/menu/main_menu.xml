@@ -2,21 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_use_view_pager"
-        android:title="Use ViewPager"
-        android:checkable="true"
-        android:checked="false"/>
-
-    <item
         android:id="@+id/menu_use_expandable_headers"
-        android:title="Use expandable headers"
         android:checkable="true"
-        android:checked="false"/>
+        android:checked="false"
+        android:title="Use expandable headers"/>
 
     <item
         android:id="@+id/menu_use_compact_settings"
-        android:title="Use compact settings"
         android:checkable="true"
-        android:checked="false"/>
+        android:checked="false"
+        android:title="Use compact layouts"/>
+
+    <group
+        android:id="@+id/menu_settings_style"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_style_view_pager"
+            android:title="ViewPager"/>
+        <item
+            android:id="@+id/menu_style_list"
+            android:title="List (1 Top Level)"/>
+
+        <item
+            android:id="@+id/menu_style_list_multi_level"
+            android:title="List (Multi Level)"/>
+    </group>
 
 </menu>

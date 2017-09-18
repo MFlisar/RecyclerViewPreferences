@@ -1,4 +1,4 @@
-package com.michaelflisar.recyclerviewpreferences.fragments.dialogs;
+package com.michaelflisar.recyclerviewpreferences.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.michaelflisar.bundlebuilder.Arg;
 import com.michaelflisar.bundlebuilder.BundleBuilder;
 import com.michaelflisar.recyclerviewpreferences.R;
-import com.michaelflisar.recyclerviewpreferences.utils.SettingsFragmentInstanceManager;
+import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 
 import java.lang.reflect.Field;
 
@@ -76,7 +76,7 @@ public class ColorSettingsDialogFragment extends ColorChooserDialog {
         mColorCallback = new ColorCallback() {
             @Override
             public void onColorSelection(@NonNull ColorChooserDialog colorChooserDialog, @ColorInt int color) {
-                SettingsFragmentInstanceManager.get().dispatchHandleColorSelected(id, getActivity(), color, global);
+                SettingsManager.get().dispatchColorSelected(id, getActivity(), color, global);
             }
 
             @Override

@@ -1,4 +1,4 @@
-package com.michaelflisar.recyclerviewpreferences.fragments.dialogs;
+package com.michaelflisar.recyclerviewpreferences.fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import android.text.InputType;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.michaelflisar.bundlebuilder.Arg;
 import com.michaelflisar.bundlebuilder.BundleBuilder;
-import com.michaelflisar.recyclerviewpreferences.utils.SettingsFragmentInstanceManager;
+import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 
 import icepick.Icepick;
 import icepick.State;
@@ -64,7 +64,7 @@ public class TextSettingsDialogFragment extends DialogFragment {
                 .inputType(InputType.TYPE_CLASS_TEXT)
                 .positiveText(android.R.string.ok)
                 .onPositive((materialDialog, dialogAction) -> {
-                    SettingsFragmentInstanceManager.get().dispatchHandleTextChanged(id, getActivity(), lastValue, global);
+                    SettingsManager.get().dispatchTextChanged(id, getActivity(), lastValue, global);
                 })
                 .show();
         return dlg;

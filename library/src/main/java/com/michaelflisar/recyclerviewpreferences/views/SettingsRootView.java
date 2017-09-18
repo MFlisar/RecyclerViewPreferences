@@ -6,17 +6,18 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.michaelflisar.recyclerviewpreferences.SettingsManager;
+
 public class SettingsRootView extends CardView {
-    //XXLayout could be LinearLayout, RelativeLayout or others
-    private Paint m_paint;
+    private Paint mPaint;
     private boolean mIsVisible = true;
     private boolean mIsEnabled = true;
 
@@ -38,10 +39,17 @@ public class SettingsRootView extends CardView {
     private void init() {
         ColorMatrix cm = new ColorMatrix();
         cm.setSaturation(0);
-        m_paint = new Paint();
-        ColorFilter filter = new PorterDuffColorFilter(Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
-        m_paint.setColorFilter(filter);
-//        m_paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        mPaint = new Paint();
+//        ColorFilter filter = new PorterDuffColorFilter(SettingsManager.get().getState().isDarkTheme() ?
+//                // material design: disabled text color is white with 50% opacity
+//                ColorUtils.setAlphaComponent(Color.WHITE, 128) :
+//                // material design: disabled text color is black with 38% opacity
+//                ColorUtils.setAlphaComponent(Color.BLACK, 97), PorterDuff.Mode.SRC_ATOP);
+//        ColorFilter filter = new PorterDuffColorFilter(SettingsManager.get().getState().isDarkTheme() ? Color.GRAY : Color.LTGRAY, PorterDuff.Mode.SRC_ATOP);
+        ColorFilter filter = new PorterDuffColorFilter(SettingsManager.get().getState().isDarkTheme() ? Color.WHITE : Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+        mPaint.setColorFilter(filter);
+        mPaint.setAlpha(SettingsManager.get().getState().isDarkTheme() ? 128 : 97);
+//        mPaint.setColorFilter(new ColorMatrixColorFilter(cm));
     }
 
     public void setState(boolean enabled, boolean visible) {
@@ -53,7 +61,7 @@ public class SettingsRootView extends CardView {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         if (!mIsEnabled) {
-            canvas.saveLayer(null, m_paint, Canvas.ALL_SAVE_FLAG);
+            canvas.saveLayer(null, mPaint, Canvas.ALL_SAVE_FLAG);
         }
         super.dispatchDraw(canvas);
         if (!mIsEnabled) {
@@ -66,12 +74,13 @@ public class SettingsRootView extends CardView {
 
         super.onMeasure(widthMeasureSpec, mIsVisible ? heightMeasureSpec : 0);
         // keep padding, as it may contain the padding of the RecyclerViews decorator
-        if (!mIsVisible)
+        if (!mIsVisible) {
             setMeasuredDimension(getMeasuredWidth(), getPaddingBottom() + getPaddingTop());
+        }
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev){
+    public boolean dispatchTouchEvent(MotionEvent ev) {
         // consume all touches if disabled
         if (!mIsEnabled) {
             return true;

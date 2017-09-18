@@ -66,7 +66,7 @@ public class NumberSettingItem<Parent extends IItem & IExpandable, CLASS, SettDa
         int newInt = ((NumberSetting<CLASS, SettData, VH>) mData).getMin() + progress * ((NumberSetting<CLASS, SettData, VH>) mData).getStepSize();
         if (currentInt != newInt) {
             if (mData.setValue((CLASS)mCallback.getCustomSettingsObject(), global, newInt)) {
-                mData.updateValueView(true, viewHolder, viewHolder.getValueTopView(), mData.getSettData(), global, (CLASS)mCallback.getCustomSettingsObject());
+                mData.updateValueView(true, viewHolder, viewHolder.getValueTopView(), mData.getSettData(), global, mCallback);
                 mData.onValueChanged(global ? mData.getDefaultId() : mData.getCustomId(), viewHolder.getActivity(), global, (CLASS)mCallback.getCustomSettingsObject());
             }
         }

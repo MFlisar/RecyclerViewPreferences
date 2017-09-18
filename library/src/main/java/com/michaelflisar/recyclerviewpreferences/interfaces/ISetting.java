@@ -2,15 +2,10 @@ package com.michaelflisar.recyclerviewpreferences.interfaces;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
 
-import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
-import com.michaelflisar.recyclerviewpreferences.base.MultiSettingData;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.classes.Dependency;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
-import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
-import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.iconics.typeface.IIcon;
@@ -31,6 +26,7 @@ public interface ISetting<Value, CLASS, SettData extends ISettData<Value, CLASS,
     int getDefaultId();
     int getCustomId();
     int getUseCustomId();
+    int getViewHolderId();
 
     // FastAdapter
     int getLayoutTypeId();
@@ -49,6 +45,8 @@ public interface ISetting<Value, CLASS, SettData extends ISettData<Value, CLASS,
     SettingsText getInfo();
     boolean isInfoHtml();
 
+    boolean supportsCustomOnly();
+
     // Werte
     Value getValue(CLASS object, boolean global);
     boolean setValue(CLASS object, boolean global, Value value);
@@ -58,6 +56,7 @@ public interface ISetting<Value, CLASS, SettData extends ISettData<Value, CLASS,
     // Events
     void onValueChanged(int id, Activity activity, boolean global, CLASS customSettingsObject);
     void updateView(int id, Activity activity, boolean global, Value newValue, boolean dialogClosed, Object event);
+    void handleDialogEvent(int id, Activity activity, boolean global, CLASS customSettingsObject, Object event);
 
     // Dependencies
     void setDependency(Dependency dependency);
@@ -65,9 +64,4 @@ public interface ISetting<Value, CLASS, SettData extends ISettData<Value, CLASS,
 
     // Functions
     boolean checkId(int id);
-
-    // Multi Setting
-    boolean isMultiSetting();
-    int getMultiSettingCount();
-    MultiSettingData getMultiSetting(int index);
 }

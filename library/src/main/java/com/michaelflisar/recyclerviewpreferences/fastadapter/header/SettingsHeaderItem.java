@@ -37,7 +37,7 @@ public class SettingsHeaderItem<T extends BaseSettingsItem> extends AbstractExpa
     final private FastAdapter.OnClickListener<SettingsHeaderItem> onClickListener = new FastAdapter.OnClickListener<SettingsHeaderItem>() {
         @Override
         public boolean onClick(View v, IAdapter adapter, SettingsHeaderItem item, int position) {
-            if (item.getSubItems() != null) {
+            if (mExpandable && item.getSubItems() != null) {
                 if (!item.isExpanded()) {
                     ViewCompat.animate(v.findViewById(R.id.ivIcon)).rotation(180).start();
                 } else {
@@ -66,6 +66,11 @@ public class SettingsHeaderItem<T extends BaseSettingsItem> extends AbstractExpa
 
     public void setExpandable(boolean expandable) {
         mExpandable = expandable;
+    }
+
+    @Override
+    public boolean isAutoExpanding() {
+        return mExpandable;
     }
 
     @Override

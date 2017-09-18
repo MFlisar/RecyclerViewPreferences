@@ -19,7 +19,7 @@ public interface ISettData<Value, CLASS, SettData extends ISettData<Value, CLASS
         void onValueChanged(int id, Activity activity, boolean global, CLASS customSettingsObject);
     }
 
-//    interface IGlobalSettData<Value, CLASS, SettData extends ISettData<Value, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, CLASS, SettData, VH>> extends ISettData<Value, CLASS, SettData, VH> {
+//    interface IGlobalSettData<Value, CLASS, BaseSettData extends ISettData<Value, CLASS, BaseSettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, CLASS, BaseSettData, VH>> extends ISettData<Value, CLASS, BaseSettData, VH> {
 //
 //
 //    }

@@ -38,8 +38,8 @@ public class TextSetting<CLASS, SettData extends ISettData<String, CLASS, SettDa
     }
 
     @Override
-    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, CLASS customSettingsObject) {
-        String text = getValue(customSettingsObject, global);
+    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
+        String text = getValue((CLASS)callback.getCustomSettingsObject(), global);
         ((TextView) v).setText(text);
     }
 

@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.michaelflisar.recyclerviewpreferences.R;
+import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
@@ -14,7 +15,6 @@ import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.TextSettin
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
-import com.michaelflisar.recyclerviewpreferences.utils.SettingsFragmentInstanceManager;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.iconics.typeface.IIcon;
@@ -39,8 +39,8 @@ public abstract class BaseDialogSetting<CLASS, Value, SettData extends ISettData
     }
 
     @Override
-    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, CLASS customSettingsObject) {
-        ((TextView) v).setText(getDisplayValue(settData, global, customSettingsObject));
+    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
+        ((TextView) v).setText(getDisplayValue(settData, global, (CLASS)callback.getCustomSettingsObject()));
     }
 
     protected abstract String getDisplayValue(SettData settData, boolean global, CLASS customSettingsObject);
@@ -79,7 +79,7 @@ public abstract class BaseDialogSetting<CLASS, Value, SettData extends ISettData
     @Override
     public void updateView(int id, Activity activity, boolean global, Value newValue, boolean dialogClosed, Object event) {
         if (dialogClosed) {
-            SettingsFragmentInstanceManager.get().dispatchHandleCustomDialogEvent(id, activity, newValue, global);
+            SettingsManager.get().dispatchCustomDialogEvent(id, activity, newValue, global);
         }
     }
 

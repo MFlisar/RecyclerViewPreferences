@@ -12,12 +12,10 @@ import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.ColorSettingItem;
-import com.michaelflisar.recyclerviewpreferences.fragments.dialogs.ColorSettingsDialogFragment;
-import com.michaelflisar.recyclerviewpreferences.fragments.dialogs.ColorSettingsDialogFragmentBundleBuilder;
+import com.michaelflisar.recyclerviewpreferences.fragments.ColorSettingsDialogFragmentBundleBuilder;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
-import com.michaelflisar.recyclerviewpreferences.utils.SettingsFragmentInstanceManager;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
@@ -43,8 +41,8 @@ public class ColorSetting<CLASS, SettData extends ISettData<Integer, CLASS, Sett
     }
 
     @Override
-    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, CLASS customSettingsObject) {
-        int color = getValue(customSettingsObject, global);
+    public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
+        int color = getValue((CLASS)callback.getCustomSettingsObject(), global);
         Util.setCircleColorBackground(v, color, true, SettingsManager.get().getState().isDarkTheme());
     }
 
@@ -65,7 +63,7 @@ public class ColorSetting<CLASS, SettData extends ISettData<Integer, CLASS, Sett
                 getTitle().toString()
         )
                 .createFragment()
-                .show(((FragmentActivity)activity).getSupportFragmentManager(), null);
+                .show(((FragmentActivity) activity).getSupportFragmentManager(), null);
     }
 
     @Override
@@ -87,7 +85,7 @@ public class ColorSetting<CLASS, SettData extends ISettData<Integer, CLASS, Sett
     @Override
     public void updateView(int id, Activity activity, boolean global, Integer newValue, boolean dialogClosed, Object event) {
         if (dialogClosed) {
-            SettingsFragmentInstanceManager.get().dispatchHandleColorSelected(id, activity, newValue, global);
+            SettingsManager.get().dispatchColorSelected(id, activity, newValue, global);
         }
     }
 }

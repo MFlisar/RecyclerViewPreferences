@@ -1,24 +1,19 @@
-package com.michaelflisar.recyclerviewpreferences.utils;
+package com.michaelflisar.recyclerviewpreferences;
 
 import android.app.Activity;
 
-import com.michaelflisar.recyclerviewpreferences.SettingsManager;
-import com.michaelflisar.recyclerviewpreferences.fragments.SettingsFragment;
 import com.michaelflisar.recyclerviewpreferences.implementations.DialogHandler;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
  * Created by flisar on 21.08.2017.
+ *
+ * Internal helper class used by SettingsFragment and SettingsManager
+ * Necessary functions are exposed via SettingsManager
  */
-
-public class SettingsFragmentInstanceManager {
-
-    // TODO
-    // Would work if we use own dialogs ONLY which use this class to broadcast their event instead of activity callbacks!
-    // then we would NOT need to implement any interface in the parent activity
+class SettingsFragmentInstanceManager {
 
     private static SettingsFragmentInstanceManager instance;
     private Set<SettingsFragment> mFragments = new HashSet<>();
@@ -26,65 +21,65 @@ public class SettingsFragmentInstanceManager {
     private SettingsFragmentInstanceManager() {
     }
 
-    public static SettingsFragmentInstanceManager get() {
+    static SettingsFragmentInstanceManager get() {
         if (instance == null) {
             instance = new SettingsFragmentInstanceManager();
         }
         return instance;
     }
 
-    public void register(SettingsFragment fragment) {
+    void register(SettingsFragment fragment) {
         mFragments.add(fragment);
     }
 
-    public void unregister(SettingsFragment fragment) {
+    void unregister(SettingsFragment fragment) {
         mFragments.remove(fragment);
     }
 
-    public void dispatchHandleCustomDialogEvent(final int id, Activity activity, Object data, boolean global) {
+    void dispatchCustomDialogEvent(final int id, Activity activity, Object data, boolean global) {
         synchronized (mFragments) {
             for (SettingsFragment f : mFragments) {
-                if (!f.isViewPager()) {
+                if (!f.isViewPager() && f.getSettingsManager() != null && f.handlesGlobalSetting() == global) {
                     SettingsManager.get().getDialogHandler().handleDialogResult(f, DialogHandler.DialogType.Custom, id, activity, data, global, f.getCustomSettingsObject());
                 }
             }
         }
     }
 
-    public void dispatchHandleNumberChanged(final int id, Activity activity, List<Integer> numbers, boolean global) {
+    void dispatchNumberChanged(final int id, Activity activity, Integer number, boolean global) {
         synchronized (mFragments) {
             for (SettingsFragment f : mFragments) {
-                if (!f.isViewPager()) {
-                    SettingsManager.get().getDialogHandler().handleDialogResult(f, DialogHandler.DialogType.Number, id, activity, numbers, global, f.getCustomSettingsObject());
+                if (!f.isViewPager() && f.getSettingsManager() != null && f.handlesGlobalSetting() == global) {
+                    SettingsManager.get().getDialogHandler().handleDialogResult(f, DialogHandler.DialogType.Number, id, activity, number, global, f.getCustomSettingsObject());
                 }
             }
         }
     }
 
-    public void dispatchHandleTextChanged(final int id, Activity activity, String value, boolean global) {
+    void dispatchTextChanged(final int id, Activity activity, String value, boolean global) {
         synchronized (mFragments) {
             for (SettingsFragment f : mFragments) {
-                if (!f.isViewPager()) {
+                if (!f.isViewPager() && f.getSettingsManager() != null && f.handlesGlobalSetting() == global) {
                     SettingsManager.get().getDialogHandler().handleDialogResult(f, DialogHandler.DialogType.Text, id, activity, value, global, f.getCustomSettingsObject());
                 }
             }
         }
     }
 
-    public void dispatchHandleColorSelected(final int id, Activity activity, int color, boolean global) {
+    void dispatchColorSelected(final int id, Activity activity, int color, boolean global) {
         synchronized (mFragments) {
             for (SettingsFragment f : mFragments) {
-                if (!f.isViewPager()) {
+                if (!f.isViewPager() && f.getSettingsManager() != null && f.handlesGlobalSetting() == global) {
                     SettingsManager.get().getDialogHandler().handleDialogResult(f, DialogHandler.DialogType.Color, id, activity, color, global, f.getCustomSettingsObject());
                 }
             }
         }
     }
 
-    public void dispatchDependencyChanged(final int id,  boolean global, Object customSettingsObject) {
+    void dispatchDependencyChanged(final int id, boolean global, Object customSettingsObject) {
         synchronized (mFragments) {
             for (SettingsFragment f : mFragments) {
-                if (!f.isViewPager()) {
+                if (!f.isViewPager() && f.getSettingsManager() != null && f.handlesGlobalSetting() == global) {
                     f.getSettingsManager().dispatchDependencyChanged(id, global, customSettingsObject);
                 }
             }

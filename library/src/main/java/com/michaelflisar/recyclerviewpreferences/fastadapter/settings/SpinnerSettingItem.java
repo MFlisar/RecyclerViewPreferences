@@ -59,9 +59,6 @@ public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettD
         boolean global = mGlobalSetting || !topSwitch;
         int currentID = mData.getValue((CLASS)mCallback.getCustomSettingsObject(), global);
         int newId = ((SpinnerSetting<CLASS, SettData, VH>) mData).getListId(index);
-//        int currentIndex = mData.getValue(mCallback.getHandle(), mCallback.getSidebar(), mCallback.getFolder(), global);
-//        int currentID = ((SpinnerSetting<CLASS>)mData).getListId(currentIndex);
-//        int newId = ((SpinnerSetting<CLASS>)mData).getListId(value);
         if (currentID != newId) {
             if (mData.setValue((CLASS)mCallback.getCustomSettingsObject(), global, newId)) {
                 mData.onValueChanged(global ? mData.getDefaultId() : mData.getCustomId(), viewHolder.getActivity(), global, (CLASS)mCallback.getCustomSettingsObject());
