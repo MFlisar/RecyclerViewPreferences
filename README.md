@@ -7,7 +7,8 @@ A full recycler view based and NO XML preferences replacement with a lot of extr
 
 ### Features
 * No xml preferences
-* Supports numbers, strings, multi numbers, boolean, color settings and can be extended to support any other type
+* Supports numbers, strings, boolean, color settings and can be extended to support any other type
+* Uses `DialogFragments` and therefore support rotation and pause/resume in any state
 * View based, can be placed in any layout at any place and at any size
 * `PreferenceFragment` that can be placed in layouts anywhere, which handles all the library specific events
 * Supports ANY storage like `SharedPreference` or any other, default setting implementations for global settings that are stored in `SharedPreferences` are integrated
