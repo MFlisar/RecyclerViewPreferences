@@ -1,6 +1,8 @@
 ### RecyclerViewPreferences [![Release](https://jitpack.io/v/MFlisar/RecyclerViewPreferences.svg)](https://jitpack.io/#MFlisar/RecyclerViewPreferences)
 A full recycler view based and NO XML preferences replacement with a lot of extra features
 
+![Demo](https://github.com/MFlisar/RecyclerViewPreferences/blob/master/files/demo.gif?raw=true)
+
 ### Features
 * No xml preferences
 * Supports numbers, strings, multi numbers, boolean, color settings and can be extended to support any other type
