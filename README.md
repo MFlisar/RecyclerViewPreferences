@@ -2,6 +2,7 @@
 A full recycler view based and NO XML preferences replacement with a lot of extra features
 
 ![Demo](https://github.com/MFlisar/RecyclerViewPreferences/blob/master/files/demo.gif?raw=true)
+
 ![Demo MP4](https://github.com/MFlisar/RecyclerViewPreferences/blob/master/files/demo.mp4?raw=true)
 
 ### Features
