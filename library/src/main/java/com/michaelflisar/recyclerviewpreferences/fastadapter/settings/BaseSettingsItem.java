@@ -69,10 +69,20 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
 
     @Override
     public void checkDependency(boolean global, Object customSettingsObject) {
-        Dependency dependency = mData.getDependency();
-        if (dependency != null) {
-            mStateEnabled = dependency.isEnabled(global, customSettingsObject);
-
+        List<Dependency> dependencies = mData.getDependencies();
+        Boolean newStateEnabled = null;
+        if (dependencies != null) {
+            for (Dependency d : dependencies) {
+                boolean enabled = d.isEnabled(global, customSettingsObject);
+                if (newStateEnabled == null) {
+                    newStateEnabled = enabled;
+                } else {
+                    newStateEnabled &= enabled;
+                }
+            }
+        }
+        if (newStateEnabled != null) {
+            mStateEnabled = newStateEnabled;
         }
     }
 
@@ -104,13 +114,13 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
     @Override
     public void bindView(VH viewHolder, List<Object> payloads) {
         super.bindView(viewHolder, payloads);
-        viewHolder.updateCompactMode(mGlobalSetting, mCompact || mData.supportsCustomOnly());
+        viewHolder.updateCompactMode(mGlobalSetting, mCompact || mData.getSupportType() == BaseSetting.SupportType.CustomOnly);
         viewHolder.updateIcon(mData, mGlobalSetting);
 
         // 1) Custom Value Switch + Info Global Value
         if (!mGlobalSetting) {
-            Util.setTextAppearance(viewHolder.getTitleTextView(), (mCompact || mData.supportsCustomOnly()) ? R.style.SettTitleCompactTextAppearance : R.style.SettTitleTextAppearance);
-            viewHolder.getUseCustomSwitch().setVisibility(mData.supportsCustomOnly() ? View.GONE : View.VISIBLE);
+            Util.setTextAppearance(viewHolder.getTitleTextView(), (mCompact || mData.getSupportType() == BaseSetting.SupportType.CustomOnly) ? R.style.SettTitleCompactTextAppearance : R.style.SettTitleTextAppearance);
+            viewHolder.getUseCustomSwitch().setVisibility(mData.getSupportType() == BaseSetting.SupportType.CustomOnly ? View.GONE : View.VISIBLE);
 
             boolean customEnabled = mData.getCustomEnabled((CLASS) mCallback.getCustomSettingsObject());
             viewHolder.getUseCustomSwitch().setChecked(customEnabled);

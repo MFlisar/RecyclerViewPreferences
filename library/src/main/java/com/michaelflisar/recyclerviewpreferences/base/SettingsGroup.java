@@ -124,9 +124,9 @@ public class SettingsGroup {
     public List<BaseSettingsItem> getSettingItems(boolean global, boolean compact, ISettCallback settingCallback, boolean withBottomDivider) {
         List<BaseSettingsItem> items = Util.convertList(mSettings, setting -> setting.createItem(global, compact, settingCallback, withBottomDivider));
         if (global) {
-            return Util.filterList(items, item -> !item.getSettings().supportsCustomOnly());
+            return Util.filterList(items, item -> item.getSettings().getSupportType() != BaseSetting.SupportType.CustomOnly);
         } else {
-            return items;
+            return Util.filterList(items, item -> item.getSettings().getSupportType() != BaseSetting.SupportType.GlobalOnly);
         }
     }
 

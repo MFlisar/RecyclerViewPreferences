@@ -157,16 +157,36 @@ public class SettingsFragmentManager {
 //        return false;
 //    }
 
-    public <CLASS, SD extends ISettData<?, CLASS, SD, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<?, CLASS, SD, VH>> void dispatchDependencyChanged(final int id,  boolean global, Object customSettingsObject)//, ISetting<?, CLASS, SD, VH> dependencySetting, SD settData, boolean global, CLASS customSettingsObject) {
+    public <CLASS, SD extends ISettData<?, CLASS, SD, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<?, CLASS, SD, VH>> void dispatchDependencyChanged(final int id, boolean global,
+            Object customSettingsObject)//, ISetting<?, CLASS, SD, VH> dependencySetting, SD settData, boolean global, CLASS customSettingsObject) {
     {
         for (ISetting setting : mSettings) {
-            Dependency dependency = setting.getDependency();
-            if (dependency != null && dependency.dependsOn(id))
-            {
-                boolean enabled = dependency.isEnabled(global, customSettingsObject);
-                boolean visible = dependency.isVisible(global, customSettingsObject);
-                if (updateViewsDependency(setting.getSettingId(), enabled, visible)) {
-                    Log.d(SettingsFragmentManager.class.getSimpleName(), "Setting \"" + setting.getTitle().getText() + "\" dependency changed: enabled = " + enabled + ", visible = " + visible);
+            List<Dependency> dependencies = setting.getDependencies();
+            if (dependencies != null) {
+                Boolean allEnabled = null;
+                Boolean allVisible = null;
+                for (Dependency d : dependencies) {
+                    if (d != null && d.dependsOn(id)) {
+                        boolean enabled = d.isEnabled(global, customSettingsObject);
+                        boolean visible = d.isVisible(global, customSettingsObject);
+                        if (allEnabled == null) {
+                            allEnabled = enabled;
+                        } else {
+                            allEnabled &= enabled;
+                        }
+                        if (allVisible == null) {
+                            allVisible = visible;
+                        } else {
+                            allVisible &= visible;
+                        }
+                    }
+                }
+
+                if (allEnabled != null && allVisible != null) {
+                    if (updateViewsDependency(setting.getSettingId(), allEnabled, allVisible)) {
+                        Log.d(SettingsFragmentManager.class.getSimpleName(),
+                                "Setting \"" + setting.getTitle().getText() + "\" dependency changed: enabled = " + allEnabled + ", visible = " + allVisible);
+                    }
                 }
             }
         }
@@ -178,7 +198,7 @@ public class SettingsFragmentManager {
             if (mAdapter != null) {
                 int index = Util.indexOf(mAdapter.getAdapterItems(), item -> item instanceof ISettingsItem && ((ISettingsItem) item).getSettings().checkId(id));
                 if (index != -1) {
-                    ((ISettingsItem)mAdapter.getAdapterItems().get(index)).setDependencyState(enabled, visible);
+                    ((ISettingsItem) mAdapter.getAdapterItems().get(index)).setDependencyState(enabled, visible);
                     // TODO: update filter state!!!!
                     mAdapter.notifyAdapterItemChanged(index);
                     return true;

@@ -57,6 +57,10 @@ public class SettingsManager {
         return instance;
     }
 
+    public static void reset() {
+        instance = new SettingsManager();
+    }
+
     public void init(Context context, ISetup stateManager, String sharedPreferenceName) {
         mContext = context.getApplicationContext();
         mStateManager = stateManager == null ? new Setup() : stateManager;

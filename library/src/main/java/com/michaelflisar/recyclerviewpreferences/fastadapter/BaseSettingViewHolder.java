@@ -62,7 +62,7 @@ public abstract class BaseSettingViewHolder<DB extends ViewDataBinding, Value, C
             data.updateValueView(true, (VH) this, getValueTopView(), data.getSettData(), globalSetting, callback);
         } else {
             data.updateValueView(true, (VH) this, getValueTopView(), data.getSettData(), false, callback);
-            if (!data.supportsCustomOnly()) {
+            if (data.getSupportType() != BaseSetting.SupportType.CustomOnly) {
                 data.updateValueView(false, (VH) this, getValueBottomView(), data.getSettData(), true, callback);
             }
         }
@@ -115,7 +115,11 @@ public abstract class BaseSettingViewHolder<DB extends ViewDataBinding, Value, C
             IconicsImageView iv = (IconicsImageView) getIconView();
             iv.setIcon(icon);
             iv.setPaddingDp(data.getIconPaddingDp());
-            iv.setColor(Util.getTextColor());
+            if (data.getIconColor() != null) {
+                iv.setColor(data.getIconColor());
+            } else {
+                iv.setColor(Util.getTextColor());
+            }
 //            IconicsDrawable d = ((IconicsDrawable) getIconView().getDrawable());
 //            d.icon(icon).color(Util.getTextColor()).paddingDp(data.getIconPaddingDp());
         } else {

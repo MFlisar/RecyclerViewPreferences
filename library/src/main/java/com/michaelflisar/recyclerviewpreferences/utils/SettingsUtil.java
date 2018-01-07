@@ -126,12 +126,31 @@ public class SettingsUtil {
 
                             // Update state of all items
                             for (BaseSettingsItem item : itemsOfHeader) {
-                                Dependency dependency = item.getSettings().getDependency();
-                                if (dependency != null) {
-                                    boolean enabled = dependency.isEnabled(global, customSettingsObject);
-                                    boolean visible = dependency.isVisible(global, customSettingsObject);
-                                    // TODO: setDependencyState mit CheckDependency(global, customSettingsObject) ersetzen
-                                    item.setDependencyState(enabled, visible);
+                                List<Dependency> dependencies = item.getSettings().getDependencies();
+                                if (dependencies != null) {
+                                    Boolean allEnabled = null;
+                                    Boolean allVisible = null;
+                                    for (Dependency d : dependencies) {
+                                        if (d != null) {
+                                            boolean enabled = d.isEnabled(global, customSettingsObject);
+                                            boolean visible = d.isVisible(global, customSettingsObject);
+                                            if (allEnabled == null) {
+                                                allEnabled = enabled;
+                                            } else {
+                                                allEnabled &= enabled;
+                                            }
+                                            if (allVisible == null) {
+                                                allVisible = visible;
+                                            } else {
+                                                allVisible &= visible;
+                                            }
+
+                                        }
+                                    }
+                                    if (allEnabled != null && allVisible != null) {
+                                        // TODO: setDependencyState mit CheckDependency(global, customSettingsObject) ersetzen
+                                        item.setDependencyState(allEnabled, allVisible);
+                                    }
                                 }
                             }
                         }

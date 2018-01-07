@@ -153,13 +153,11 @@ public class CustomSetting {
         }
 
         @Override
-        public <CLASS,
-                SD extends ISettData<Data, CLASS, SD, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Data, CLASS, SD, VH>>
-        boolean handleCustomEvent(com.michaelflisar.recyclerviewpreferences.implementations.DialogHandler.DialogType type, SettingsFragment settingsFragment, int id, Activity activity, Data value,
-                boolean global, CLASS customSettingsObject) {
-
-            // implement your own method, for the demo we use the default one... this one update the value and assumes that the event is equal to the data type which is the case here
-            return DialogUtil.handleCustomEvent(type, settingsFragment, id, activity, value, global, customSettingsObject);
+        public <CLASS, SD extends ISettData<Data, CLASS, SD, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Data, CLASS, SD, VH>> boolean handleCustomEvent(
+                SettingsFragment settingsFragment, ISetting setting, int id, Activity activity, Data data, boolean global, CLASS customSettingsObject) {
+            // implement your own method, for the demo we use the default one...
+            // this one update the value and assumes that the event is equal to the data type which is the case here
+            return DialogUtil.handleCustomEvent(settingsFragment, setting, id, activity, data, global, customSettingsObject);
         }
     }
 }

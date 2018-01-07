@@ -10,12 +10,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
-import com.michaelflisar.recyclerviewpreferences.settings.NumberSetting;
 import com.michaelflisar.recyclerviewpreferences.databinding.AdapterSettingItemNumberBinding;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.BaseSettingViewHolder;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.hooks.BaseCustomEventHook;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
+import com.michaelflisar.recyclerviewpreferences.settings.NumberSetting;
 import com.michaelflisar.recyclerviewpreferences.views.FixedSwitch;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IExpandable;
@@ -27,7 +27,9 @@ import java.util.List;
  * Created by Michael on 20.05.2017.
  */
 
-public class NumberSettingItem<Parent extends IItem & IExpandable, CLASS, SettData extends ISettData<Integer, CLASS, SettData, VH>, VH extends NumberSettingItem.NumberViewHolder<Integer, CLASS, SettData, VH>> extends BaseSettingsItem<Parent, Integer, CLASS, SettData, VH> {
+public class NumberSettingItem<Parent extends IItem & IExpandable, CLASS, SettData extends ISettData<Integer, CLASS, SettData, VH>, VH extends NumberSettingItem.NumberViewHolder<Integer, CLASS,
+        SettData, VH>> extends
+        BaseSettingsItem<Parent, Integer, CLASS, SettData, VH> {
 
     // ------------------
     // Factory
@@ -49,11 +51,12 @@ public class NumberSettingItem<Parent extends IItem & IExpandable, CLASS, SettDa
     @Override
     public void bindView(VH viewHolder, List<Object> payloads) {
         super.bindView(viewHolder, payloads);
-        AdapterSettingItemNumberBinding binding = (AdapterSettingItemNumberBinding)viewHolder.getBinding();
-        NumberSetting sett = (NumberSetting)mData;
+        AdapterSettingItemNumberBinding binding = (AdapterSettingItemNumberBinding) viewHolder.getBinding();
+        NumberSetting sett = (NumberSetting) mData;
         binding.sbTop.setVisibility(((NumberSetting) mData).getMode().getSeekbarVisibility());
         binding.sbTop.setMax((sett.getMax() - sett.getMin()) / sett.getStepSize());
-        binding.sbTop.setProgress((mData.getValue((CLASS)mCallback.getCustomSettingsObject(), mGlobalSetting) - ((NumberSetting<CLASS, SettData, VH>) mData).getMin()) / ((NumberSetting<CLASS, SettData, VH>) mData).getStepSize());
+        binding.sbTop.setProgress((mData.getValue((CLASS) mCallback.getCustomSettingsObject(), mGlobalSetting) - ((NumberSetting<CLASS, SettData, VH>) mData).getMin())
+                / ((NumberSetting<CLASS, SettData, VH>) mData).getStepSize());
     }
 
     protected void onSeekbarChanged(VH viewHolder, int progress, boolean topSwitch) {
@@ -62,12 +65,12 @@ public class NumberSettingItem<Parent extends IItem & IExpandable, CLASS, SettDa
         }
 
         boolean global = mGlobalSetting || !topSwitch;
-        int currentInt = mData.getValue((CLASS)mCallback.getCustomSettingsObject(), mGlobalSetting);
+        int currentInt = mData.getValue((CLASS) mCallback.getCustomSettingsObject(), mGlobalSetting);
         int newInt = ((NumberSetting<CLASS, SettData, VH>) mData).getMin() + progress * ((NumberSetting<CLASS, SettData, VH>) mData).getStepSize();
         if (currentInt != newInt) {
-            if (mData.setValue((CLASS)mCallback.getCustomSettingsObject(), global, newInt)) {
+            if (mData.setValue((CLASS) mCallback.getCustomSettingsObject(), global, newInt)) {
                 mData.updateValueView(true, viewHolder, viewHolder.getValueTopView(), mData.getSettData(), global, mCallback);
-                mData.onValueChanged(global ? mData.getDefaultId() : mData.getCustomId(), viewHolder.getActivity(), global, (CLASS)mCallback.getCustomSettingsObject());
+                mData.onValueChanged(global ? mData.getDefaultId() : mData.getCustomId(), viewHolder.getActivity(), global, (CLASS) mCallback.getCustomSettingsObject());
             }
         }
     }
@@ -76,7 +79,8 @@ public class NumberSettingItem<Parent extends IItem & IExpandable, CLASS, SettDa
     // ViewHolder
     // ------------------
 
-    public static class NumberViewHolder<Integer, CLASS, SettData extends ISettData<Integer, CLASS, SettData, VH>, VH extends NumberViewHolder<Integer, CLASS, SettData, VH>> extends BaseSettingViewHolder<AdapterSettingItemNumberBinding, Integer, CLASS, SettData, VH> {
+    public static class NumberViewHolder<Integer, CLASS, SettData extends ISettData<Integer, CLASS, SettData, VH>, VH extends NumberViewHolder<Integer, CLASS, SettData, VH>> extends
+            BaseSettingViewHolder<AdapterSettingItemNumberBinding, Integer, CLASS, SettData, VH> {
         public NumberViewHolder(View view, boolean globalSetting, boolean compact) {
             super(view, globalSetting, compact);
         }
@@ -182,8 +186,10 @@ public class NumberSettingItem<Parent extends IItem & IExpandable, CLASS, SettDa
             view.post(() -> {
                 SeekBar.OnSeekBarChangeListener listener = new SeekBar.OnSeekBarChangeListener() {
                     @Override
-                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                        onEventOccurred(seekBar, viewHolder, fastAdapter);
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        if (fromUser) {
+                            onEventOccurred(seekBar, viewHolder, fastAdapter);
+                        }
                     }
 
                     @Override

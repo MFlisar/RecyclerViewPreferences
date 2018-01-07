@@ -3,12 +3,15 @@ package com.michaelflisar.recyclerviewpreferences.interfaces;
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 
+import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.classes.Dependency;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.iconics.typeface.IIcon;
+
+import java.util.List;
 
 /**
  * Created by flisar on 16.05.2017.
@@ -36,6 +39,7 @@ public interface ISetting<Value, CLASS, SettData extends ISettData<Value, CLASS,
     // Icon
     IIcon getIcon();
     int getIconPaddingDp();
+    Integer getIconColor();
 
     // Titel
     SettingsText getTitle();
@@ -45,9 +49,10 @@ public interface ISetting<Value, CLASS, SettData extends ISettData<Value, CLASS,
     SettingsText getInfo();
     boolean isInfoHtml();
 
-    boolean supportsCustomOnly();
+    // Type
+    BaseSetting.SupportType getSupportType();
 
-    // Werte
+    // Values
     Value getValue(CLASS object, boolean global);
     boolean setValue(CLASS object, boolean global, Value value);
     boolean getCustomEnabled(CLASS object);
@@ -59,8 +64,9 @@ public interface ISetting<Value, CLASS, SettData extends ISettData<Value, CLASS,
     void handleDialogEvent(int id, Activity activity, boolean global, CLASS customSettingsObject, Object event);
 
     // Dependencies
-    void setDependency(Dependency dependency);
-    Dependency getDependency();
+    void clearDependencies();
+    void addDependency(Dependency dependency);
+    List<Dependency> getDependencies();
 
     // Functions
     boolean checkId(int id);

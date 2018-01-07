@@ -1,10 +1,9 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
 
     dataBinding.enabled = true
 
@@ -25,10 +24,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    retrolambda {
-        jvmArgs '-noverify'
     }
 
 //    dexOptions {

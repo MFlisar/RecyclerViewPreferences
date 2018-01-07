@@ -92,8 +92,8 @@ public class SettingsDefinitions {
         // now settings do have ids, we can use SettingsManager.get().find(id) now and add dependencies easily like this
         // ---------------------------
 
-        SettingsManager.get().find(SETT_NEXT_SETTING.get()).setDependency(Dependency.getBooleanDependency(SettingsManager.get().find(SETT_ENABLE_NEXT_SETTING.get()), Dependency.Type.Disable));
-        SettingsManager.get().find(SETT_COLOR.get()).setDependency(Dependency.getBooleanDependency(SettingsManager.get().find(SETT_ENABLE_COLOR.get()), Dependency.Type.Hide));
+        SettingsManager.get().find(SETT_NEXT_SETTING.get()).addDependency(Dependency.getBooleanDependency(SettingsManager.get().find(SETT_ENABLE_NEXT_SETTING.get()), Dependency.Type.Disable));
+        SettingsManager.get().find(SETT_COLOR.get()).addDependency(Dependency.getBooleanDependency(SettingsManager.get().find(SETT_ENABLE_COLOR.get()), Dependency.Type.Hide));
 
         // ---------------------------
         // Remember group ids of this block

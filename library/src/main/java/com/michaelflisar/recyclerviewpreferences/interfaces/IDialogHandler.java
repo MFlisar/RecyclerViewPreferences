@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 
 import com.michaelflisar.recyclerviewpreferences.SettingsFragment;
-import com.michaelflisar.recyclerviewpreferences.implementations.DialogHandler;
 
 /**
  * Created by flisar on 25.08.2017.

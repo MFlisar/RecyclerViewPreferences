@@ -15,12 +15,21 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
 import com.michaelflisar.recyclerviewpreferences.utils.SettingsId;
 import com.mikepenz.iconics.typeface.IIcon;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by flisar on 16.05.2017.
  */
 
 public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
         ISettingsViewHolder<Value, CLASS, SettData, VH>> implements ISetting<Value, CLASS, SettData, VH> {
+
+    public enum SupportType {
+        Normal,
+        CustomOnly,
+        GlobalOnly
+    }
 
     private SettingsId mId = null;
     private IIDSetCallback mIdSetCallback;
@@ -30,15 +39,17 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
 
     private IIcon mIcon;
     private int mIconPadding;
+    private Integer mIconColor;
     private SettingsText mTitle;
     private SettingsText mSubTitle;
     private SettingsText mInfo;
     private boolean mInfoIsHtml;
-    private boolean mSupportCustomOnly;
+    private SupportType mSupportType;
 
-    private Dependency mDependency;
+    private List<Dependency> mDependency;
 
     public BaseSetting(Class<CLASS> clazz, SettData settData, SettingsText title, IIcon icon) {
+        mDependency = new ArrayList<>();
         mIdSetCallback = null;
         mClazz = clazz;
         mSettData = settData;
@@ -48,7 +59,8 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
         mInfoIsHtml = false;
         mIcon = icon;
         mIconPadding = 0;
-        mSupportCustomOnly = false;
+        mIconColor = null;
+        mSupportType = SupportType.Normal;
     }
 
     public BaseSetting<Value, CLASS, SettData, VH> withIdCallback(IIDSetCallback callback) {
@@ -93,13 +105,14 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
         return this;
     }
 
-    public BaseSetting<Value, CLASS, SettData, VH> withIconPadding(int iconPadding) {
+    public BaseSetting<Value, CLASS, SettData, VH> withIconSetup(int iconPadding, Integer iconColor) {
         mIconPadding = iconPadding;
+        mIconColor = iconColor;
         return this;
     }
 
-    public BaseSetting<Value, CLASS, SettData, VH> withSupportCustomOnly() {
-        mSupportCustomOnly = true;
+    public BaseSetting<Value, CLASS, SettData, VH> withSupportType(SupportType supportType) {
+        mSupportType = supportType;
         return this;
     }
 
@@ -167,8 +180,8 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
     }
 
     @Override
-    public final boolean supportsCustomOnly() {
-        return mSupportCustomOnly;
+    public final SupportType getSupportType() {
+        return mSupportType;
     }
 
     @Override
@@ -184,6 +197,11 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
     @Override
     public final int getIconPaddingDp() {
         return mIconPadding;
+    }
+
+    @Override
+    public final Integer getIconColor() {
+        return mIconColor;
     }
 
     // --------------------
@@ -228,13 +246,18 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
     }
 
     @Override
-    public final Dependency getDependency() {
+    public final void clearDependencies() {
+        mDependency.clear();
+    }
+
+    @Override
+    public final List<Dependency> getDependencies() {
         return mDependency;
     }
 
     @Override
-    public final void setDependency(Dependency dependency) {
-        mDependency = dependency;
+    public final void addDependency(Dependency dependency) {
+        mDependency.add(dependency);
     }
 
     // --------------------
