@@ -2,19 +2,17 @@ package com.michaelflisar.recyclerviewpreferences.settings;
 
 import android.app.Activity;
 import android.databinding.ViewDataBinding;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.michaelflisar.recyclerviewpreferences.R;
-import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
+import com.michaelflisar.recyclerviewpreferences.defaults.DefaultSpinnerLayoutProvider;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.SpinnerSettingItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
@@ -36,6 +34,8 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
     private ISettingsSpinnerEnumHelper mSpinnerHelper;
     private Runnable mRunnableTop = null;
     private Runnable mRunnableBottom = null;
+    private ISettingsSpinnerEnumHelper.SpinnerLayoutProvider mLayoutProvider;
+    private int mSpinnerMode;
 
     public SpinnerSetting(Class<CLASS> clazz, SettData settData, int title, IIcon icon, ISettingsSpinnerEnumHelper spinnerHelper) {
         this(clazz, settData, new SettingsText(title), icon, spinnerHelper);
@@ -48,6 +48,19 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
     private SpinnerSetting(Class<CLASS> clazz, SettData settData, SettingsText title, IIcon icon, ISettingsSpinnerEnumHelper spinnerHelper) {
         super(clazz, settData, title, icon);
         mSpinnerHelper = spinnerHelper;
+
+        if (mSpinnerHelper instanceof ISettingsSpinnerEnumHelper.SpinnerLayoutProvider) {
+            mLayoutProvider = (ISettingsSpinnerEnumHelper.SpinnerLayoutProvider) mSpinnerHelper;
+        } else {
+            mLayoutProvider = new DefaultSpinnerLayoutProvider();
+        }
+
+        mSpinnerMode = Spinner.MODE_DROPDOWN;
+    }
+
+    public SpinnerSetting withSpinnerMode(int mode) {
+        mSpinnerMode = mode;
+        return this;
     }
 
     @Override
@@ -68,30 +81,29 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
             ((Spinner) v).setOnItemSelectedListener(null);
 
             if (((Spinner) v).getAdapter() == null) {
-                boolean highlightSelected = SettingsManager.get().getState().supportSpinnerDropDownHighlighting();
-                int layout = R.layout.spinner_main_view;
-                if (v.getId() == R.id.spValueBottom) {
-                    layout = R.layout.spinner_main_view_not_bold;
-                    highlightSelected = false;
-                }
-                final boolean fHighlightSelected = highlightSelected;
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(v.getContext(), layout, new ArrayList<String>()) {
+                final boolean isTopLayout = v.getId() == R.id.spValueTop;
+                int layout = mLayoutProvider.getLayoutResource(isTopLayout, false);
+                int layoutDropdown = mLayoutProvider.getLayoutResource(isTopLayout, true);
+                int textViewId = mLayoutProvider.getTextViewResourceId(isTopLayout, true);
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(v.getContext(), layout, textViewId, new ArrayList<String>()) {
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        int selectedIndex = getListIndex(getValue((CLASS) callback.getCustomSettingsObject(), global));
+                        view = mLayoutProvider.updateLayout(isTopLayout, position, view, false, selectedIndex == position);
+                        return view;
+                    }
+
                     @Override
                     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                        View v = super.getDropDownView(position, convertView, parent);
-                        if (fHighlightSelected) {
-                            final int selectedIndex = getListIndex(getValue((CLASS) callback.getCustomSettingsObject(), global));
-                            // this automatic highlighting only works with a root TextView currently
-                            if (v instanceof TextView) {
-                                TextView text = (TextView) v;
-                                text.setTypeface(null, position == selectedIndex ? Typeface.BOLD : Typeface.NORMAL);
-//                                text.setTextColor(Util.getAccentColor(v.getContext()));
-                            }
-                        }
-                        return v;
+                        View view = super.getDropDownView(position, convertView, parent);
+                        int selectedIndex = getListIndex(getValue((CLASS) callback.getCustomSettingsObject(), global));
+                        view = mLayoutProvider.updateLayout(isTopLayout, position, view, true, selectedIndex == position);
+                        return view;
                     }
                 };
-                adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                adapter.setDropDownViewResource(layoutDropdown);
                 adapter.addAll(mSpinnerHelper.getTitles());
                 ((Spinner) v).setAdapter(adapter);
             }
@@ -141,12 +153,20 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
 
     @Override
     public final int getLayoutTypeId() {
-        return R.id.id_adapter_setting_spinner_item;
+        if (mSpinnerMode == Spinner.MODE_DROPDOWN) {
+            return R.id.id_adapter_setting_spinner_item;
+        } else {
+            return R.id.id_adapter_setting_spinner_dialog_item;
+        }
     }
 
     @Override
     public final int getLayout() {
-        return R.layout.adapter_setting_item_spinner;
+        if (mSpinnerMode == Spinner.MODE_DROPDOWN) {
+            return R.layout.adapter_setting_item_spinner;
+        } else {
+            return R.layout.adapter_setting_item_spinner_dialog;
+        }
     }
 
     @Override

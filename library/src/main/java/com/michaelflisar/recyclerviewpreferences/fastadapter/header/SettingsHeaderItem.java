@@ -15,7 +15,8 @@ import com.michaelflisar.recyclerviewpreferences.utils.Definitions;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
-import com.mikepenz.fastadapter.commons.items.AbstractExpandableItem;
+import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem;
+import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.IIcon;
@@ -31,10 +32,10 @@ public class SettingsHeaderItem<T extends BaseSettingsItem> extends AbstractExpa
     private boolean mExpandable;
     private IIcon mIcon;
     private SettingsText mTitle;
-    private FastAdapter.OnClickListener<SettingsHeaderItem> mOnClickListener;
+    private OnClickListener<SettingsHeaderItem> mOnClickListener;
 
     //we define a clickListener in here so we can directly animate
-    final private FastAdapter.OnClickListener<SettingsHeaderItem> onClickListener = new FastAdapter.OnClickListener<SettingsHeaderItem>() {
+    final private OnClickListener<SettingsHeaderItem> onClickListener = new OnClickListener<SettingsHeaderItem>() {
         @Override
         public boolean onClick(View v, IAdapter adapter, SettingsHeaderItem item, int position) {
             if (mExpandable && item.getSubItems() != null) {
@@ -78,7 +79,7 @@ public class SettingsHeaderItem<T extends BaseSettingsItem> extends AbstractExpa
         return new ViewHolder(v);
     }
 
-    public FastAdapter.OnClickListener<SettingsHeaderItem> getOnClickListener() {
+    public OnClickListener<SettingsHeaderItem> getOnClickListener() {
         return mOnClickListener;
     }
 
@@ -86,13 +87,13 @@ public class SettingsHeaderItem<T extends BaseSettingsItem> extends AbstractExpa
     // Item
     // ------------------
 
-    public SettingsHeaderItem withOnClickListener(FastAdapter.OnClickListener<SettingsHeaderItem> mOnClickListener) {
+    public SettingsHeaderItem withOnClickListener(OnClickListener<SettingsHeaderItem> mOnClickListener) {
         this.mOnClickListener = mOnClickListener;
         return this;
     }
 
     @Override
-    public FastAdapter.OnClickListener<SettingsHeaderItem> getOnItemClickListener() {
+    public OnClickListener<SettingsHeaderItem> getOnItemClickListener() {
         return onClickListener;
     }
 

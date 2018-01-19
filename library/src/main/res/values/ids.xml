@@ -3,6 +3,7 @@
     <item name="id_adapter_setting_text_item" type="id" />
     <item name="id_adapter_setting_number_item" type="id" />
     <item name="id_adapter_setting_spinner_item" type="id" />
+    <item name="id_adapter_setting_spinner_dialog_item" type="id" />
     <item name="id_adapter_setting_color_item" type="id" />
     <item name="id_adapter_setting_boolean_item" type="id" />
     <item name="id_adapter_setting_edittext_item" type="id" />

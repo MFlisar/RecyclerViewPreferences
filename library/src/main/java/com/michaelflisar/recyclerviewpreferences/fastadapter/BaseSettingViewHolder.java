@@ -14,6 +14,7 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.michaelflisar.recyclerviewpreferences.views.SettingsRootView;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.IIcon;
 import com.mikepenz.iconics.view.IconicsImageView;
 
@@ -113,13 +114,15 @@ public abstract class BaseSettingViewHolder<DB extends ViewDataBinding, Value, C
         if (icon != null) {
             getIconView().setVisibility(View.VISIBLE);
             IconicsImageView iv = (IconicsImageView) getIconView();
-            iv.setIcon(icon);
-            iv.setPaddingDp(data.getIconPaddingDp());
+            IconicsDrawable drawable = new IconicsDrawable(iv.getContext(), icon);
+            drawable.paddingDp(data.getIconPaddingDp());
             if (data.getIconColor() != null) {
-                iv.setColor(data.getIconColor());
+                drawable.color(data.getIconColor());
             } else {
-                iv.setColor(Util.getTextColor());
+                drawable.color(Util.getTextColor());
             }
+            iv.setIcon(drawable);
+
 //            IconicsDrawable d = ((IconicsDrawable) getIconView().getDrawable());
 //            d.icon(icon).color(Util.getTextColor()).paddingDp(data.getIconPaddingDp());
         } else {

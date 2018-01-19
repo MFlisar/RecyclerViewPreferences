@@ -50,7 +50,7 @@ dependencies {
     // ----------------------
 
 //    compile project(':session-manager')
-    compile 'com.github.Chingiz:SessionManager-Android:1.1'
+    compile 'com.github.Chingiz:SessionManager-Android:1.2'
 
     compile('com.afollestad.material-dialogs:core:0.9.4.7') {
         transitive = true
@@ -65,13 +65,15 @@ dependencies {
     // Should (Could) be removed and replaced with manual written code
     // ----------------------
 
-    compile 'com.mikepenz:fastadapter-commons:2.6.3@aar'
-    compile('com.mikepenz:fastadapter:2.6.3@aar') {
+    implementation ('com.mikepenz:fastadapter:3.0.5@aar') {
         transitive = true
         exclude group: 'com.android.support'
     }
-    compile 'com.mikepenz:iconics-core:2.9.1@aar'
-    compile 'com.mikepenz:iconics-views:2.9.2@aar'
+    implementation 'com.mikepenz:fastadapter-commons:3.0.5@aar'
+    implementation 'com.mikepenz:fastadapter-extensions-expandable:3.0.5@aar'
+
+    implementation  "com.mikepenz:iconics-core:3.0.0@aar"
+    implementation  "com.mikepenz:iconics-views:3.0.0@aar"
     compile 'com.mikepenz:google-material-typeface:3.0.1.1.original@aar'
 
     // ----------------------

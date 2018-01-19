@@ -23,6 +23,7 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
+import com.mikepenz.fastadapter.IItemAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 
 import java.util.ArrayList;
@@ -194,7 +195,6 @@ public class SettingsUtil {
         adapter.withEventHook(new EditTextSettingItem.SettingsEditTextTopEvent());
         adapter.withEventHook(new EditTextSettingItem.SettingsEditTextBottomEvent());
         adapter.withEventHook(new NumberSettingItem.SettingsSeekbarTopEvent());
-        adapter.withPositionBasedStateManagement(false);
         setNewList(adapter, items, savedInstanceState, fastAdapterBundlePrefix);
         return adapter;
     }

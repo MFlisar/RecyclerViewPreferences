@@ -12,13 +12,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
-import com.michaelflisar.recyclerviewpreferences.settings.SpinnerSetting;
 import com.michaelflisar.recyclerviewpreferences.classes.SimpleSpinnerListener;
 import com.michaelflisar.recyclerviewpreferences.databinding.AdapterSettingItemSpinnerBinding;
+import com.michaelflisar.recyclerviewpreferences.databinding.AdapterSettingItemSpinnerDialogBinding;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.BaseSettingViewHolder;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.hooks.BaseCustomEventHook;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
+import com.michaelflisar.recyclerviewpreferences.settings.SpinnerSetting;
 import com.michaelflisar.recyclerviewpreferences.views.FixedSwitch;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IExpandable;
@@ -28,7 +29,8 @@ import com.mikepenz.fastadapter.IItem;
  * Created by Michael on 20.05.2017.
  */
 
-public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettData extends ISettData<Integer, CLASS, SettData, VH>, VH extends SpinnerSettingItem.SpinnerViewHolder<Integer, CLASS, SettData, VH>> extends
+public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettData extends ISettData<Integer, CLASS, SettData, VH>, VH extends SpinnerSettingItem.SpinnerViewHolder<Integer, CLASS,
+        SettData, VH>> extends
         BaseSettingsItem<Parent, Integer, CLASS, SettData, VH> {
 
     // ------------------
@@ -57,11 +59,11 @@ public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettD
         }
 
         boolean global = mGlobalSetting || !topSwitch;
-        int currentID = mData.getValue((CLASS)mCallback.getCustomSettingsObject(), global);
+        int currentID = mData.getValue((CLASS) mCallback.getCustomSettingsObject(), global);
         int newId = ((SpinnerSetting<CLASS, SettData, VH>) mData).getListId(index);
         if (currentID != newId) {
-            if (mData.setValue((CLASS)mCallback.getCustomSettingsObject(), global, newId)) {
-                mData.onValueChanged(global ? mData.getDefaultId() : mData.getCustomId(), viewHolder.getActivity(), global, (CLASS)mCallback.getCustomSettingsObject());
+            if (mData.setValue((CLASS) mCallback.getCustomSettingsObject(), global, newId)) {
+                mData.onValueChanged(global ? mData.getDefaultId() : mData.getCustomId(), viewHolder.getActivity(), global, (CLASS) mCallback.getCustomSettingsObject());
             }
         }
     }
@@ -85,7 +87,8 @@ public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettD
     // ViewHolder
     // ------------------
 
-    public static class SpinnerViewHolder<Data, CLASS, SettData extends ISettData<Data, CLASS, SettData, VH>, VH extends SpinnerViewHolder<Data, CLASS, SettData, VH>> extends BaseSettingViewHolder<AdapterSettingItemSpinnerBinding, Data, CLASS, SettData, VH> {
+    public static class SpinnerViewHolder<Data, CLASS, SettData extends ISettData<Data, CLASS, SettData, VH>, VH extends SpinnerViewHolder<Data, CLASS, SettData, VH>> extends
+            BaseSettingViewHolder<ViewDataBinding, Data, CLASS, SettData, VH> {
         public SpinnerViewHolder(View view, boolean globalSetting, boolean compact) {
             super(view, globalSetting, compact);
         }
@@ -115,62 +118,110 @@ public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettD
 
         @Override
         public FixedSwitch getUseCustomSwitch() {
-            return binding.swEnable;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).swEnable;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).swEnable;
+            }
         }
 
         @Override
         public TextView getTitleTextView() {
-            return binding.tvTitle;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).tvTitle;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).tvTitle;
+            }
         }
 
         @Override
         public TextView getSubTitleTextView() {
-            return binding.tvSubTitle;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).tvSubTitle;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).tvSubTitle;
+            }
         }
 
         @Override
         public LinearLayout getTopValueContainer() {
-            return binding.llCustomValueContainer;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).llCustomValueContainer;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).llCustomValueContainer;
+            }
         }
 
         @Override
         public TextView getIsUsingGlobalTextView() {
-            return binding.tvIsUsingDefault;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).tvIsUsingDefault;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).tvIsUsingDefault;
+            }
         }
 
         @Override
         public ImageView getIconView() {
-            return binding.ivIcon;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).ivIcon;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).ivIcon;
+            }
         }
 
         @Override
         public View getInfoButton() {
-            return binding.btInfo;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).btInfo;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).btInfo;
+            }
         }
 
         @Override
         public View getValueTopView() {
-            return binding.spValueTop;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).spValueTop;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).spValueTop;
+            }
         }
 
         @Override
         public View getValueBottomView() {
-            return binding.spValueBottom;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).spValueBottom;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).spValueBottom;
+            }
         }
 
         @Override
         public View getInnerDivider() {
-            return binding.vDividerRow;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).vDividerRow;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).vDividerRow;
+            }
         }
 
         @Override
         public View getRow1() {
-            return binding.llRow1;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).llRow1;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).llRow1;
+            }
         }
 
         @Override
         public View getRow2() {
-            return binding.llRow2;
+            if (binding instanceof AdapterSettingItemSpinnerBinding) {
+                return ((AdapterSettingItemSpinnerBinding) binding).llRow2;
+            } else {
+                return ((AdapterSettingItemSpinnerDialogBinding) binding).llRow2;
+            }
         }
     }
 
@@ -182,7 +233,11 @@ public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettD
         @Override
         public View onBind(RecyclerView.ViewHolder viewHolder) {
             if (viewHolder instanceof SpinnerViewHolder) {
-                return ((AdapterSettingItemSpinnerBinding) ((SpinnerViewHolder) viewHolder).getBinding()).spValueTop;
+                if (((SpinnerViewHolder) viewHolder).getBinding() instanceof AdapterSettingItemSpinnerBinding) {
+                    return ((AdapterSettingItemSpinnerBinding) ((SpinnerViewHolder) viewHolder).getBinding()).spValueTop;
+                } else {
+                    return ((AdapterSettingItemSpinnerDialogBinding) ((SpinnerViewHolder) viewHolder).getBinding()).spValueTop;
+                }
             }
             return null;
         }
@@ -211,7 +266,11 @@ public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettD
         @Override
         public View onBind(RecyclerView.ViewHolder viewHolder) {
             if (viewHolder instanceof SpinnerViewHolder) {
-                return ((AdapterSettingItemSpinnerBinding) ((SpinnerViewHolder) viewHolder).getBinding()).spValueBottom;
+                if (((SpinnerViewHolder) viewHolder).getBinding() instanceof AdapterSettingItemSpinnerBinding) {
+                    return ((AdapterSettingItemSpinnerBinding) ((SpinnerViewHolder) viewHolder).getBinding()).spValueBottom;
+                } else {
+                    return ((AdapterSettingItemSpinnerDialogBinding) ((SpinnerViewHolder) viewHolder).getBinding()).spValueBottom;
+                }
             }
             return null;
         }

@@ -8,6 +8,7 @@ import com.michaelflisar.recyclerviewpreferences.classes.Dependency;
 import com.michaelflisar.recyclerviewpreferences.classes.GlobalSetting;
 import com.michaelflisar.recyclerviewpreferences.demo.classes.DemoFolder;
 import com.michaelflisar.recyclerviewpreferences.demo.classes.IconStyle;
+import com.michaelflisar.recyclerviewpreferences.demo.classes.IconStyleWithIcon;
 import com.michaelflisar.recyclerviewpreferences.demo.custom.CustomSetting;
 import com.michaelflisar.recyclerviewpreferences.demo.custom.CustomInMemoryOnlySettData;
 import com.michaelflisar.recyclerviewpreferences.demo.custom.FolderSettData;
@@ -54,6 +55,9 @@ public class SettingsDefinitions {
                         .add(new SpinnerSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref1_3", IconStyle.Normal.getId()), "Icon Style",
                                 GoogleMaterial.Icon.gmd_image,
                                 new IconStyle.EnumHelper()))
+                        .add(new SpinnerSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref1_6", IconStyleWithIcon.Normal.getId()), "Icon Style with icon",
+                                GoogleMaterial.Icon.gmd_image,
+                                new IconStyleWithIcon.EnumHelper()))
                         .add(new BooleanSetting(GlobalSetting.class, SharedPreferenceSettData.createBoolData("pref1_4"), "Enable next setting", GoogleMaterial.Icon.gmd_settings)
                                 .withIdCallback(id -> SETT_ENABLE_NEXT_SETTING.set(id)))
                         .add(new BooleanSetting(GlobalSetting.class, SharedPreferenceSettData.createBoolData("pref1_5"), "Next setting", GoogleMaterial.Icon.gmd_settings)
@@ -121,6 +125,9 @@ public class SettingsDefinitions {
                         .add(new SpinnerSetting(GlobalSetting.class, CustomInMemoryOnlySettData.createIntData("pref1_3", IconStyle.Normal.getId()), "Icon Style",
                                 GoogleMaterial.Icon.gmd_image,
                                 new IconStyle.EnumHelper()))
+                        .add(new SpinnerSetting(GlobalSetting.class, CustomInMemoryOnlySettData.createIntData("pref1_6", IconStyleWithIcon.Normal.getId()), "Icon Style with icon",
+                                GoogleMaterial.Icon.gmd_image,
+                                new IconStyleWithIcon.EnumHelper()))
                         .add(new CustomSetting.Setting(CustomSetting.Data.class, CustomInMemoryOnlySettData.createCustomDataData("pref1_4", new CustomSetting.Data(4, 6)),
                                 "Grid size dialog", GoogleMaterial.Icon.gmd_grid_on))
                 );

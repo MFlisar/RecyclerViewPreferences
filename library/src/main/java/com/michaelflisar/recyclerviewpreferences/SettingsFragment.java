@@ -29,10 +29,12 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsFragment;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsFragmentParent;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
+import com.michaelflisar.recyclerviewpreferences.utils.FastAdapterUtil;
 import com.michaelflisar.recyclerviewpreferences.utils.SettingsUtil;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import com.mikepenz.fastadapter.expandable.ExpandableExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -145,6 +147,10 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
 
             if (init) {
                 mFastItemAdapter = new FastItemAdapter<>();
+                if (pageSetup.isUseExpandableHeaders()) {
+                    ExpandableExtension expandableExtension = new ExpandableExtension<>();
+                    mFastItemAdapter.addExtension(expandableExtension);
+                }
                 mManager = new SettingsFragmentManager(getActivity(), mFastItemAdapter, mSettings);
             }
 
@@ -177,7 +183,7 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
             getArguments().putParcelable("setup", setup);
             if (mItems != null) {
                 if (!enabled) {
-                    mFastItemAdapter.expand();
+                    FastAdapterUtil.expand(mFastItemAdapter);
                 }
                 SettingsUtil.updateExpandableHeaders(mItems, enabled);
                 SettingsUtil.setExpandedState(mItems, true);
@@ -278,7 +284,7 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
 
     @Override
     public boolean handlesGlobalSetting() {
-       return globalSetting;
+        return globalSetting;
     }
 
     @Override
@@ -325,8 +331,9 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
     }
 
     public RecyclerView getRecyclerView() {
-        if (mBinding == null)
+        if (mBinding == null) {
             return null;
+        }
         if (isViewPager()) {
             return ((SettingsFragment) mPagerAdapter.getFragmentAt(((SettingsViewpagerFragmentBinding) mBinding).vpSettings.getCurrentItem())).getRecyclerView();
         } else {
