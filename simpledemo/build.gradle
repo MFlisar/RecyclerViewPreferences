@@ -1,0 +1,36 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+
+    // currently necessary, settings library uses DataBinding
+    dataBinding.enabled = true
+
+    defaultConfig {
+        applicationId "com.michaelflisar.recyclerviewpreferences.simpledemo"
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile project(':library')
+
+    implementation  "com.mikepenz:iconics-core:3.0.0@aar"
+    implementation  "com.mikepenz:iconics-views:3.0.0@aar"
+    compile 'com.mikepenz:google-material-typeface:3.0.1.1.original@aar'
+}

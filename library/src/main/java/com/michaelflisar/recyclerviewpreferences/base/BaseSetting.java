@@ -272,4 +272,8 @@ public abstract class BaseSetting<Value, CLASS, SettData extends ISettData<Value
     @Override
     public void updateView(int id, Activity activity, boolean global, Value newValue, boolean dialogClosed, Object event) {
     }
+
+    public void onLayoutReady(VH viewHolder) {
+
+    }
 }

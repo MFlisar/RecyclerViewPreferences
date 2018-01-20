@@ -152,4 +152,8 @@ public abstract class BaseSettingViewHolder<DB extends ViewDataBinding, Value, C
             getRow2().setVisibility(View.VISIBLE);
         }
     }
+
+    protected void onBindindReady() {
+
+    }
 }

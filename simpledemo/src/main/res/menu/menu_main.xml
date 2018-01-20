@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_use_expandable_headers"
+        android:checkable="true"
+        android:checked="false"
+        android:title="Use expandable headers"/>
+
+    <group
+        android:id="@+id/menu_settings_style"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_style_view_pager"
+            android:title="ViewPager"/>
+        <item
+            android:id="@+id/menu_style_list"
+            android:title="List (1 Top Level)"/>
+
+        <item
+            android:id="@+id/menu_style_list_multi_level"
+            android:title="List (Multi Level)"/>
+    </group>
+
+</menu>

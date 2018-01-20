@@ -46,7 +46,7 @@ public class NumberSettingsDialogFragment extends DialogFragment {
     Integer max;
     @Arg
     String title;
-    @Arg
+    @Arg(optional = true)
     Integer unitRes;
 
     @State

@@ -1,9 +1,13 @@
 package com.michaelflisar.recyclerviewpreferences.fastadapter.settings;
 
 import android.app.Activity;
+import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.michaelflisar.recyclerviewpreferences.R;
@@ -111,9 +115,17 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
         return mData.getLayout();
     }
 
+//    @Override
+//    public View createView(Context ctx, @Nullable ViewGroup parent) {
+//        View view = LayoutInflater.from(ctx).inflate(getLayoutRes(), parent, false);
+//
+//        return view;
+//    }
+
     @Override
     public void bindView(VH viewHolder, List<Object> payloads) {
         super.bindView(viewHolder, payloads);
+        mData.onLayoutReady(viewHolder);
         viewHolder.updateCompactMode(mGlobalSetting, mCompact || mData.getSupportType() == BaseSetting.SupportType.CustomOnly);
         viewHolder.updateIcon(mData, mGlobalSetting);
 

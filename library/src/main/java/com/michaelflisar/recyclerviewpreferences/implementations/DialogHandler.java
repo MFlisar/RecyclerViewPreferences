@@ -25,13 +25,6 @@ import java.util.List;
 
 public class DialogHandler {
 
-    public enum DialogType {
-        Number,
-        Text,
-        Color,
-        Custom
-    }
-
     private HashMap<Class, List<IDialogHandler>> mCustomDialogHandlers = new HashMap<>();
     private IDialogHandler mDefaultDialogHandler = new DefaultCustomDialogHandler();
 
@@ -49,7 +42,7 @@ public class DialogHandler {
             VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, CLASS, SD, VH>>
     void showNumberPicker(Activity activity, NumberSetting.Mode mode, NumberSetting<CLASS, SD, VH> setting, boolean global, CLASS customSettingsObject) {
         if (mode.getSupportsDialog()) {
-            new NumberSettingsDialogFragmentBundleBuilder(
+            NumberSettingsDialogFragmentBundleBuilder builder = new NumberSettingsDialogFragmentBundleBuilder(
                     mode.getNumberPickerType(),
                     setting.getSettingId(),
                     global,
@@ -57,10 +50,12 @@ public class DialogHandler {
                     setting.getMin(),
                     setting.getStepSize(),
                     setting.getMax(),
-                    setting.getTitle().getText(),
-                    setting.getUnitRes()
-            )
-                    .createFragment()
+                    setting.getTitle().getText()
+            );
+            if (setting.getUnitRes() != null) {
+                builder.withUnitRes(setting.getUnitRes());
+            }
+            builder.createFragment()
                     .show(((FragmentActivity) activity).getSupportFragmentManager(), null);
         }
     }
@@ -160,5 +155,12 @@ public class DialogHandler {
         }
 
         return false;
+    }
+
+    public enum DialogType {
+        Number,
+        Text,
+        Color,
+        Custom
     }
 }

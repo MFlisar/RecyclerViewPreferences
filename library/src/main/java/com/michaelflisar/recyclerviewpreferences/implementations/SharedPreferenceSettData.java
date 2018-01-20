@@ -14,11 +14,14 @@ import java.util.List;
 
 import hundredthirtythree.sessionmanager.SessionManager;
 
-public class SharedPreferenceSettData<Value, SettData extends ISettData<Value, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, GlobalSetting, SettData, VH>> implements ISettData<Value, GlobalSetting, SettData, VH> {
+public class SharedPreferenceSettData<Value, SettData extends ISettData<Value, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, GlobalSetting, SettData,
+        VH>> implements
+        ISettData<Value, GlobalSetting, SettData, VH> {
 
     protected final String preferenceId;
     private final Class<?> mClass;
     protected Value defaultValue;
+    private ISharedPreferenceStringSerialiser mSerialiser;
 
     private SharedPreferenceSettData(Class<?> clazz, String preferenceId) {
         this.preferenceId = preferenceId;
@@ -31,29 +34,50 @@ public class SharedPreferenceSettData<Value, SettData extends ISettData<Value, G
             withDefaultValue((Value) "");
         } else if (mClass.equals(List.class)) {
             withDefaultValue((Value) new ArrayList<Integer>());
+        } else if (ISharedPreferenceStringSerialiser.class.isAssignableFrom(mClass)) {
+            withDefaultValue(null);
         } else {
             throw new RuntimeException("Class " + mClass.getName() + " not supported!");
         }
     }
 
-    public final String getPreferenceId() {
-        return preferenceId;
+    public static <SettData extends ISettData<Integer, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, GlobalSetting, SettData, VH>>
+    SharedPreferenceSettData createIntData(
+            String preferenceId, int defaultValue) {
+        return new SharedPreferenceSettData(Integer.class, preferenceId)
+                .withDefaultValue(defaultValue);
     }
 
-    public static <SettData extends ISettData<Integer, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, GlobalSetting, SettData, VH>> SharedPreferenceSettData createIntData(String preferenceId, int defaultValue) {
-        return new SharedPreferenceSettData(Integer.class, preferenceId).withDefaultValue(defaultValue);
-    }
-
-    public static <SettData extends ISettData<Boolean, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Boolean, GlobalSetting, SettData, VH>> SharedPreferenceSettData<Boolean, SettData, VH> createBoolData(String preferenceId) {
+    public static <SettData extends ISettData<Boolean, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Boolean, GlobalSetting, SettData, VH>>
+    SharedPreferenceSettData<Boolean, SettData, VH> createBoolData(
+            String preferenceId) {
         return new SharedPreferenceSettData(Boolean.class, preferenceId);
     }
 
-    public static <SettData extends ISettData<Boolean, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Boolean, GlobalSetting, SettData, VH>> SharedPreferenceSettData<Boolean, SettData, VH> createBoolData(String preferenceId, boolean defaultValue) {
-        return new SharedPreferenceSettData(Boolean.class, preferenceId).withDefaultValue(defaultValue);
+    public static <SettData extends ISettData<Boolean, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Boolean, GlobalSetting, SettData, VH>>
+    SharedPreferenceSettData<Boolean, SettData, VH> createBoolData(
+            String preferenceId, boolean defaultValue) {
+        return new SharedPreferenceSettData(Boolean.class, preferenceId)
+                .withDefaultValue(defaultValue);
     }
 
-    public static <SettData extends ISettData<String, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<String, GlobalSetting, SettData, VH>> SharedPreferenceSettData createStringData(String preferenceId, String defaultValue) {
-        return new SharedPreferenceSettData(String.class, preferenceId).withDefaultValue(defaultValue);
+    public static <SettData extends ISettData<String, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<String, GlobalSetting, SettData, VH>>
+    SharedPreferenceSettData createStringData(
+            String preferenceId, String defaultValue) {
+        return new SharedPreferenceSettData(String.class, preferenceId)
+                .withDefaultValue(defaultValue);
+    }
+
+    public static <SettData extends ISettData<String, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<String, GlobalSetting, SettData, VH>, T, S extends
+            ISharedPreferenceStringSerialiser<T>> SharedPreferenceSettData createCustomData(
+            String preferenceId, T defaultValue, S serialiser) {
+        return new SharedPreferenceSettData(String.class, preferenceId)
+                .withDefaultValue(serialiser.toString(defaultValue))
+                .withSerialiser(serialiser);
+    }
+
+    public final String getPreferenceId() {
+        return preferenceId;
     }
 
 //    public static SharedPreferenceSettData<List<Integer>, ?, ?> createIntListData(String preferenceId) {
@@ -62,6 +86,11 @@ public class SharedPreferenceSettData<Value, SettData extends ISettData<Value, G
 
     public SharedPreferenceSettData<Value, SettData, VH> withDefaultValue(Value value) {
         defaultValue = value;
+        return this;
+    }
+
+    public <T, S extends ISharedPreferenceStringSerialiser<T>> SharedPreferenceSettData<Value, SettData, VH> withSerialiser(S serialiser) {
+        mSerialiser = serialiser;
         return this;
     }
 
@@ -83,7 +112,9 @@ public class SharedPreferenceSettData<Value, SettData extends ISettData<Value, G
 
     @Override
     public Value getValue(GlobalSetting object, boolean global) {
-        if (mClass.equals(Integer.class)) {
+        if (mSerialiser != null) {
+           return (Value)mSerialiser.fromString(SessionManager.getString(preferenceId, (String) defaultValue));
+        } else if (mClass.equals(Integer.class)) {
             return (Value) (Integer) SessionManager.getInt(preferenceId, (Integer) defaultValue);
         } else if (mClass.equals(Boolean.class)) {
             return (Value) (Boolean) SessionManager.getBoolean(preferenceId, (Boolean) defaultValue);
@@ -99,7 +130,9 @@ public class SharedPreferenceSettData<Value, SettData extends ISettData<Value, G
 
     @Override
     public boolean setValue(GlobalSetting object, boolean global, Value value) {
-        if (mClass.equals(Integer.class)) {
+        if (mSerialiser != null) {
+            SessionManager.putString(preferenceId, mSerialiser.toString(value));
+        } else if (mClass.equals(Integer.class)) {
             SessionManager.putInt(preferenceId, (Integer) value);
         } else if (mClass.equals(Boolean.class)) {
             SessionManager.putBoolean(preferenceId, (Boolean) value);
@@ -131,5 +164,11 @@ public class SharedPreferenceSettData<Value, SettData extends ISettData<Value, G
             return new ArrayList<>();
         }
         return Util.convertList(Arrays.asList(value.split(";")), v -> Integer.parseInt(v));
+    }
+
+    public interface ISharedPreferenceStringSerialiser<T> {
+        String toString(T value);
+
+        T fromString(String data);
     }
 }
