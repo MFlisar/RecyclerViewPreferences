@@ -80,10 +80,10 @@ public class SettingsUtil {
                 items.addAll(getSettingItems(global, customSettingsObject, setup, settingsCallback, localAnyParentIsGroup, group.getGroups(), settingGroupId, addIfAnyParentIsInGroup, addTopHeaders,
                         showHeadersAsButtons, headerId, forceNoHeaders, collapsedIds));
             } else {
-                if ((addIfAnyParentIsInGroup && localAnyParentIsGroup) || group.check(settingGroupId)) {
+                if (((addIfAnyParentIsInGroup && localAnyParentIsGroup) || group.check(settingGroupId))) {
                     if (showHeadersAsButtons) {
                         if (!forceNoHeaders) {
-                            List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, true);
+                            List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, true, setup.getFilter());
                             if (!SettingsManager.get().getState().isHideEmptyHeaders() || itemsOfHeader.size() > 0) {
                                 SettingsMultilevelHeaderItem header = new SettingsMultilevelHeaderItem(group.getIcon(), group.getTitle(), headerId.getAndDecrement())
                                         .withOnItemClickListener((view, iAdapter, item, i) -> {
@@ -95,7 +95,7 @@ public class SettingsUtil {
                         }
                     } else {
                         SettingsHeaderItem header = null;
-                        List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, true);
+                        List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, true, setup.getFilter());
 
                         if (SettingsManager.get().getState().isHideEmptyHeaders() && itemsOfHeader.size() == 0) {
                             // skip, we don't need an empty header

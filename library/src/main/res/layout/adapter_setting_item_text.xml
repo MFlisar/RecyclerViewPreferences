@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="4dp"
-                        android:gravity="center_vertical"
+                        android:gravity="center_vertical|right"
                         android:paddingLeft="4dp"
                         android:paddingRight="4dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"

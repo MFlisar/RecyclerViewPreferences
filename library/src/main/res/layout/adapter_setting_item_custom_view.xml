@@ -71,10 +71,11 @@
 
                     <ViewStub
                         android:id="@+id/vValueTop"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="4dp"
-                        android:gravity="center_vertical"
+                        android:gravity="center_vertical|right|end"
                         android:paddingLeft="4dp"
                         android:paddingRight="4dp"/>
 
@@ -109,9 +110,10 @@
 
                 <ViewStub
                     android:id="@+id/vValueBottom"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right|end"
                     android:paddingLeft="4dp"
                     android:paddingRight="4dp"/>
 

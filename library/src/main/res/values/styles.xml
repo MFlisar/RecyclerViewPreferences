@@ -29,7 +29,7 @@
         <item name="android:layout_marginRight">8dp</item>
         <item name="android:layout_marginLeft">4dp</item>
         <item name="android:layout_gravity">center_vertical</item>
-        <item name="ico_icon">@string/gmd_settings</item>
+        <item name="ico_icon">gmd-settings</item>
         <!-- TODO: for dark themes this does not work, it's gray instead of white there although the same attribute works for textviews-->
         <item name="ico_color">?android:attr/textColorPrimary</item>
         <item name="ico_size">24dp</item>
@@ -122,7 +122,7 @@
 
     <style name="SettHeaderIcon">
         <item name="ico_color">?colorPrimary</item>
-        <item name="ico_icon">@string/gmd_keyboard_arrow_up</item>
+        <item name="ico_icon">gmd-keyboard-arrow-up</item>
         <item name="ico_size">24dp</item>
         <item name="ico_padding">4dp</item>
         <item name="android:layout_marginRight">4dp</item>
@@ -145,7 +145,7 @@
     <style name="SettButtonInfo" parent="Widget.AppCompat.Button.Colored">
         <!-- TODO: calc color based on accent in code? -->
         <item name="ico_color">#FFFFFF</item>
-        <item name="ico_icon">@string/gmd_info_outline</item>
+        <item name="ico_icon">gmd-info-outline</item>
         <item name="ico_padding">4dp</item>
         <item name="ico_size">36dp</item>
         <item name="android:layout_width">48dp</item>

@@ -4,7 +4,10 @@ package com.michaelflisar.recyclerviewpreferences.defaults;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
+
+import java.util.List;
 
 public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
 
@@ -30,6 +33,7 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
     private boolean mScrollablePagerTabs = true;
     private boolean mHideEmptyHeaders = false;
     private boolean mSupportSpinnerDropDownhighlighting = true; // buggy, currently does not update the current selected item if item is changed and dropdown is opened again
+    private IFilter mFilter = null;
 
     public Setup() {
 
@@ -126,6 +130,17 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
 
     public Setup setSettingsStyle(SettingsStyle style) {
         mSettingsStyle = style;
+        return this;
+    }
+
+    @Override
+    public IFilter getFilter() {
+        return mFilter;
+    }
+
+    @Override
+    public Setup setFilter(IFilter filter) {
+        mFilter = filter;
         return this;
     }
 

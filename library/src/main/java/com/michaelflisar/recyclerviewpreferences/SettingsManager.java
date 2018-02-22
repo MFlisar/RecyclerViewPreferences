@@ -9,6 +9,7 @@ import com.michaelflisar.recyclerviewpreferences.base.SettingsGroup;
 import com.michaelflisar.recyclerviewpreferences.defaults.Setup;
 import com.michaelflisar.recyclerviewpreferences.implementations.DialogHandler;
 import com.michaelflisar.recyclerviewpreferences.interfaces.IDialogHandler;
+import com.michaelflisar.recyclerviewpreferences.interfaces.IIDSetCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
@@ -168,19 +169,23 @@ public class SettingsManager {
 
     public void add(List<SettingsGroup> groups) {
         for (SettingsGroup group : groups) {
-            add(group, true);
+            add(group, true, null);
         }
     }
 
     public void add(SettingsGroup group) {
-        add(group, true);
+        add(group, null);
+    }
+
+    public void add(SettingsGroup group, IIDSetCallback callback) {
+        add(group, true, callback);
     }
 
     public ISetting find(int settingsId) {
         return mSettingsMap.get(settingsId);
     }
 
-    private void add(SettingsGroup group, boolean isTopGroup) {
+    private void add(SettingsGroup group, boolean isTopGroup, IIDSetCallback callback) {
         // 1) add all settings to all settings list and map
         if (group.getSettings() != null) {
             for (int i = 0; i < group.getSettings().size(); i++) {
@@ -188,13 +193,16 @@ public class SettingsManager {
             }
         } else {
             for (SettingsGroup g : group.getGroups()) {
-                add(g, false);
+                add(g, false, null);
             }
         }
         // 2) create unique id in this manager ONLY if no manual id is not set yet
         if (group.getGroupId() == -1) {
             mLastId += 1;
             group.setGroupId(mLastId);
+            if (callback != null) {
+                callback.onIdSet(mLastId);
+            }
         }
         // 2) add the group to the list and map
         if (isTopGroup) {

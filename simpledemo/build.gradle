@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
 
     // currently necessary, settings library uses DataBinding
     dataBinding.enabled = true
@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "com.michaelflisar.recyclerviewpreferences.simpledemo"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
@@ -29,8 +29,4 @@ android {
 
 dependencies {
     compile project(':library')
-
-    implementation  "com.mikepenz:iconics-core:3.0.0@aar"
-    implementation  "com.mikepenz:iconics-views:3.0.0@aar"
-    compile 'com.mikepenz:google-material-typeface:3.0.1.1.original@aar'
 }

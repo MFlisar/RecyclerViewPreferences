@@ -3,6 +3,7 @@ package com.michaelflisar.recyclerviewpreferences.base;
 
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
+import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.mikepenz.iconics.typeface.IIcon;
 
@@ -121,13 +122,17 @@ public class SettingsGroup {
         return mIcon;
     }
 
-    public List<BaseSettingsItem> getSettingItems(boolean global, boolean compact, ISettCallback settingCallback, boolean withBottomDivider) {
+    public List<BaseSettingsItem> getSettingItems(boolean global, boolean compact, ISettCallback settingCallback, boolean withBottomDivider, ISetup.IFilter filter) {
         List<BaseSettingsItem> items = Util.convertList(mSettings, setting -> setting.createItem(global, compact, settingCallback, withBottomDivider));
         if (global) {
-            return Util.filterList(items, item -> item.getSettings().getSupportType() != BaseSetting.SupportType.CustomOnly);
+            items = Util.filterList(items, item -> item.getSettings().getSupportType() != BaseSetting.SupportType.CustomOnly);
         } else {
-            return Util.filterList(items, item -> item.getSettings().getSupportType() != BaseSetting.SupportType.GlobalOnly);
+            items = Util.filterList(items, item -> item.getSettings().getSupportType() != BaseSetting.SupportType.GlobalOnly);
         }
+        if (filter != null) {
+            items = Util.filterList(items, item -> filter.isEnabled(item));
+        }
+        return items;
     }
 
     public SettingsText getTitle() {

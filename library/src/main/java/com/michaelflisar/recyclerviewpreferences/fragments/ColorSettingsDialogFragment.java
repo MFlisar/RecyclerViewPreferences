@@ -6,15 +6,14 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
+import com.evernote.android.state.State;
+import com.evernote.android.state.StateSaver;
 import com.michaelflisar.bundlebuilder.Arg;
 import com.michaelflisar.bundlebuilder.BundleBuilder;
 import com.michaelflisar.recyclerviewpreferences.R;
 import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 
 import java.lang.reflect.Field;
-
-import icepick.Icepick;
-import icepick.State;
 
 /**
  * Created by flisar on 22.08.2017.
@@ -40,7 +39,7 @@ public class ColorSettingsDialogFragment extends ColorChooserDialog {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        StateSaver.restoreInstanceState(this, savedInstanceState);
         ColorSettingsDialogFragmentBundleBuilder.inject(getArguments(), this);
 
         if (lastValue != null) {
@@ -63,7 +62,7 @@ public class ColorSettingsDialogFragment extends ColorChooserDialog {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        StateSaver.saveInstanceState(this, outState);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.michaelflisar.recyclerviewpreferences.settings;
 
 import android.app.Activity;
 import android.databinding.ViewDataBinding;
+import android.databinding.ViewStubProxy;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -26,8 +27,6 @@ import com.mikepenz.iconics.typeface.IIcon;
 public abstract class BaseCustomViewSetting<CLASS, Value, SettData extends ISettData<Value, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
         ISettingsViewHolder<Value, CLASS, SettData, VH>> extends BaseSetting<Value, CLASS, SettData, VH> {
 
-    private boolean mStubIsInflated = false;
-
     public BaseCustomViewSetting(Class<CLASS> clazz, SettData settData, int title, IIcon icon) {
         this(clazz, settData, new SettingsText(title), icon);
     }
@@ -42,17 +41,16 @@ public abstract class BaseCustomViewSetting<CLASS, Value, SettData extends ISett
 
     @Override
     public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
-        setDisplayedValue(v, settData, global, (CLASS) callback.getCustomSettingsObject());
+        setDisplayedValue(topView, v, settData, global, (CLASS) callback.getCustomSettingsObject());
     }
 
-    protected abstract void setDisplayedValue(View v, SettData settData, boolean global, CLASS customSettingsObject);
+    protected abstract void setDisplayedValue(boolean topView, View v, SettData settData, boolean global, CLASS customSettingsObject);
+
+    protected abstract int getCustomView(boolean topValue);
 
     @Override
     public void bind(VH vh) {
-
     }
-
-    protected abstract int getCustomView(boolean topValue);
 
     @Override
     public void unbind(VH vh) {
@@ -76,14 +74,28 @@ public abstract class BaseCustomViewSetting<CLASS, Value, SettData extends ISett
     }
 
     @Override
-    public final void onLayoutReady(VH viewHolder) {
-//        if (!mStubIsInflated) {
-            ((AdapterSettingItemCustomViewBinding) viewHolder.getBinding()).vValueTop.getViewStub().setLayoutResource(getCustomView(true));
-            ((AdapterSettingItemCustomViewBinding) viewHolder.getBinding()).vValueTop.getViewStub().inflate();
-            ((AdapterSettingItemCustomViewBinding) viewHolder.getBinding()).vValueBottom.getViewStub().setLayoutResource(getCustomView(false));
-            ((AdapterSettingItemCustomViewBinding) viewHolder.getBinding()).vValueBottom.getViewStub().inflate();
-//            mStubIsInflated = true;
-//        }
+    public final void onLayoutReady(VH vh) {
+        ViewStubProxy proxyTop = ((AdapterSettingItemCustomViewBinding) vh.getBinding()).vValueTop;
+        ViewStubProxy proxyBottom = ((AdapterSettingItemCustomViewBinding) vh.getBinding()).vValueBottom;
+
+        if (proxyTop.getViewStub() != null && !proxyTop.isInflated()) {
+            proxyTop.getViewStub().setLayoutResource(getCustomView(true));
+            View view = proxyTop.getViewStub().inflate();
+            onLayoutStubReady(view, true);
+        } else {
+            onLayoutStubReady(proxyTop.getRoot(), true);
+        }
+        if (proxyBottom.getViewStub() != null && !proxyBottom.isInflated()) {
+            proxyBottom.getViewStub().setLayoutResource(getCustomView(false));
+            View view = proxyBottom.getViewStub().inflate();
+            onLayoutStubReady(view, false);
+        } else {
+            onLayoutStubReady(proxyBottom.getRoot(), false);
+        }
+    }
+
+    protected void onLayoutStubReady(View view, boolean top) {
+
     }
 
     @Override
@@ -97,6 +109,10 @@ public abstract class BaseCustomViewSetting<CLASS, Value, SettData extends ISett
         if (dialogClosed) {
             SettingsManager.get().dispatchCustomDialogEvent(id, activity, newValue, global);
         }
+    }
+
+    public interface BaseCustomViewHolder<VDB extends ViewDataBinding> {
+
     }
 
 }

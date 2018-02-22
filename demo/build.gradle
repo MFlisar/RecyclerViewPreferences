@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 //apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     dataBinding.enabled = true
 
     defaultConfig {
         applicationId "com.michaelflisar.recyclerviewpreferences.demo"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
@@ -36,8 +36,4 @@ dependencies {
 
     compile 'com.shawnlin:number-picker:2.4.4'
     compile 'com.github.nguyenhoanglam:ImagePicker:1.2.1'
-
-    implementation  "com.mikepenz:iconics-core:3.0.0@aar"
-    implementation  "com.mikepenz:iconics-views:3.0.0@aar"
-    compile 'com.mikepenz:google-material-typeface:3.0.1.1.original@aar'
 }

@@ -89,7 +89,7 @@ public class CustomImageSetting {
         }
 
         @Override
-        protected void setDisplayedValue(View v, SettData settData, boolean global, CLASS customSettingsObject) {
+        protected void setDisplayedValue(boolean topView, View v, SettData settData, boolean global, CLASS customSettingsObject) {
             Data data = getValue(customSettingsObject, global);
             // Display data in view that is bound in bindStub
 //            return data.getDisplayValue();

@@ -1,5 +1,6 @@
 package com.michaelflisar.recyclerviewpreferences.utils;
 
+import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.expandable.ExpandableExtension;
 
@@ -9,21 +10,20 @@ import com.mikepenz.fastadapter.expandable.ExpandableExtension;
 
 public class FastAdapterUtil {
 
-    public static void expand(FastItemAdapter adapter) {
+    public static <T extends IItem> void expand(FastItemAdapter<T> adapter) {
         if (adapter.getExtensions() == null || adapter.getExtensions().size() == 0) {
             return;
         }
-        ExpandableExtension expandableExtension = (ExpandableExtension) adapter.getExtensions().iterator().next();
+        ExpandableExtension expandableExtension = getExpandableExtension(adapter);
         if (expandableExtension != null) {
             expandableExtension.expand();
         }
     }
 
-    public static ExpandableExtension getExpandableExtension(FastItemAdapter adapter) {
+    public static <T extends IItem> ExpandableExtension<T> getExpandableExtension(FastItemAdapter<T> adapter) {
         if (adapter.getExtensions() == null || adapter.getExtensions().size() == 0) {
             return null;
         }
-        ExpandableExtension expandableExtension = (ExpandableExtension) adapter.getExtensions().iterator().next();
-        return expandableExtension;
+        return adapter.getExtension(ExpandableExtension.class);
     }
 }

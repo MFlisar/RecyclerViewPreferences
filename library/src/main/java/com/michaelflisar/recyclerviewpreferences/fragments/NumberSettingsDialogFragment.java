@@ -10,13 +10,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.evernote.android.state.State;
+import com.evernote.android.state.StateSaver;
 import com.michaelflisar.bundlebuilder.Arg;
 import com.michaelflisar.bundlebuilder.BundleBuilder;
 import com.michaelflisar.recyclerviewpreferences.R;
 import com.michaelflisar.recyclerviewpreferences.SettingsManager;
-
-import icepick.Icepick;
-import icepick.State;
 
 /**
  * Created by flisar on 22.08.2017.
@@ -55,7 +54,7 @@ public class NumberSettingsDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        StateSaver.restoreInstanceState(this, savedInstanceState);
         NumberSettingsDialogFragmentBundleBuilder.inject(getArguments(), this);
 
         if (lastValue != null) {
@@ -68,7 +67,7 @@ public class NumberSettingsDialogFragment extends DialogFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        StateSaver.saveInstanceState(this, outState);
     }
 
     @NonNull
