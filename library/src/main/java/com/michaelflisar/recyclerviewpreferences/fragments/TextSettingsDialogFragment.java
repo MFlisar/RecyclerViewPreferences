@@ -28,6 +28,8 @@ public class TextSettingsDialogFragment extends DialogFragment {
     String value;
     @Arg
     String title;
+    @Arg
+    Boolean allowEmptyInput;
 
     @State
     String lastValue;
@@ -56,7 +58,7 @@ public class TextSettingsDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         MaterialDialog dlg = new MaterialDialog.Builder(getActivity())
                 .title(title)
-                .input(null, value, false, (materialDialog, charSequence) -> {
+                .input(null, value, allowEmptyInput, (materialDialog, charSequence) -> {
                     lastValue = charSequence.toString();
                 })
                 .alwaysCallInputCallback()

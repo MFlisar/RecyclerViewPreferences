@@ -28,6 +28,8 @@ import com.mikepenz.iconics.typeface.IIcon;
 public class TextDialogSetting<CLASS, SettData extends ISettData<String, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
         ISettingsViewHolder<String, CLASS, SettData, VH>> extends BaseSetting<String, CLASS, SettData, VH> {
 
+    private boolean mAllowEmptyInput = false;
+
     public TextDialogSetting(Class<CLASS> clazz, SettData settData, int title, IIcon icon) {
         this(clazz, settData, new SettingsText(title), icon);
     }
@@ -38,6 +40,11 @@ public class TextDialogSetting<CLASS, SettData extends ISettData<String, CLASS, 
 
     private TextDialogSetting(Class<CLASS> clazz, SettData settData, SettingsText title, IIcon icon) {
         super(clazz, settData, title, icon);
+    }
+
+    public TextDialogSetting withAllowEmptyInput(boolean allowEmptyText) {
+        mAllowEmptyInput = allowEmptyText;
+        return this;
     }
 
     @Override
@@ -60,7 +67,8 @@ public class TextDialogSetting<CLASS, SettData extends ISettData<String, CLASS, 
                 getSettingId(),
                 global,
                 getValue(customSettingsObject, global),
-                getTitle().getText()
+                getTitle().getText(),
+                mAllowEmptyInput
         )
                 .createFragment()
                 .show(((FragmentActivity) activity).getSupportFragmentManager(), null);
