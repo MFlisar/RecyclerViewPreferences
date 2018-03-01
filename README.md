@@ -26,7 +26,7 @@ repositories {
 2) Add the compile statement to your module's build.gradle:
 ```
 dependencies {
-	compile 'com.github.MFlisar:RecyclerViewPreferences:0.3'
+	compile 'com.github.MFlisar:RecyclerViewPreferences:0.4'
 }
 ```
 
