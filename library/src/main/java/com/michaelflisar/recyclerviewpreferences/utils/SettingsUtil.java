@@ -159,6 +159,12 @@ public class SettingsUtil {
                 }
             }
         }
+        // remove empty headers (sub headers only, empty headers are not added anyways)
+        if (SettingsManager.get().getState().isHideEmptyHeaders()) {
+            if (items.size() == 1 && items.get(0) instanceof SettingsAlternativeHeaderItem) {
+                items.clear();
+            }
+        }
         return items;
     }
 
