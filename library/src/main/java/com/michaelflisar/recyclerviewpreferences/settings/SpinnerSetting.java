@@ -2,6 +2,8 @@ package com.michaelflisar.recyclerviewpreferences.settings;
 
 import android.app.Activity;
 import android.databinding.ViewDataBinding;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,7 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
     private Runnable mRunnableBottom = null;
     private ISettingsSpinnerEnumHelper.SpinnerLayoutProvider mLayoutProvider;
     private int mSpinnerMode;
+    private Handler mHandler;
 
     public SpinnerSetting(Class<CLASS> clazz, SettData settData, int title, IIcon icon, ISettingsSpinnerEnumHelper spinnerHelper) {
         this(clazz, settData, new SettingsText(title), icon, spinnerHelper);
@@ -48,6 +51,8 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
     private SpinnerSetting(Class<CLASS> clazz, SettData settData, SettingsText title, IIcon icon, ISettingsSpinnerEnumHelper spinnerHelper) {
         super(clazz, settData, title, icon);
         mSpinnerHelper = spinnerHelper;
+
+        mHandler = new Handler(Looper.getMainLooper());
 
         if (mSpinnerHelper instanceof ISettingsSpinnerEnumHelper.SpinnerLayoutProvider) {
             mLayoutProvider = (ISettingsSpinnerEnumHelper.SpinnerLayoutProvider) mSpinnerHelper;
@@ -71,10 +76,7 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
         } else {
             runnable = mRunnableBottom;
         }
-
-        if (runnable != null) {
-            v.removeCallbacks(runnable);
-        }
+        removeCallbacks(v, runnable);
 
         runnable = () -> {
             AdapterView.OnItemSelectedListener listener = ((Spinner) v).getOnItemSelectedListener();
@@ -115,7 +117,7 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
 //                v.post(() -> ((Spinner)v).setOnItemSelectedListener(listener));
         };
 
-        v.post(runnable);
+        post(v, runnable);
 
         if (topView) {
             mRunnableTop = runnable;
@@ -132,10 +134,10 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
     @Override
     public void unbind(VH vh) {
         if (mRunnableTop != null) {
-            vh.getValueTopView().removeCallbacks(mRunnableTop);
+            removeCallbacks(vh.getValueTopView(), mRunnableTop);
         }
         if (mRunnableBottom != null) {
-            vh.getValueBottomView().removeCallbacks(mRunnableBottom);
+            removeCallbacks(vh.getValueBottomView(), mRunnableBottom);
         }
         ((Spinner) vh.getValueTopView()).setAdapter(null);
         ((Spinner) vh.getValueBottomView()).setAdapter(null);
@@ -193,5 +195,23 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
 
     public final int getListId(int index) {
         return mSpinnerHelper.getListId(index);
+    }
+
+    // --------------------
+    // Callback helpers
+    // --------------------
+
+    private final void post(View v, Runnable runnable) {
+        if (runnable == null)
+            return;
+//        v.post(runnable);
+        mHandler.post(runnable);
+    }
+
+    private final void removeCallbacks(View v, Runnable runnable) {
+        if (runnable == null)
+            return;
+//        v.removeCallbacks(runnable);
+        mHandler.removeCallbacks(runnable);
     }
 }
