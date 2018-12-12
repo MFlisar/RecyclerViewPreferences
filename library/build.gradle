@@ -7,10 +7,10 @@ group = 'com.github.MFlisar'
 
 android {
 
-    compileSdkVersion setup.compileSdk ?: 28
+    compileSdkVersion setup?.compileSdk ?: 28
     defaultConfig {
-        minSdkVersion setup.minSdk ?: 16
-        targetSdkVersion setup.targetSdk ?: 28
+        minSdkVersion setup?.minSdk ?: 16
+        targetSdkVersion setup?.targetSdk ?: 28
     }
 
     buildTypes {
@@ -34,16 +34,16 @@ dependencies {
     // Kotlin
     // ------------------------
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlinVersion ?: '1.3.10'}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions?.kotlinVersion ?: '1.3.10'}"
 
     // ------------------------
     // AndroidX
     // ------------------------
 
-    implementation "androidx.appcompat:appcompat:${androidx.appcompat ?: '1.0.2'}"
-    implementation "androidx.recyclerview:recyclerview:${androidx.recyclerview ?: '1.0.0'}"
-    implementation "androidx.cardview:cardview:${androidx.cardview ?: '1.0.0'}"
-    implementation "com.google.android.material:material:${androidx.material ?: '1.0.0'}"
+    implementation "androidx.appcompat:appcompat:${androidx?.appcompat ?: '1.0.2'}"
+    implementation "androidx.recyclerview:recyclerview:${androidx?.recyclerview ?: '1.0.0'}"
+    implementation "androidx.cardview:cardview:${androidx?.cardview ?: '1.0.0'}"
+    implementation "com.google.android.material:material:${androidx?.material ?: '1.0.0'}"
 
     // ----------------------
     // Libraries
@@ -55,29 +55,29 @@ dependencies {
 //    api project(':core')
 //    api project(':input')
 //    api project(':color')
-    api "com.afollestad.material-dialogs:core:${versions.materialDialogs ?: '2.0.0-beta6'}"
-    api "com.afollestad.material-dialogs:input:${versions.materialDialogs ?: '2.0.0-beta6'}"
-    api "com.afollestad.material-dialogs:color:${versions.materialDialogs ?: '2.0.0-beta6'}"
+    api "com.afollestad.material-dialogs:core:${versions?.materialDialogs ?: '2.0.0-beta6'}"
+    api "com.afollestad.material-dialogs:input:${versions?.materialDialogs ?: '2.0.0-beta6'}"
+    api "com.afollestad.material-dialogs:color:${versions?.materialDialogs ?: '2.0.0-beta6'}"
 
     // ----------------------
     // Should (Could) be removed and replaced with manual written code
     // ----------------------
 
-    implementation("com.mikepenz:fastadapter:${mikepenz.fastAdapter ?: '3.3.1'}") {
+    implementation("com.mikepenz:fastadapter:${mikepenz?.fastAdapter ?: '3.3.1'}") {
         transitive = true
         exclude group: 'com.android.support'
     }
-    implementation "com.mikepenz:fastadapter-commons:${mikepenz.fastAdapter ?: '3.3.1'}"
-    implementation "com.mikepenz:fastadapter-extensions-expandable:${mikepenz.fastAdapter ?: '3.3.1'}"
+    implementation "com.mikepenz:fastadapter-commons:${mikepenz?.fastAdapter ?: '3.3.1'}"
+    implementation "com.mikepenz:fastadapter-extensions-expandable:${mikepenz?.fastAdapter ?: '3.3.1'}"
 
-    api "com.mikepenz:iconics-core:${mikepenz.iconics ?: '3.3.1'}"
-    api "com.mikepenz:iconics-views:${mikepenz.iconics ?: '3.3.1'}"
-    api "com.mikepenz:google-material-typeface:${mikepenz.iconicsMaterial?: '3.0.1.3.original'}"
+    api "com.mikepenz:iconics-core:${mikepenz?.iconics ?: '3.3.1'}"
+    api "com.mikepenz:iconics-views:${mikepenz?.iconics ?: '3.3.1'}"
+    api "com.mikepenz:google-material-typeface:${mikepenz?.iconicsMaterial?: '3.0.1.3.original'}"
 
     // ----------------------
     // Annotation Processors
     // ----------------------
 
-    implementation "com.evernote:android-state:${versions.androidState ?: '1.4.1'}"
-    kapt "com.evernote:android-state-processor:${versions.androidState ?: '1.4.1'}"
+    implementation "com.evernote:android-state:${versions?.androidState ?: '1.4.1'}"
+    kapt "com.evernote:android-state-processor:${versions?.androidState ?: '1.4.1'}"
 }
