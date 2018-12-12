@@ -1,6 +1,7 @@
 package com.michaelflisar.recyclerviewpreferences.demo;
 
 import android.graphics.Color;
+import android.widget.Spinner;
 
 import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsGroup;
@@ -61,6 +62,9 @@ public class SettingsDefinitions {
                         .add(new SpinnerSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref1_6", IconStyleWithIcon.Normal.getId()), "Icon Style with icon",
                                 GoogleMaterial.Icon.gmd_image,
                                 new IconStyleWithIcon.EnumHelper()))
+                        .add(new SpinnerSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref1_3a", IconStyle.Normal.getId()), "Icon Style dialog",
+                                GoogleMaterial.Icon.gmd_image,
+                                new IconStyle.EnumHelper()).withSpinnerMode(Spinner.MODE_DIALOG))
                         .add(new BooleanSetting(GlobalSetting.class, SharedPreferenceSettData.createBoolData("pref1_4"), "Enable next setting", GoogleMaterial.Icon.gmd_settings)
                                 .withIdCallback(id -> SETT_ENABLE_NEXT_SETTING.set(id)))
                         .add(new BooleanSetting(GlobalSetting.class, SharedPreferenceSettData.createBoolData("pref1_5"), "Next setting", GoogleMaterial.Icon.gmd_settings)
@@ -156,6 +160,8 @@ public class SettingsDefinitions {
                         .add(new NumberSetting(DemoFolder.class, FolderSettData.createIntData("pref2_2", 0), "Padding", GoogleMaterial.Icon.gmd_border_all, NumberSetting.Mode.Seekbar, 0, 64,
                                 1, R.string.unit_dp))
                         .add(new SpinnerSetting(DemoFolder.class, FolderSettData.createIntData("pref2_3", IconStyle.Normal.getId()), "Style", GoogleMaterial.Icon.gmd_image,
+                                new IconStyle.EnumHelper()))
+                        .add(new SpinnerSetting(DemoFolder.class, FolderSettData.createIntData("pref2_3a", IconStyle.Normal.getId()), "Style - no icon", null,
                                 new IconStyle.EnumHelper()))
                         .add(new ColorSetting(DemoFolder.class, FolderSettData.createIntData("pref2_4", Color.RED), "Color", GoogleMaterial.Icon.gmd_colorize))
                         .add(new BooleanSetting(DemoFolder.class, FolderSettData.createBoolData("pref2_5"), "Show label", GoogleMaterial.Icon.gmd_text_format))

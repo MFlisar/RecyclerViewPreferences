@@ -1,7 +1,8 @@
 package com.michaelflisar.recyclerviewpreferences.interfaces;
 
 import android.app.Activity;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
@@ -34,16 +35,21 @@ public interface ISetting<Value, CLASS, SettData extends ISettData<Value, CLASS,
     // FastAdapter
     int getLayoutTypeId();
     int getLayout();
-    <P extends IItem & IExpandable> BaseSettingsItem<P, ?, ?, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback, boolean withBottomDivider);
+    <P extends IItem & IExpandable> BaseSettingsItem<P, ?, ?, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback, boolean flatStyle);
 
     // Icon
     IIcon getIcon();
     int getIconPaddingDp();
     Integer getIconColor();
 
+    // Backgorund
+//    Integer getBackgroundTint();
+
     // Titel
     SettingsText getTitle();
     SettingsText getSubTitle();
+    Integer getTextColor();
+    Integer getTitleTextColor();
 
     // Info
     SettingsText getInfo();
@@ -51,6 +57,7 @@ public interface ISetting<Value, CLASS, SettData extends ISettData<Value, CLASS,
 
     // Type
     BaseSetting.SupportType getSupportType();
+    BaseSetting.SettingType getSettingType();
 
     // Values
     Value getValue(CLASS object, boolean global);

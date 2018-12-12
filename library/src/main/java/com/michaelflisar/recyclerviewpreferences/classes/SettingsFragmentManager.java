@@ -1,7 +1,8 @@
 package com.michaelflisar.recyclerviewpreferences.classes;
 
 import android.app.Activity;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
@@ -158,7 +159,7 @@ public class SettingsFragmentManager {
 //    }
 
     public <CLASS, SD extends ISettData<?, CLASS, SD, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<?, CLASS, SD, VH>> void dispatchDependencyChanged(final int id, boolean global,
-            Object customSettingsObject)//, ISetting<?, CLASS, SD, VH> dependencySetting, SD settData, boolean global, CLASS customSettingsObject) {
+                                                                                                                                                                      Object customSettingsObject)//, ISetting<?, CLASS, SD, VH> dependencySetting, SD settData, boolean global, CLASS customSettingsObject) {
     {
         for (ISetting setting : mSettings) {
             List<Dependency> dependencies = setting.getDependencies();

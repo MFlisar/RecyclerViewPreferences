@@ -1,9 +1,10 @@
 package com.michaelflisar.recyclerviewpreferences.demo.custom;
 
 import android.app.Activity;
-import android.databinding.ViewDataBinding;
+import androidx.databinding.ViewDataBinding;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,7 +16,7 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.IDialogHandler;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
-import com.michaelflisar.recyclerviewpreferences.settings.BaseCustomViewSetting;
+import com.michaelflisar.recyclerviewpreferences.settings.CustomSetting;
 import com.michaelflisar.recyclerviewpreferences.utils.DialogUtil;
 import com.mikepenz.iconics.typeface.IIcon;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
@@ -76,9 +77,11 @@ public class CustomImageSetting {
     // Setting
     // ----------------
 
-    public static class Setting<CLASS, SettData extends ISettData<Data, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
-            ISettingsViewHolder<Data, CLASS, SettData, VH>> extends
-            BaseCustomViewSetting<CLASS, Data, SettData, VH> {
+    public static class Setting<
+            CLASS,
+            SettData extends ISettData<Data, CLASS, SettData, VH>,
+            VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Data, CLASS, SettData, VH>>
+            extends CustomSetting<CLASS, Data, SettData, VH> {
 
         public Setting(Class<CLASS> clazz, SettData settData, int title, IIcon icon) {
             super(clazz, settData, title, icon);
@@ -89,7 +92,7 @@ public class CustomImageSetting {
         }
 
         @Override
-        protected void setDisplayedValue(boolean topView, View v, SettData settData, boolean global, CLASS customSettingsObject) {
+        protected void setDisplayedValue(boolean topView, VH vh, View v, SettData settData, boolean global, CLASS customSettingsObject) {
             Data data = getValue(customSettingsObject, global);
             // Display data in view that is bound in bindStub
 //            return data.getDisplayValue();

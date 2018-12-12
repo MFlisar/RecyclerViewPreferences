@@ -1,9 +1,10 @@
 package com.michaelflisar.recyclerviewpreferences.interfaces;
 
 import android.app.Activity;
-import android.support.v7.widget.RecyclerView;
 
 import com.michaelflisar.recyclerviewpreferences.SettingsFragment;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by flisar on 25.08.2017.

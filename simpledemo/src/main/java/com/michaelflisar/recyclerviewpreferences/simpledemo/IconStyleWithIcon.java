@@ -71,7 +71,7 @@ public enum IconStyleWithIcon {
         // here we add a icon to the TextView
         @Override
         public View updateLayout(boolean topLayout, int position, View view, boolean dropdown, boolean selected) {
-            // the defuault layout is an TextView
+            // the default layout is an TextView
             TextView tv = (TextView) view;
             tv.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_launcher, 0, 0, 0);
             return view;

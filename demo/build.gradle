@@ -1,16 +1,15 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 28
 
     dataBinding.enabled = true
 
     defaultConfig {
         applicationId "com.michaelflisar.recyclerviewpreferences.demo"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -25,15 +24,19 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-//    dexOptions {
-//        preDexLibraries false
-//    }
 }
 
 dependencies {
-    compile project(':library')
 
-    compile 'com.shawnlin:number-picker:2.4.4'
-    compile 'com.github.nguyenhoanglam:ImagePicker:1.2.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.71"//$versions.kotlinVersion"
+
+    implementation project(':library')
+
+    implementation 'com.shawnlin:number-picker:2.4.6'
+    implementation 'com.github.nguyenhoanglam:ImagePicker:1.2.1'
+
+    implementation "androidx.appcompat:appcompat:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "com.google.android.material:material:1.0.0"
 }

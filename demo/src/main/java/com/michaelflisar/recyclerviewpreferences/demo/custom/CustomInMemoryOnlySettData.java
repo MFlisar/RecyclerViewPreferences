@@ -1,7 +1,7 @@
 package com.michaelflisar.recyclerviewpreferences.demo.custom;
 
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.michaelflisar.recyclerviewpreferences.classes.GlobalSetting;
 import com.michaelflisar.recyclerviewpreferences.demo.classes.DemoInMemoryStorage;
@@ -11,7 +11,8 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomInMemoryOnlySettData<Value,
+public class CustomInMemoryOnlySettData<
+        Value,
         SettData extends ISettData<Value, GlobalSetting, SettData, VH>,
         VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, GlobalSetting, SettData, VH>>
         implements ISettData<Value, GlobalSetting, SettData, VH> {

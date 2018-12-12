@@ -10,6 +10,7 @@ import com.michaelflisar.recyclerviewpreferences.defaults.Setup;
 import com.michaelflisar.recyclerviewpreferences.implementations.DialogHandler;
 import com.michaelflisar.recyclerviewpreferences.interfaces.IDialogHandler;
 import com.michaelflisar.recyclerviewpreferences.interfaces.IIDSetCallback;
+import com.michaelflisar.recyclerviewpreferences.interfaces.IInfoDialogHandler;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
@@ -39,6 +40,7 @@ public class SettingsManager {
     private Set<Integer> mCollapsedSettingIds;
     private ISetup mStateManager;
     private DialogHandler mDialogHandler = null;
+    private IInfoDialogHandler mInfoHandler = null;
 
     private SettingsManager() {
         mSettingChangedListeners = new HashSet<>();
@@ -83,6 +85,14 @@ public class SettingsManager {
 
     public void setDialogHandler(DialogHandler dialogHandler) {
         mDialogHandler = dialogHandler;
+    }
+
+    public void setInfoHandler(IInfoDialogHandler infoHandler) {
+        mInfoHandler = infoHandler;
+    }
+
+    public IInfoDialogHandler getInfoHandler() {
+        return mInfoHandler;
     }
 
     public <T> void registerDialogHandler(IDialogHandler<T> handler) {

@@ -1,9 +1,2 @@
 <resources>
-    <!--<dimen name="page_padding">8dp</dimen>-->
-
-    <dimen name="divider_left_margin_no_image">2dp</dimen>
-    <dimen name="divider_left_margin_with_image">38dp</dimen>
-
-    <dimen name="row2_left_padding_no_image">0dp</dimen>
-    <dimen name="row2_left_padding_with_image">36dp</dimen>
 </resources>

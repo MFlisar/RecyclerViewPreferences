@@ -17,6 +17,7 @@ public class SettingsGroup {
     private SettingsGroup mParent;
     private List<SettingsGroup> mGroups;
     private List<BaseSetting> mSettings;
+    private boolean mHideInLayout;
 
     public SettingsGroup(int title) {
         mIcon = null;
@@ -25,6 +26,7 @@ public class SettingsGroup {
         mGroups = new ArrayList<>();
         mSettings = null;
         mId = -1;
+        mHideInLayout = false;
     }
 
     public SettingsGroup(String title) {
@@ -34,6 +36,7 @@ public class SettingsGroup {
         mGroups = new ArrayList<>();
         mSettings = null;
         mId = -1;
+        mHideInLayout = false;
     }
 
     public SettingsGroup(IIcon icon, int title) {
@@ -44,6 +47,7 @@ public class SettingsGroup {
         mGroups = null;
         mSettings = new ArrayList<>();
         mId = -1;
+        mHideInLayout = false;
     }
 
     public SettingsGroup(IIcon icon, String title) {
@@ -54,6 +58,7 @@ public class SettingsGroup {
         mGroups = null;
         mSettings = new ArrayList<>();
         mId = -1;
+        mHideInLayout = false;
     }
 
     public void setGroupId(int id) {
@@ -122,8 +127,17 @@ public class SettingsGroup {
         return mIcon;
     }
 
-    public List<BaseSettingsItem> getSettingItems(boolean global, boolean compact, ISettCallback settingCallback, boolean withBottomDivider, ISetup.IFilter filter) {
-        List<BaseSettingsItem> items = Util.convertList(mSettings, setting -> setting.createItem(global, compact, settingCallback, withBottomDivider));
+    public SettingsGroup withHideInLayout() {
+        mHideInLayout = true;
+        return this;
+    }
+
+    public boolean isHideInLayout() {
+        return mHideInLayout;
+    }
+
+    public List<BaseSettingsItem> getSettingItems(boolean global, boolean compact, ISettCallback settingCallback, ISetup.IFilter filter, boolean flatStyle) {
+        List<BaseSettingsItem> items = Util.convertList(mSettings, setting -> setting.createItem(global, compact, settingCallback, flatStyle));
         if (global) {
             items = Util.filterList(items, item -> item.getSettings().getSupportType() != BaseSetting.SupportType.CustomOnly);
         } else {

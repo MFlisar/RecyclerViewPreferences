@@ -2,23 +2,16 @@ package com.michaelflisar.recyclerviewpreferences;
 
 
 import android.app.Activity;
-import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.michaelflisar.bundlebuilder.Arg;
-import com.michaelflisar.bundlebuilder.BundleBuilder;
-import com.michaelflisar.recyclerviewpreferences.activity.MultiLevelSingleSettingsGroupActivityBundleBuilder;
+import com.google.android.material.tabs.TabLayout;
+import com.michaelflisar.recyclerviewpreferences.activity.MultiLevelSingleSettingsGroupActivity;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsGroup;
 import com.michaelflisar.recyclerviewpreferences.classes.AdvancedFragmentStatePagerAdapter;
+import com.michaelflisar.recyclerviewpreferences.classes.SettingsDividerDecorator;
 import com.michaelflisar.recyclerviewpreferences.classes.SettingsFragmentManager;
 import com.michaelflisar.recyclerviewpreferences.databinding.SettingsFragmentBinding;
 import com.michaelflisar.recyclerviewpreferences.databinding.SettingsViewpagerFragmentBinding;
@@ -42,20 +35,34 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-@BundleBuilder(setterPrefix = "with")
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 public class SettingsFragment extends Fragment implements ISettCallback, ISettingsFragment {
 
-    @Arg
+    private static final SettingsFragment internalCreate(ISetup setup, boolean globalSetting, String fastAdapterPrefix, boolean isPage, boolean isMultiLevelPage, ArrayList<Integer> groupIds) {
+        SettingsFragment f = new SettingsFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("setup", setup);
+        args.putBoolean("globalSetting", globalSetting);
+        args.putString("fastAdapterPrefix", fastAdapterPrefix);
+        args.putBoolean("globalSetting", globalSetting);
+        args.putBoolean("isPage", isPage);
+        args.putBoolean("isMultiLevelPage", isMultiLevelPage);
+        args.putIntegerArrayList("groupIds", groupIds);
+        f.setArguments(args);
+        return f;
+    }
+
     ISetup setup;
-    @Arg
     boolean globalSetting;
-    @Arg(optional = true)
     ArrayList<Integer> groupIds;
-    @Arg
     String fastAdapterPrefix;
-    @Arg
     Boolean isPage;
-    @Arg
     Boolean isMultiLevelPage;
 
     private PagerAdapter mPagerAdapter;
@@ -65,6 +72,7 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
     protected FastItemAdapter mFastItemAdapter;
     protected List<IItem> mItems;
     private SettingsFragmentManager mManager;
+    private SettingsDividerDecorator mDividerDecorator;
 
     public static SettingsFragment create(ISetup setup, boolean globalSetting, ArrayList<Integer> groupIds) {
         return create(setup, globalSetting, false, groupIds);
@@ -79,31 +87,25 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
     }
 
     static SettingsFragment create(ISetup setup, boolean globalSetting, boolean isMultiLevelPage, ArrayList<Integer> groupIds) {
-        return new SettingsFragmentBundleBuilder()
-                .withSetup(setup)
-                .withGlobalSetting(globalSetting)
-                .withGroupIds(groupIds)
-                .withFastAdapterPrefix(UUID.randomUUID().toString())
-                .withIsPage(false)
-                .withIsMultiLevelPage(isMultiLevelPage)
-                .createFragment();
+        return internalCreate(setup, globalSetting, UUID.randomUUID().toString(), false, isMultiLevelPage, groupIds);
     }
 
     static SettingsFragment createPage(ISetup setup, boolean globalSetting, int groupId) {
-        return new SettingsFragmentBundleBuilder()
-                .withSetup(setup)
-                .withGlobalSetting(globalSetting)
-                .withGroupIds(new ArrayList<>(Arrays.asList(groupId)))
-                .withFastAdapterPrefix(UUID.randomUUID().toString())
-                .withIsPage(true)
-                .withIsMultiLevelPage(false)
-                .createFragment();
+        return internalCreate(setup, globalSetting, UUID.randomUUID().toString(), true, false, new ArrayList<>(Arrays.asList(groupId)));
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SettingsFragmentBundleBuilder.inject(getArguments(), this);
+
+        setup = getArguments().getParcelable("setup");
+        globalSetting = getArguments().getBoolean("globalSetting");
+        fastAdapterPrefix = getArguments().getString("fastAdapterPrefix");
+        globalSetting = getArguments().getBoolean("globalSetting");
+        isPage = getArguments().getBoolean("isPage");
+        isMultiLevelPage = getArguments().getBoolean("isMultiLevelPage");
+        groupIds = getArguments().getIntegerArrayList("groupIds");
+
         mGroups = new ArrayList<>();
         mSettings = new ArrayList<>();
         for (Integer id : groupIds) {
@@ -154,14 +156,21 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
                 mManager = new SettingsFragmentManager(getActivity(), mFastItemAdapter, mSettings);
             }
 
-            mItems = SettingsUtil.getSettingItems(globalSetting, getCustomSettingsObject(), pageSetup, this, SettingsManager.get().getCollapsedSettingIds(), isMultiLevelPage,
-                    groupIds.toArray(new Integer[groupIds.size()]));
+            mItems = SettingsUtil.getSettingItems(
+                    globalSetting,
+                    getCustomSettingsObject(),
+                    pageSetup,
+                    this,
+                    SettingsManager.get().getCollapsedSettingIds(),
+                    isMultiLevelPage,
+                    groupIds.toArray(new Integer[groupIds.size()])
+            );
 
             if (init) {
                 SettingsUtil.initAdapter(mFastItemAdapter, mItems, savedInstanceState, fastAdapterPrefix);
-                binding.rvSettings.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext(), LinearLayoutManager.VERTICAL, false));
+                binding.rvSettings.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext(), RecyclerView.VERTICAL, false));
                 binding.rvSettings.setAdapter(mFastItemAdapter);
-                SettingsUtil.addDecorator(binding.rvSettings);
+                mDividerDecorator = SettingsUtil.addDecorator(binding.rvSettings, pageSetup.getLayoutStyle(), pageSetup.getDividerStyle());
             } else {
                 SettingsUtil.setNewList(mFastItemAdapter, mItems, savedInstanceState, fastAdapterPrefix);
             }
@@ -201,6 +210,18 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
         } else {
             setup.setLayoutStyle(enabled ? Setup.LayoutStyle.Compact : Setup.LayoutStyle.Normal);
             getArguments().putParcelable("setup", setup);
+            if (mDividerDecorator != null) {
+                if (setup.getDividerStyle() == Setup.DividerStyle.NotForSimpleOrCompactMode) {
+                    RecyclerView rv = getRecyclerView();
+                    if (rv != null) {
+                        if (enabled) {
+                            rv.removeItemDecoration(mDividerDecorator);
+                        } else {
+                            rv.addItemDecoration(mDividerDecorator);
+                        }
+                    }
+                }
+            }
             if (mItems != null) {
                 SettingsUtil.updateCompactMode(mItems, enabled);
                 mFastItemAdapter.notifyAdapterDataSetChanged();
@@ -322,11 +343,8 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
         ISetup s = setup.copy();
         s.setSettingsStyle(Setup.SettingsStyle.List);
         s.setUseExpandableHeaders(false);
-        new MultiLevelSingleSettingsGroupActivityBundleBuilder()
-                .withGroupId(groupId)
-                .withSetup(s)
-                .withGlobalSetting(globalSetting)
-                .startActivity(getActivity());
+
+        MultiLevelSingleSettingsGroupActivity.start(getActivity(), groupId, s, globalSetting);
 //        Toast.makeText(getActivity(), "Group: " + groupId, Toast.LENGTH_SHORT).show();
     }
 

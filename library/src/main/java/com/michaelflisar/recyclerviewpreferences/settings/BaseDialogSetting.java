@@ -1,10 +1,7 @@
 package com.michaelflisar.recyclerviewpreferences.settings;
 
 import android.app.Activity;
-import android.databinding.ViewDataBinding;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.michaelflisar.recyclerviewpreferences.R;
@@ -20,12 +17,19 @@ import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.iconics.typeface.IIcon;
 
+import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * Created by flisar on 16.05.2017.
  */
 
-public abstract class BaseDialogSetting<CLASS, Value, SettData extends ISettData<Value, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
-        ISettingsViewHolder<Value, CLASS, SettData, VH>> extends BaseSetting<Value, CLASS, SettData, VH> {
+public abstract class BaseDialogSetting<
+        CLASS,
+        Value,
+        SettData extends ISettData<Value, CLASS, SettData, VH>,
+        VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, CLASS, SettData, VH>>
+        extends BaseSetting<Value, CLASS, SettData, VH> {
 
     public BaseDialogSetting(Class<CLASS> clazz, SettData settData, int title, IIcon icon) {
         this(clazz, settData, new SettingsText(title), icon);
@@ -41,7 +45,7 @@ public abstract class BaseDialogSetting<CLASS, Value, SettData extends ISettData
 
     @Override
     public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
-        ((TextView) v).setText(getDisplayValue(settData, global, (CLASS)callback.getCustomSettingsObject()));
+        ((TextView) v).setText(getDisplayValue(settData, global, (CLASS) callback.getCustomSettingsObject()));
     }
 
     protected abstract String getDisplayValue(SettData settData, boolean global, CLASS customSettingsObject);
@@ -68,13 +72,12 @@ public abstract class BaseDialogSetting<CLASS, Value, SettData extends ISettData
 
     @Override
     public final int getLayout() {
-        return R.layout.adapter_setting_item_text;
+        return R.layout.adapter_base_setting_item;
     }
 
     @Override
-    public <P extends IItem & IExpandable> BaseSettingsItem<P, Value, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,
-            boolean withBottomDivider) {
-        return new TextSettingItem(global, compact, this, settingsCallback, withBottomDivider);
+    public <P extends IItem & IExpandable> BaseSettingsItem<P, Value, CLASS, SettData, ?> createItem(boolean global, boolean compact,ISettCallback settingsCallback,boolean flatStyle) {
+        return new TextSettingItem(global, compact, this, settingsCallback, flatStyle);
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.michaelflisar.recyclerviewpreferences.demo.custom;
 
 import android.app.Activity;
-import android.databinding.ViewDataBinding;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.ViewDataBinding;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -17,7 +17,6 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
 import com.michaelflisar.recyclerviewpreferences.settings.BaseDialogSetting;
 import com.michaelflisar.recyclerviewpreferences.utils.DialogUtil;
-import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.mikepenz.iconics.typeface.IIcon;
 import com.shawnlin.numberpicker.NumberPicker;
 

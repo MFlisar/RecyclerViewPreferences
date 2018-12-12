@@ -1,28 +1,29 @@
 package com.michaelflisar.recyclerviewpreferences.fastadapter.settings;
 
 import android.app.Activity;
-import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
+
+import androidx.core.view.ViewCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.res.ColorStateList;
+import android.os.Build;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.michaelflisar.recyclerviewpreferences.R;
+import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.classes.Dependency;
-import com.michaelflisar.recyclerviewpreferences.fastadapter.BaseSettingViewHolder;
+import com.michaelflisar.recyclerviewpreferences.fastadapter.BaseBaseSettingViewHolder;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.hooks.BaseCustomEventHook;
-import com.michaelflisar.recyclerviewpreferences.fragments.InfoSettingsDialogFragmentBundleBuilder;
+import com.michaelflisar.recyclerviewpreferences.fragments.InfoSettingsDialogFragment;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
-import com.michaelflisar.recyclerviewpreferences.views.FixedSwitch;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
@@ -35,9 +36,14 @@ import java.util.List;
  * Created by flisar on 13.03.2017.
  */
 
-public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value, CLASS, SettData extends ISettData<Value, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
-        ISettingsViewHolder<Value, CLASS, SettData, VH>> extends
-        AbstractItem<BaseSettingsItem, VH> implements ISubItem<BaseSettingsItem<Parent, Value, CLASS, SettData, VH>, Parent>, ISettingsItem {
+public abstract class BaseSettingsItem<
+        Parent extends IItem & IExpandable,
+        Value,
+        CLASS,
+        SettData extends ISettData<Value, CLASS, SettData, VH>,
+        VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, CLASS, SettData, VH>>
+        extends AbstractItem<BaseSettingsItem, VH> implements ISubItem<BaseSettingsItem<Parent, Value, CLASS, SettData, VH>, Parent>, ISettingsItem {
+
     // ------------------
     // Item
     // ------------------
@@ -46,20 +52,20 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
     protected boolean mCompact;
     protected BaseSetting<Value, CLASS, SettData, VH> mData;
     protected ISettCallback mCallback;
-    protected boolean mWithBottomDivider;
+    protected boolean mFlatStyle;
 
     private boolean mStateEnabled = true;
     private boolean mStateVisible = true;
 
     private Parent mParent;
 
-    public BaseSettingsItem(boolean globalSetting, boolean compact, BaseSetting<Value, CLASS, SettData, VH> data, ISettCallback callback, boolean withBottomDivider) {
+    public BaseSettingsItem(boolean globalSetting, boolean compact, BaseSetting<Value, CLASS, SettData, VH> data, ISettCallback callback, boolean flatStyle) {
         mGlobalSetting = globalSetting;
         mCompact = compact;
         mData = data;
         mCallback = callback;
-        mWithBottomDivider = withBottomDivider;
         withIdentifier(data.getViewHolderId());
+        mFlatStyle = flatStyle;
     }
 
     public void setGlobal(boolean global) {
@@ -96,10 +102,6 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
         mStateVisible = visible;
     }
 
-    public void withBottomDivider(boolean withBottomDivider) {
-        mWithBottomDivider = withBottomDivider;
-    }
-
     @Override
     public ISetting getSettings() {
         return mData;
@@ -126,20 +128,23 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
     public void bindView(VH viewHolder, List<Object> payloads) {
         super.bindView(viewHolder, payloads);
         mData.onLayoutReady(viewHolder);
-        viewHolder.updateCompactMode(mGlobalSetting, mCompact || mData.getSupportType() == BaseSetting.SupportType.CustomOnly);
+        viewHolder.updateCompactMode(mGlobalSetting, mCompact || mData.getSupportType() == BaseSetting.SupportType.CustomOnly || mData.getSettingType() == BaseSetting.SettingType.Info);
         viewHolder.updateIcon(mData, mGlobalSetting);
 
         // 1) Custom Value Switch + Info Global Value
         if (!mGlobalSetting) {
-            Util.setTextAppearance(viewHolder.getTitleTextView(), (mCompact || mData.getSupportType() == BaseSetting.SupportType.CustomOnly) ? R.style.SettTitleCompactTextAppearance : R.style.SettTitleTextAppearance);
-            viewHolder.getUseCustomSwitch().setVisibility(mData.getSupportType() == BaseSetting.SupportType.CustomOnly ? View.GONE : View.VISIBLE);
+            if (mData.getSettingType() == BaseSetting.SettingType.Normal) {
+                Util.setTextAppearance(viewHolder.getTitleTextView(), (mCompact || mData.getSupportType() == BaseSetting.SupportType.CustomOnly) ? R.style.SettTitleCompactTextAppearance : R.style.SettTitleTextAppearance);
+                viewHolder.getUseCustomSwitch(mData.getIcon() != null).setVisibility(mData.getSupportType() == BaseSetting.SupportType.CustomOnly ? View.GONE : View.VISIBLE);
 
-            boolean customEnabled = mData.getCustomEnabled((CLASS) mCallback.getCustomSettingsObject());
-            viewHolder.getUseCustomSwitch().setChecked(customEnabled);
-            viewHolder.onUpdateCustomViewDependencies(mGlobalSetting);
+                boolean customEnabled = mData.getCustomEnabled((CLASS) mCallback.getCustomSettingsObject());
+                viewHolder.setUseCustomSwitchChecked(mData.getIcon() != null, customEnabled);
+                viewHolder.onUpdateCustomViewDependencies(mData.getIcon() != null, mGlobalSetting);
+            } else {
+                setGlobalTitelAndSwitchLook(viewHolder);
+            }
         } else {
-            Util.setTextAppearance(viewHolder.getTitleTextView(), R.style.SettTitleGlobalTextAppearance);
-            viewHolder.getUseCustomSwitch().setVisibility(View.GONE);
+            setGlobalTitelAndSwitchLook(viewHolder);
         }
 
         // 2) Title + Sub Title
@@ -151,7 +156,16 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
             viewHolder.getSubTitleTextView().setVisibility(View.GONE);
             viewHolder.getSubTitleTextView().setText("");
         }
-
+        if (mData.getTitleTextColor() != null) {
+            viewHolder.getTitleTextView().setTextColor(mData.getTitleTextColor());
+        } else {
+            viewHolder.getTitleTextView().setTextColor(Util.getSecondaryTextColor());
+        }
+        if (mData.getTextColor() != null) {
+            viewHolder.getSubTitleTextView().setTextColor(mData.getTextColor());
+        } else {
+            viewHolder.getSubTitleTextView().setTextColor(Util.getTertiaryTextColor());
+        }
         // 3) Wert
         viewHolder.updateValues(mData, mGlobalSetting, mCallback);
 
@@ -159,12 +173,28 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
 //        viewHolder.getInnerDivider().setVisibility(View.GONE);
 
         // 5) Info Button
-        viewHolder.getInfoButton().setVisibility(mData.getInfo() != null ? View.VISIBLE : View.GONE);
+        viewHolder.getInfoButton().setVisibility(mData.getSettingType() == BaseSetting.SettingType.Normal && mData.getInfo() != null ? View.VISIBLE : View.GONE);
 
         // 6) State updaten
         viewHolder.updateState(mStateEnabled, mStateVisible);
 
-        viewHolder.bind(mData);
+        viewHolder.bind(mData, mGlobalSetting);
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            if (mData.getBackgroundTint() != null) {
+//                viewHolder.getCardView().setBackgroundTintList(ColorStateList.valueOf(mData.getBackgroundTint()));
+//            } else {
+//                viewHolder.getCardView().setCardBackgroundColor(Util.getCardColor());
+//            }
+//        }
+
+        if (mFlatStyle)
+            ViewCompat.setElevation(viewHolder.getCardView(), 0);
+    }
+
+    private void setGlobalTitelAndSwitchLook(VH viewHolder) {
+        Util.setTextAppearance(viewHolder.getTitleTextView(), R.style.SettTitleGlobalTextAppearance);
+        viewHolder.getUseCustomSwitch(mData.getIcon() != null).setVisibility(View.GONE);
     }
 
     private void onUseCustomChanged(ISettingsViewHolder<Value, CLASS, SettData, VH> viewHolder) {
@@ -172,29 +202,36 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
             return;
         }
 
-        boolean b = viewHolder.getUseCustomSwitch().isChecked();
+        boolean b = viewHolder.getIsUseCustomSwitchChecked(mData.getIcon() != null);
         if (b != mData.getCustomEnabled((CLASS) mCallback.getCustomSettingsObject())) {
             mData.setCustomEnabled((CLASS) mCallback.getCustomSettingsObject(), b);
             mData.onValueChanged(mData.getUseCustomId(), (Activity) viewHolder.getBinding().getRoot().getContext(), mGlobalSetting, (CLASS) mCallback.getCustomSettingsObject());
-            viewHolder.onUpdateCustomViewDependencies(mGlobalSetting);
+            viewHolder.onUpdateCustomViewDependencies(mData.getIcon() != null, mGlobalSetting);
         }
     }
 
     private void onShowChangeSetting(VH viewHolder) {
-        if (!mGlobalSetting && !mData.getCustomEnabled((CLASS) mCallback.getCustomSettingsObject())) {
-            Toast.makeText(viewHolder.getTopValueContainer().getContext(), R.string.info_enable_setting_to_change_it, Toast.LENGTH_LONG).show();
+        if (mData.getSettingType() == BaseSetting.SettingType.Normal) {
+            if (!mGlobalSetting && !mData.getCustomEnabled((CLASS) mCallback.getCustomSettingsObject())) {
+                Toast.makeText(viewHolder.getTopValueContainer().getContext(), R.string.info_enable_setting_to_change_it, Toast.LENGTH_LONG).show();
+            } else {
+                mData.onShowChangeSetting(viewHolder, mCallback.getParentActivity(), mCallback.getBinding(), mData.getSettData(), mGlobalSetting, (CLASS) mCallback.getCustomSettingsObject());
+            }
         } else {
-            mData.onShowChangeSetting(viewHolder, mCallback.getParentActivity(), mCallback.getBinding(), mData.getSettData(), mGlobalSetting, (CLASS) mCallback.getCustomSettingsObject());
+            onShowInfo(viewHolder);
         }
     }
 
-    private void onShowInfo(ISettingsViewHolder<Value, CLASS, SettData, VH> viewHolder) {
+    private void onShowInfo(VH viewHolder) {
         if (mData.getInfo() != null) {
-            new InfoSettingsDialogFragmentBundleBuilder(
+            if (SettingsManager.get().getInfoHandler() != null) {
+                if (SettingsManager.get().getInfoHandler().showInfo(mData, viewHolder))
+                    return;
+            }
+            InfoSettingsDialogFragment.Companion.create(
                     mData.isInfoHtml(),
                     mData.getInfo().getText()
             )
-                    .createFragment()
                     .show(((FragmentActivity) mCallback.getParentActivity()).getSupportFragmentManager(), null);
         }
     }
@@ -228,7 +265,8 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
         @Override
         public View onBind(RecyclerView.ViewHolder viewHolder) {
             if (viewHolder instanceof ISettingsViewHolder) {
-                return ((ISettingsViewHolder) viewHolder).getUseCustomSwitch();
+                // doesn't matter which view, we use the VH anyways
+                return viewHolder.itemView;
             }
             return null;
         }
@@ -241,7 +279,8 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
         @Override
         public void onBindListener(View view, RecyclerView.ViewHolder viewHolder, FastAdapter<IItem> fastAdapter) {
             // forward custom event to {@link BaseCustomEventHook#onEventOccurred}
-            ((FixedSwitch) view).setOnCheckedChangeListener((v, b) -> onEventOccurred(v, viewHolder, fastAdapter));
+            ISettingsViewHolder vh = (ISettingsViewHolder) viewHolder;
+            vh.setCustomSwitchListeners((v, b) -> onEventOccurred(v, viewHolder, fastAdapter));
         }
 
         @Override
@@ -254,7 +293,7 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
     public static class ShowSettingsEvent extends BaseCustomEventHook<IItem> {
         @Override
         public View onBind(RecyclerView.ViewHolder viewHolder) {
-            if (viewHolder instanceof BaseSettingViewHolder) {
+            if (viewHolder instanceof BaseBaseSettingViewHolder) {
                 return ((ISettingsViewHolder) viewHolder).getRow1();
             }
             return null;
@@ -281,7 +320,7 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
     public static class ShowInfoEvent extends BaseCustomEventHook<IItem> {
         @Override
         public View onBind(RecyclerView.ViewHolder viewHolder) {
-            if (viewHolder instanceof BaseSettingViewHolder) {
+            if (viewHolder instanceof BaseBaseSettingViewHolder) {
                 return ((ISettingsViewHolder) viewHolder).getInfoButton();
             }
             return null;
@@ -301,7 +340,7 @@ public abstract class BaseSettingsItem<Parent extends IItem & IExpandable, Value
         @Override
         public void onEvent(View view, int pos, FastAdapter<IItem> fastAdapter, IItem item, RecyclerView.ViewHolder viewHolder) {
             // handle the event
-            ((BaseSettingsItem) item).onShowInfo((ISettingsViewHolder) viewHolder);
+            ((BaseSettingsItem) item).onShowInfo(viewHolder);
         }
     }
 }

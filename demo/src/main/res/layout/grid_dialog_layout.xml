@@ -4,7 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:padding="@dimen/md_dialog_frame_margin">
+    android:paddingLeft="@dimen/md_dialog_frame_margin_horizontal"
+    android:paddingRight="@dimen/md_dialog_frame_margin_horizontal"
+    android:paddingTop="@dimen/md_dialog_frame_margin_vertical"
+    android:paddingBottom="@dimen/md_dialog_frame_margin_vertical">
 
     <com.shawnlin.numberpicker.NumberPicker
         android:id="@+id/npRows"

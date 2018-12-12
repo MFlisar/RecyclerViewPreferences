@@ -1,19 +1,15 @@
 package com.michaelflisar.recyclerviewpreferences.fastadapter.header;
 
-import android.databinding.DataBindingUtil;
-import android.graphics.Color;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.DataBindingUtil;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.michaelflisar.recyclerviewpreferences.R;
-import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.databinding.AdapterItemHeaderBinding;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.utils.Definitions;
-import com.michaelflisar.recyclerviewpreferences.utils.Util;
-import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
@@ -53,11 +49,11 @@ public class SettingsHeaderItem<T extends BaseSettingsItem> extends AbstractExpa
         }
     };
 
-    public SettingsHeaderItem(boolean expandable, IIcon icon, int title, int id) {
-        this(expandable, icon, new SettingsText(title), id);
+    public SettingsHeaderItem(boolean expandable, IIcon icon, int title, int id, boolean flatStyle) {
+        this(expandable, icon, new SettingsText(title), id, flatStyle);
     }
 
-    public SettingsHeaderItem(boolean expandable, IIcon icon, SettingsText title, int id) {
+    public SettingsHeaderItem(boolean expandable, IIcon icon, SettingsText title, int id, boolean flatStyle) {
         mExpandable = expandable;
         mIcon = icon;
         mTitle = title;
@@ -147,7 +143,12 @@ public class SettingsHeaderItem<T extends BaseSettingsItem> extends AbstractExpa
         public ViewHolder(View view) {
             super(view);
             binding = DataBindingUtil.bind(view);
-            binding.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext()).icon(GoogleMaterial.Icon.gmd_keyboard_arrow_up).sizeDp(16).color(binding.tvTitle.getTextColors()));
+            binding.ivIcon.setImageDrawable(new IconicsDrawable(view.getContext())
+                    .icon(GoogleMaterial.Icon.gmd_keyboard_arrow_up)
+                    .sizeDp(24)
+                    .paddingDp(4)
+                    .color(binding.tvTitle.getTextColors())
+            );
         }
     }
 }

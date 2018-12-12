@@ -1,9 +1,9 @@
 package com.michaelflisar.recyclerviewpreferences.settings;
 
 import android.app.Activity;
-import android.databinding.ViewDataBinding;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.ViewDataBinding;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,7 +13,7 @@ import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.TextSettingItem;
-import com.michaelflisar.recyclerviewpreferences.fragments.TextSettingsDialogFragmentBundleBuilder;
+import com.michaelflisar.recyclerviewpreferences.fragments.TextSettingsDialogFragment;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
@@ -25,8 +25,11 @@ import com.mikepenz.iconics.typeface.IIcon;
  * Created by flisar on 16.05.2017.
  */
 
-public class TextDialogSetting<CLASS, SettData extends ISettData<String, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
-        ISettingsViewHolder<String, CLASS, SettData, VH>> extends BaseSetting<String, CLASS, SettData, VH> {
+public class TextDialogSetting<
+        CLASS,
+        SettData extends ISettData<String, CLASS, SettData, VH>,
+        VH extends RecyclerView.ViewHolder & ISettingsViewHolder<String, CLASS, SettData, VH>>
+        extends BaseSetting<String, CLASS, SettData, VH> {
 
     private boolean mAllowEmptyInput = false;
 
@@ -63,14 +66,13 @@ public class TextDialogSetting<CLASS, SettData extends ISettData<String, CLASS, 
 
     @Override
     public void onShowChangeSetting(VH vh, Activity activity, ViewDataBinding binding, SettData settData, boolean global, CLASS customSettingsObject) {
-        new TextSettingsDialogFragmentBundleBuilder(
+        TextSettingsDialogFragment.Companion.create(
                 getSettingId(),
                 global,
                 getValue(customSettingsObject, global),
                 getTitle().getText(),
                 mAllowEmptyInput
         )
-                .createFragment()
                 .show(((FragmentActivity) activity).getSupportFragmentManager(), null);
     }
 
@@ -81,13 +83,12 @@ public class TextDialogSetting<CLASS, SettData extends ISettData<String, CLASS, 
 
     @Override
     public final int getLayout() {
-        return R.layout.adapter_setting_item_text;
+        return R.layout.adapter_base_setting_item;
     }
 
     @Override
-    public <P extends IItem & IExpandable> BaseSettingsItem<P, String, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,
-            boolean withBottomDivider) {
-        return new TextSettingItem(global, compact, this, settingsCallback, withBottomDivider);
+    public <P extends IItem & IExpandable> BaseSettingsItem<P, String, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback, boolean flatStyle) {
+        return new TextSettingItem(global, compact, this, settingsCallback, flatStyle);
     }
 
     @Override

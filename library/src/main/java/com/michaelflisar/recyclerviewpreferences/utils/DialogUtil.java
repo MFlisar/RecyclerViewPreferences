@@ -1,7 +1,8 @@
 package com.michaelflisar.recyclerviewpreferences.utils;
 
 import android.app.Activity;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 
 import com.michaelflisar.recyclerviewpreferences.SettingsFragment;

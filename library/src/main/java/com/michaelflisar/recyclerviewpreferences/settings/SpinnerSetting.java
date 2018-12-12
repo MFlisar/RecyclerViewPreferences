@@ -1,10 +1,8 @@
 package com.michaelflisar.recyclerviewpreferences.settings;
 
 import android.app.Activity;
-import android.databinding.ViewDataBinding;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,12 +25,19 @@ import com.mikepenz.iconics.typeface.IIcon;
 
 import java.util.ArrayList;
 
+import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * Created by flisar on 16.05.2017.
  */
 
-public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
-        ISettingsViewHolder<Integer, CLASS, SettData, VH>> extends BaseSetting<Integer, CLASS, SettData, VH> {
+public class SpinnerSetting<
+        CLASS,
+        SettData extends ISettData<Integer, CLASS, SettData, VH>,
+        VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, CLASS, SettData, VH>>
+        extends BaseSetting<Integer, CLASS, SettData, VH> {
+
     private ISettingsSpinnerEnumHelper mSpinnerHelper;
     private Runnable mRunnableTop = null;
     private Runnable mRunnableBottom = null;
@@ -149,7 +154,7 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
     public void onShowChangeSetting(VH vh, Activity activity, ViewDataBinding binding, SettData settData, boolean global, CLASS customSettingsObject) {
         // Spinner geht mit EventHook
         // Falls Container geklickt wird, leiten wir das Event an den Spinner weiter
-        ((Spinner) vh.getValueTopView()).performClick();
+        vh.getValueTopView().performClick();
 
     }
 
@@ -165,16 +170,17 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
     @Override
     public final int getLayout() {
         if (mSpinnerMode == Spinner.MODE_DROPDOWN) {
-            return R.layout.adapter_setting_item_spinner;
+            return R.layout.adapter_base_setting_item;
+//            return R.layout.adapter_setting_item_spinner;
         } else {
-            return R.layout.adapter_setting_item_spinner_dialog;
+            return R.layout.adapter_base_setting_item;
+//            return R.layout.adapter_setting_item_spinner_dialog;
         }
     }
 
     @Override
-    public <P extends IItem & IExpandable> BaseSettingsItem<P, Integer, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,
-            boolean withBottomDivider) {
-        return new SpinnerSettingItem(global, compact, this, settingsCallback, withBottomDivider);
+    public <P extends IItem & IExpandable> BaseSettingsItem<P, Integer, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,boolean flatStyle) {
+        return new SpinnerSettingItem(mSpinnerMode, global, compact, this, settingsCallback, flatStyle);
     }
 
 //    public final List<String> getItems() {
@@ -202,15 +208,17 @@ public class SpinnerSetting<CLASS, SettData extends ISettData<Integer, CLASS, Se
     // --------------------
 
     private final void post(View v, Runnable runnable) {
-        if (runnable == null)
+        if (runnable == null) {
             return;
+        }
 //        v.post(runnable);
         mHandler.post(runnable);
     }
 
     private final void removeCallbacks(View v, Runnable runnable) {
-        if (runnable == null)
+        if (runnable == null) {
             return;
+        }
 //        v.removeCallbacks(runnable);
         mHandler.removeCallbacks(runnable);
     }

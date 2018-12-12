@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.widget.CardView
-        style="@style/SettCardViewMultiLevel"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        style="@style/SettCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            style="@style/SettMultiLevelText"
-            android:id="@+id/tvTitle"
+        <LinearLayout
+            style="@style/SettCardViewContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="..." />
+            android:orientation="horizontal">
 
-    </android.support.v7.widget.CardView>
+            <com.mikepenz.iconics.view.IconicsImageView
+                android:id="@+id/ivIcon"
+                style="@style/SettImage" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                style="@style/SettMultiLevelText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="..." />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </layout>

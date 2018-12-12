@@ -2,11 +2,14 @@ package com.michaelflisar.recyclerviewpreferences.utils;
 
 
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsGroup;
 import com.michaelflisar.recyclerviewpreferences.classes.Dependency;
+import com.michaelflisar.recyclerviewpreferences.classes.SettingsDividerDecorator;
 import com.michaelflisar.recyclerviewpreferences.classes.SettingsSpaceDecorator;
 import com.michaelflisar.recyclerviewpreferences.defaults.Setup;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.header.SettingsAlternativeHeaderItem;
@@ -23,7 +26,6 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
-import com.mikepenz.fastadapter.IItemAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 
 import java.util.ArrayList;
@@ -58,6 +60,29 @@ public class SettingsUtil {
             items.addAll(getSettingItems(global, customSettingsObject, setup, settingsCallback, null, groups, settingGroupId, addIfAnyParentIsInGroup, addTopHeaders, showHeadersAsButtons, headerId,
                     forceNoHeaders, collapsedIds));
         }
+
+        if (setup.isHideSingleHeader()) {
+            int countHeaders = 0;
+            int countAltHeaders = 0;
+            for (IItem item : items) {
+                if (item instanceof SettingsHeaderItem) {
+                    countHeaders++;
+                }
+                if (item instanceof SettingsAlternativeHeaderItem) {
+                    countAltHeaders++;
+                }
+            }
+
+            if (countHeaders == 1) {
+                for (IItem item : items) {
+                    if (item instanceof SettingsHeaderItem) {
+                        items = ((SettingsHeaderItem)item).getSubItems();
+                        break;
+                    }
+                }
+            }
+        }
+
         return items;
     }
 
@@ -71,7 +96,7 @@ public class SettingsUtil {
                 if (!forceNoHeaders && addTopHeaders && localAnyParentIsGroup) {
                     if (!SettingsManager.get().getState().isHideEmptyHeaders() || group.getGroups().size() > 0) {
                         if (showHeadersAsButtons) {
-                            items.add(new SettingsHeaderItem(false, null /* no icon in headers of headers in multi level list */, group.getTitle(), headerId.getAndDecrement()));
+                            items.add(new SettingsHeaderItem(false, null /* no icon in headers of headers in multi level list */, group.getTitle(), headerId.getAndDecrement(), setup.getFlatStyle()));
                         } else {
                             items.add(new SettingsAlternativeHeaderItem(group.getTitle(), headerId.getAndDecrement()));
                         }
@@ -83,9 +108,10 @@ public class SettingsUtil {
                 if (((addIfAnyParentIsInGroup && localAnyParentIsGroup) || group.check(settingGroupId))) {
                     if (showHeadersAsButtons) {
                         if (!forceNoHeaders) {
-                            List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, true, setup.getFilter());
+                            List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, setup.getFilter(),
+                                    setup.getFlatStyle());
                             if (!SettingsManager.get().getState().isHideEmptyHeaders() || itemsOfHeader.size() > 0) {
-                                SettingsMultilevelHeaderItem header = new SettingsMultilevelHeaderItem(group.getIcon(), group.getTitle(), headerId.getAndDecrement())
+                                SettingsMultilevelHeaderItem header = new SettingsMultilevelHeaderItem(group.getIcon(), group.getTitle(), headerId.getAndDecrement(), setup.getFlatStyle())
                                         .withOnItemClickListener((view, iAdapter, item, i) -> {
                                             settingsCallback.showMultiLevelSetting(group.getGroupId());
                                             return true;
@@ -95,34 +121,40 @@ public class SettingsUtil {
                         }
                     } else {
                         SettingsHeaderItem header = null;
-                        List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, true, setup.getFilter());
+                        List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, setup.getFilter(), setup.getFlatStyle());
 
                         if (SettingsManager.get().getState().isHideEmptyHeaders() && itemsOfHeader.size() == 0) {
                             // skip, we don't need an empty header
                         } else {
                             if (!forceNoHeaders) {
-                                header = new SettingsHeaderItem(setup.isUseExpandableHeaders(), group.getIcon(), group.getTitle(), headerId.getAndDecrement());
+                                header = new SettingsHeaderItem(setup.isUseExpandableHeaders(), group.getIcon(), group.getTitle(), headerId.getAndDecrement(), setup.getFlatStyle());
                                 if (collapsedIds.contains(group.getGroupId())) {
                                     header.withIsExpanded(false);
                                 }
-                                items.add(header);
+                                if (!group.isHideInLayout()) {
+                                    items.add(header);
+                                }
                             }
 
 
                             if (itemsOfHeader.size() > 0) {
-                                itemsOfHeader.get(itemsOfHeader.size() - 1).withBottomDivider(false);
+                                itemsOfHeader.get(itemsOfHeader.size() - 1);
                             }
                             if (forceNoHeaders) {
                                 items.addAll(itemsOfHeader);
                             } else {
-                                // we always use sub items to be able to switch between expandable and not expandable headers
+                                if (!group.isHideInLayout()) {
+                                    // we always use sub items to be able to switch between expandable and not expandable headers
 //                    if (setup.isUseExpandableHeaders()) {
-                                header.withSubItems(itemsOfHeader);
+                                    header.withSubItems(itemsOfHeader);
 //                    } else {
 //                        items.addAll(itemsOfHeader);
 //                    }
 
-                                header.setExpandable(setup.isUseExpandableHeaders());
+                                    header.setExpandable(setup.isUseExpandableHeaders());
+                                } else {
+                                    items.addAll(itemsOfHeader);
+                                }
                             }
 
                             // Update state of all items
@@ -184,10 +216,18 @@ public class SettingsUtil {
     // Hilfsfunktionen
     // ---------------------------
 
-    public static void addDecorator(RecyclerView rv) {
-        // TODO: Header in Cards + Space Decorator
+    public static SettingsDividerDecorator addDecorator(RecyclerView rv, Setup.LayoutStyle layoutStyle, Setup.DividerStyle dividerStyle) {
         int dp1 = Util.convertDpToPixel(1, rv.getContext());
-        rv.addItemDecoration(new SettingsSpaceDecorator(dp1 * 8, dp1 * 16, dp1 * 8));
+        rv.addItemDecoration(new SettingsSpaceDecorator(0, dp1 * 0, 0, dp1 * 8)); // row padding is part of the layouts
+       if (dividerStyle != Setup.DividerStyle.None) {
+           SettingsDividerDecorator dividerItemDecoration = new SettingsDividerDecorator(rv.getContext(), dp1 * 16);
+           if (layoutStyle == Setup.LayoutStyle.Normal || dividerStyle == Setup.DividerStyle.Always) {
+               rv.addItemDecoration(dividerItemDecoration);
+           }
+           return dividerItemDecoration;
+       } else {
+           return null;
+       }
     }
 
     public static FastItemAdapter<IItem> initAdapter(FastItemAdapter<IItem> adapter, List<IItem> items, Bundle savedInstanceState, String fastAdapterBundlePrefix) {

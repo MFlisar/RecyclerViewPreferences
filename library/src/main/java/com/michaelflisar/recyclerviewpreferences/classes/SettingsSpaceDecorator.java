@@ -1,7 +1,7 @@
 package com.michaelflisar.recyclerviewpreferences.classes;
 
 import android.graphics.Rect;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.michaelflisar.recyclerviewpreferences.R;
@@ -15,12 +15,14 @@ public class SettingsSpaceDecorator extends RecyclerView.ItemDecoration {
 
     private final int paddingHorizontal;
     private final int paddingBeforeHeader;
-    private final int paddingTopBottom;
+    private final int paddingTop;
+    private final int paddingBottom;
 
-    public SettingsSpaceDecorator(int paddingHorizontal, int paddingBeforeHeader, int paddingTopBottom) {
+    public SettingsSpaceDecorator(int paddingHorizontal, int paddingBeforeHeader, int paddingTop, int paddingBottom) {
         this.paddingHorizontal = paddingHorizontal;
         this.paddingBeforeHeader = paddingBeforeHeader;
-        this.paddingTopBottom = paddingTopBottom;
+        this.paddingTop = paddingTop;
+        this.paddingBottom = paddingBottom;
     }
 
     @Override
@@ -30,18 +32,19 @@ public class SettingsSpaceDecorator extends RecyclerView.ItemDecoration {
         int count = parent.getAdapter().getItemCount();
 
         boolean alternativeHeaderAbove = pos > 0 && parent.getAdapter().getItemViewType(pos - 1) == R.id.id_adapter_setting_alternative_header_item;
+        boolean headerAbove = pos > 0 && parent.getAdapter().getItemViewType(pos - 1) == R.id.id_adapter_setting_header_item;
 
-        // Space über jedem Header, falls dieser nicht unter alternativem Header ist und nicht an erster Stelle ist
-        if (pos > 0 && !alternativeHeaderAbove && parent.getChildViewHolder(view) instanceof SettingsHeaderItem.ViewHolder)  {
+        // Space über jedem Header, falls dieser nicht unter alternativem oder anderem Header ist und nicht an erster Stelle ist
+        if (pos > 0 && !alternativeHeaderAbove && !headerAbove&& parent.getChildViewHolder(view) instanceof SettingsHeaderItem.ViewHolder)  {
             outRect.top = paddingBeforeHeader;
         }
 
         // First and last item padding top
-        if (pos == 0 && paddingTopBottom != 0) {
-            outRect.top = paddingBeforeHeader;
+        if (pos == 0 && paddingTop != 0) {
+            outRect.top = paddingTop;
         }
-        if (pos == count -1 && paddingTopBottom != 0) {
-            outRect.bottom = paddingBeforeHeader;
+        if (pos == count -1 && paddingBottom != 0) {
+            outRect.bottom = paddingBottom;
         }
 
         // item padding left/right

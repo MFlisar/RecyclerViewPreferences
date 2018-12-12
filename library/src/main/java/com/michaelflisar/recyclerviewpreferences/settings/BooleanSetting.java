@@ -1,8 +1,6 @@
 package com.michaelflisar.recyclerviewpreferences.settings;
 
 import android.app.Activity;
-import android.databinding.ViewDataBinding;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.michaelflisar.recyclerviewpreferences.R;
@@ -18,12 +16,18 @@ import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.iconics.typeface.IIcon;
 
+import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * Created by Michael on 16.05.2017.
  */
 
-public class BooleanSetting<CLASS, SettData extends ISettData<Boolean, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
-        ISettingsViewHolder<Boolean, CLASS, SettData, VH>> extends BaseSetting<Boolean, CLASS, SettData, VH> {
+public class BooleanSetting<
+        CLASS,
+        SettData extends ISettData<Boolean, CLASS, SettData, VH>,
+        VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Boolean, CLASS, SettData, VH>>
+        extends BaseSetting<Boolean, CLASS, SettData, VH> {
 
     public BooleanSetting(Class<CLASS> clazz, SettData settData, int title, IIcon icon) {
         this(clazz, settData, new SettingsText(title), icon);
@@ -39,7 +43,7 @@ public class BooleanSetting<CLASS, SettData extends ISettData<Boolean, CLASS, Se
 
     @Override
     public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
-        ((FixedSwitch) v).setChecked(getValue((CLASS)callback.getCustomSettingsObject(), global));
+        ((FixedSwitch) v).setChecked(getValue((CLASS) callback.getCustomSettingsObject(), global));
     }
 
     @Override
@@ -64,12 +68,11 @@ public class BooleanSetting<CLASS, SettData extends ISettData<Boolean, CLASS, Se
 
     @Override
     public final int getLayout() {
-        return R.layout.adapter_setting_item_switch;
+        return R.layout.adapter_base_setting_item;
     }
 
     @Override
-    public <P extends IItem & IExpandable> BaseSettingsItem<P, Boolean, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,
-            boolean withBottomDivider) {
-        return new SwitchSettingItem(global, compact, this, settingsCallback, withBottomDivider);
+    public <P extends IItem & IExpandable> BaseSettingsItem<P, Boolean, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,boolean flatStyle) {
+        return new SwitchSettingItem(global, compact, this, settingsCallback, flatStyle);
     }
 }

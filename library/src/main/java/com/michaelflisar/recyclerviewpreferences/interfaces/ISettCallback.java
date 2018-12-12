@@ -1,10 +1,7 @@
 package com.michaelflisar.recyclerviewpreferences.interfaces;
 
 import android.app.Activity;
-import android.databinding.ViewDataBinding;
-
-import com.michaelflisar.recyclerviewpreferences.SettingsManager;
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
+import androidx.databinding.ViewDataBinding;
 
 public interface ISettCallback {
 

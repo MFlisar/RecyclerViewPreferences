@@ -1,1 +1,8 @@
 include ':library', ':demo', ':simpledemo'
+
+//include ':core'
+//project(':core').projectDir = new File(settingsDir, '../../foreign/material-dialogs/core')
+//include ':input'
+//project(':input').projectDir = new File(settingsDir, '../../foreign/material-dialogs/input')
+//include ':color'
+//project(':color').projectDir = new File(settingsDir, '../../foreign/material-dialogs/color')

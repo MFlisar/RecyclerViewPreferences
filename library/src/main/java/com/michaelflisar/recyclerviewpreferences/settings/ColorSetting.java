@@ -1,9 +1,6 @@
 package com.michaelflisar.recyclerviewpreferences.settings;
 
 import android.app.Activity;
-import android.databinding.ViewDataBinding;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.michaelflisar.recyclerviewpreferences.R;
@@ -12,7 +9,7 @@ import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.ColorSettingItem;
-import com.michaelflisar.recyclerviewpreferences.fragments.ColorSettingsDialogFragmentBundleBuilder;
+import com.michaelflisar.recyclerviewpreferences.fragments.ColorSettingsDialogFragment;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
@@ -21,12 +18,19 @@ import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.iconics.typeface.IIcon;
 
+import androidx.databinding.ViewDataBinding;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * Created by flisar on 16.05.2017.
  */
 
-public class ColorSetting<CLASS, SettData extends ISettData<Integer, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
-        ISettingsViewHolder<Integer, CLASS, SettData, VH>> extends BaseSetting<Integer, CLASS, SettData, VH> {
+public class ColorSetting<
+        CLASS,
+        SettData extends ISettData<Integer, CLASS, SettData, VH>,
+        VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, CLASS, SettData, VH>>
+        extends BaseSetting<Integer, CLASS, SettData, VH> {
 
     public ColorSetting(Class<CLASS> clazz, SettData settData, int title, IIcon icon) {
         this(clazz, settData, new SettingsText(title), icon);
@@ -42,7 +46,7 @@ public class ColorSetting<CLASS, SettData extends ISettData<Integer, CLASS, Sett
 
     @Override
     public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
-        int color = getValue((CLASS)callback.getCustomSettingsObject(), global);
+        int color = getValue((CLASS) callback.getCustomSettingsObject(), global);
         Util.setCircleColorBackground(v, color, true, SettingsManager.get().getState().isDarkTheme());
     }
 
@@ -56,13 +60,12 @@ public class ColorSetting<CLASS, SettData extends ISettData<Integer, CLASS, Sett
 
     @Override
     public void onShowChangeSetting(VH vh, Activity activity, ViewDataBinding binding, SettData settData, boolean global, CLASS customSettingsObject) {
-        new ColorSettingsDialogFragmentBundleBuilder(
+        ColorSettingsDialogFragment.Companion.create(
                 getSettingId(),
                 global,
                 getValue(customSettingsObject, global),
                 getTitle().toString()
         )
-                .createFragment()
                 .show(((FragmentActivity) activity).getSupportFragmentManager(), null);
     }
 
@@ -73,13 +76,12 @@ public class ColorSetting<CLASS, SettData extends ISettData<Integer, CLASS, Sett
 
     @Override
     public final int getLayout() {
-        return R.layout.adapter_setting_item_color;
+        return R.layout.adapter_base_setting_item;
     }
 
     @Override
-    public <P extends IItem & IExpandable> BaseSettingsItem<P, Integer, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,
-            boolean withBottomDivider) {
-        return new ColorSettingItem(global, compact, this, settingsCallback, withBottomDivider);
+    public <P extends IItem & IExpandable> BaseSettingsItem<P, Integer, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,boolean flatStyle) {
+        return new ColorSettingItem(global, compact, this, settingsCallback, flatStyle);
     }
 
     @Override

@@ -1,33 +1,48 @@
 <resources>
 
-    <!-- main setting layout -->
+    <!-- ***************************** -->
+    <!-- Container + Content Container -->
+    <!-- ***************************** -->
+
     <style name="SettCardView">
         <item name="cardUseCompatPadding">true</item>
         <item name="cardCornerRadius">0dp</item>
         <item name="cardElevation">4dp</item>
         <item name="cardPreventCornerOverlap">false</item>
         <item name="contentPadding">0dp</item>
-        <item name="android:layout_marginTop">-6dp</item>
+        <item name="android:layout_marginTop">-5dp</item>
         <item name="android:layout_marginBottom">-6dp</item>
+        <item name="android:layout_marginLeft">-6dp</item>
+        <item name="android:layout_marginRight">-6dp</item>
         <!--<item name="android:layout_marginRight">@dimen/page_padding</item>-->
         <!--<item name="android:layout_marginLeft">@dimen/page_padding</item>-->
     </style>
 
-    <style name="SettRowContainer">
-        <!--<item name="android:paddingLeft">6dp</item>-->
-        <!--<item name="android:paddingRight">6dp</item>-->
+    <style name="SettCardViewContent">
+
+    </style>
+
+    <style name="SettNoCardViewContainer">
+
+    </style>
+
+    <!-- ******* -->
+    <!-- Content - settings with padding/margins -->
+    <!-- ******* -->
+
+    <style name="SettRow">
+
     </style>
 
     <style name="SettRow1">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
         <item name="android:minHeight">48dp</item>
         <item name="android:background">?selectableItemBackground</item>
     </style>
 
     <style name="SettImage">
-        <item name="android:layout_marginTop">4dp</item>
-        <item name="android:layout_marginBottom">4dp</item>
-        <item name="android:layout_marginRight">8dp</item>
-        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">16dp</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="ico_icon">gmd-settings</item>
         <!-- TODO: for dark themes this does not work, it's gray instead of white there although the same attribute works for textviews-->
@@ -35,28 +50,84 @@
         <item name="ico_size">24dp</item>
         <item name="iiv_color">?android:attr/textColorPrimary</item>
         <item name="iiv_size">24dp</item>
-        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">24dp</item>
         <item name="android:padding">2dp</item>
+
     </style>
 
-    <style name="SettItemInnerDivider">
-        <item name="android:layout_marginLeft">@dimen/divider_left_margin_no_image</item>
-        <item name="android:layout_marginRight">2dp</item>
+    <style name="SettImageNew" parent="SettImage">
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+    </style>
+
+    <style name="SettImageInner" parent="SettImage">
+        <item name="android:layout_marginLeft">0dp</item>
+    </style>
+
+    <style name="SettContainerCustomValue">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:minHeight">48dp</item>
+        <!--<item name="android:background">?selectableItemBackground</item>-->
+    </style>
+
+    <style name="SettItemInnerDividerNew">
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
         <item name="android:layout_height">1dp</item>
         <item name="android:alpha">0.25</item>
         <item name="android:background">?attr/dividerHorizontal</item>
     </style>
 
-    <style name="SettContainerCustomValue">
-        <item name="android:minHeight">48dp</item>
-        <!--<item name="android:background">?selectableItemBackground</item>-->
+    <style name="SettSeekBar">
+        <item name="android:minHeight">32dp</item>
+        <!-- thumb half size padding is needed to avoid clipping of circle -->
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
     </style>
 
+    <style name="SettRow2">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:gravity">right</item>
+        <item name="android:minHeight">32dp</item>
+    </style>
+
+    <style name="SettHeader">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:lines">1</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    </style>
+
+    <style name="SettHeaderIcon">
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">?selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="SettMultiLevelText">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:minHeight">36dp</item>
+    </style>
+
+    <!-- ******* -->
+    <!-- Text Styles and similar -->
+    <!-- ******* -->
+
     <style name="SettContainerTitle">
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">4dp</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
 
@@ -87,53 +158,14 @@
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
-    <style name="SettSeekBar">
-        <item name="android:minHeight">32dp</item>
-        <!-- thumb half size padding is needed to avoid clipping of circle -->
-        <item name="android:paddingStart">8dp</item>
-        <item name="android:paddingEnd">8dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-    </style>
-
-    <style name="SettRow2">
-        <item name="android:gravity">right</item>
-        <item name="android:minHeight">32dp</item>
-        <item name="android:paddingLeft">@dimen/row2_left_padding_no_image</item>
-    </style>
-
     <style name="SettDefaultValueTitle">
-        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingLeft">0dp</item>
         <item name="android:paddingRight">4dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
     </style>
 
-    <style name="SettHeader">
-        <item name="android:minHeight">48dp</item>
-        <item name="android:textColor">?colorPrimary</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:gravity">center_vertical|start</item>
-        <item name="android:lines">1</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-    </style>
-
-    <style name="SettHeaderIcon">
-        <item name="ico_color">?colorPrimary</item>
-        <item name="ico_icon">gmd-keyboard-arrow-up</item>
-        <item name="ico_size">24dp</item>
-        <item name="ico_padding">4dp</item>
-        <item name="android:layout_marginRight">4dp</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
-        <item name="android:background">?selectableItemBackgroundBorderless</item>
-    </style>
-
-    <style name="SettAltHeader" parent="SettRowContainer">
+    <style name="SettAltHeader">
         <item name="android:minHeight">48dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
@@ -159,14 +191,6 @@
         <item name="android:maxLines">1</item>
         <item name="android:inputType">text</item>
         <item name="android:ellipsize">start</item>
-    </style>
-
-    <style name="SettMultiLevelText">
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:gravity">left|center_vertical</item>
-        <item name="android:drawablePadding">8dp</item>
-        <item name="android:minHeight">36dp</item>
     </style>
 
     <style name="SettCardViewMultiLevel" parent="SettCardView">

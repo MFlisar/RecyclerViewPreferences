@@ -1,9 +1,6 @@
 package com.michaelflisar.recyclerviewpreferences.settings;
 
 import android.app.Activity;
-import android.databinding.ViewDataBinding;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -12,11 +9,10 @@ import com.michaelflisar.recyclerviewpreferences.R;
 import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
-import com.michaelflisar.recyclerviewpreferences.databinding.AdapterSettingItemNumberBinding;
+import com.michaelflisar.recyclerviewpreferences.databinding.ViewNumberTopBinding;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.NumberSettingItem;
 import com.michaelflisar.recyclerviewpreferences.fragments.NumberSettingsDialogFragment;
-import com.michaelflisar.recyclerviewpreferences.fragments.NumberSettingsDialogFragmentBundleBuilder;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
@@ -24,12 +20,18 @@ import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.iconics.typeface.IIcon;
 
+import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * Created by flisar on 16.05.2017.
  */
 
-public class NumberSetting<CLASS, SettData extends ISettData<Integer, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
-        ISettingsViewHolder<Integer, CLASS, SettData, VH>> extends BaseSetting<Integer, CLASS, SettData, VH> {
+public class NumberSetting<
+        CLASS,
+        SettData extends ISettData<Integer, CLASS, SettData, VH>,
+        VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, CLASS, SettData, VH>>
+        extends BaseSetting<Integer, CLASS, SettData, VH> {
 
     public enum Mode {
         SeekbarAndDialogInput,
@@ -84,19 +86,19 @@ public class NumberSetting<CLASS, SettData extends ISettData<Integer, CLASS, Set
 
     @Override
     public void updateValueView(boolean topView, VH vh, View v, SettData settData, boolean global, ISettCallback callback) {
-        String text = mUnitRes == null ? String.valueOf(getValue((CLASS)callback.getCustomSettingsObject(), global)) : SettingsManager.get().getContext().getString(mUnitRes, getValue((CLASS)callback.getCustomSettingsObject(), global));
+        String text = mUnitRes == null ? String.valueOf(getValue((CLASS) callback.getCustomSettingsObject(), global)) : SettingsManager.get().getContext().getString(mUnitRes,
+                getValue((CLASS) callback.getCustomSettingsObject(), global));
         ((TextView) v).setText(text);
 
         if (topView) {
-            int seekbarValue = (getValue((CLASS)callback.getCustomSettingsObject(), global) - getMin()) / getStepSize();
-            ((AdapterSettingItemNumberBinding) vh.getBinding()).sbTop.setProgress(seekbarValue);
+            int seekbarValue = (getValue((CLASS) callback.getCustomSettingsObject(), global) - getMin()) / getStepSize();
+            ((ViewNumberTopBinding) vh.getTopBinding()).sbTop.setProgress(seekbarValue);
         }
     }
 
     @Override
     public void bind(VH vh) {
-        NumberSettingItem.NumberViewHolder viewHolder = (NumberSettingItem.NumberViewHolder) vh;
-        SeekBar seekBar = ((AdapterSettingItemNumberBinding) viewHolder.getBinding()).sbTop;
+        SeekBar seekBar = ((ViewNumberTopBinding) vh.getTopBinding()).sbTop;
         seekBar.setMax(mMax - mMin);
     }
 
@@ -118,13 +120,12 @@ public class NumberSetting<CLASS, SettData extends ISettData<Integer, CLASS, Set
 
     @Override
     public final int getLayout() {
-        return R.layout.adapter_setting_item_number;
+        return R.layout.adapter_base_setting_item;
     }
 
     @Override
-    public <P extends IItem & IExpandable> BaseSettingsItem<P, Integer, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,
-            boolean withBottomDivider) {
-        return new NumberSettingItem(global, compact, this, settingsCallback, withBottomDivider);
+    public <P extends IItem & IExpandable> BaseSettingsItem<P, Integer, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,  boolean flatStyle) {
+        return new NumberSettingItem(global, compact, this, settingsCallback, flatStyle);
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.michaelflisar.recyclerviewpreferences.implementations;
 
 
-import android.support.v7.widget.RecyclerView;
-
 import com.michaelflisar.recyclerviewpreferences.classes.GlobalSetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
@@ -12,11 +10,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import hundredthirtythree.sessionmanager.SessionManager;
 
-public class SharedPreferenceSettData<Value, SettData extends ISettData<Value, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, GlobalSetting, SettData,
-        VH>> implements
-        ISettData<Value, GlobalSetting, SettData, VH> {
+public class SharedPreferenceSettData<
+        Value,
+        SettData extends ISettData<Value, GlobalSetting, SettData, VH>,
+        VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, GlobalSetting, SettData, VH>>
+        implements ISettData<Value, GlobalSetting, SettData, VH> {
 
     protected final String preferenceId;
     private final Class<?> mClass;
@@ -41,34 +42,39 @@ public class SharedPreferenceSettData<Value, SettData extends ISettData<Value, G
         }
     }
 
-    public static <SettData extends ISettData<Integer, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, GlobalSetting, SettData, VH>>
+    public static <SettData extends ISettData<Integer, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<
+            Integer, GlobalSetting, SettData, VH>>
     SharedPreferenceSettData createIntData(
             String preferenceId, int defaultValue) {
         return new SharedPreferenceSettData(Integer.class, preferenceId)
                 .withDefaultValue(defaultValue);
     }
 
-    public static <SettData extends ISettData<Boolean, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Boolean, GlobalSetting, SettData, VH>>
+    public static <SettData extends ISettData<Boolean, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<
+            Boolean, GlobalSetting, SettData, VH>>
     SharedPreferenceSettData<Boolean, SettData, VH> createBoolData(
             String preferenceId) {
         return new SharedPreferenceSettData(Boolean.class, preferenceId);
     }
 
-    public static <SettData extends ISettData<Boolean, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Boolean, GlobalSetting, SettData, VH>>
+    public static <SettData extends ISettData<Boolean, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<
+            Boolean, GlobalSetting, SettData, VH>>
     SharedPreferenceSettData<Boolean, SettData, VH> createBoolData(
             String preferenceId, boolean defaultValue) {
         return new SharedPreferenceSettData(Boolean.class, preferenceId)
                 .withDefaultValue(defaultValue);
     }
 
-    public static <SettData extends ISettData<String, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<String, GlobalSetting, SettData, VH>>
+    public static <SettData extends ISettData<String, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<
+            String, GlobalSetting, SettData, VH>>
     SharedPreferenceSettData createStringData(
             String preferenceId, String defaultValue) {
         return new SharedPreferenceSettData(String.class, preferenceId)
                 .withDefaultValue(defaultValue);
     }
 
-    public static <SettData extends ISettData<String, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<String, GlobalSetting, SettData, VH>, T, S extends
+    public static <SettData extends ISettData<String, GlobalSetting, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<
+            String, GlobalSetting, SettData, VH>, T, S extends
             ISharedPreferenceStringSerialiser<T>> SharedPreferenceSettData createCustomData(
             String preferenceId, T defaultValue, S serialiser) {
         return new SharedPreferenceSettData(String.class, preferenceId)
@@ -113,7 +119,7 @@ public class SharedPreferenceSettData<Value, SettData extends ISettData<Value, G
     @Override
     public Value getValue(GlobalSetting object, boolean global) {
         if (mSerialiser != null) {
-           return (Value)mSerialiser.fromString(SessionManager.getString(preferenceId, (String) defaultValue));
+            return (Value) mSerialiser.fromString(SessionManager.getString(preferenceId, (String) defaultValue));
         } else if (mClass.equals(Integer.class)) {
             return (Value) (Integer) SessionManager.getInt(preferenceId, (Integer) defaultValue);
         } else if (mClass.equals(Boolean.class)) {

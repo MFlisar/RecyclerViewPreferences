@@ -1,44 +1,43 @@
 package com.michaelflisar.recyclerviewpreferences.fastadapter.settings;
 
-import android.app.Activity;
-import android.databinding.ViewDataBinding;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.classes.SimpleSpinnerListener;
-import com.michaelflisar.recyclerviewpreferences.databinding.AdapterSettingItemSpinnerBinding;
-import com.michaelflisar.recyclerviewpreferences.databinding.AdapterSettingItemSpinnerDialogBinding;
-import com.michaelflisar.recyclerviewpreferences.fastadapter.BaseSettingViewHolder;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.hooks.BaseCustomEventHook;
+import com.michaelflisar.recyclerviewpreferences.fastadapter.viewholders.SpinnerViewHolder;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.settings.SpinnerSetting;
-import com.michaelflisar.recyclerviewpreferences.views.FixedSwitch;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IExpandable;
 import com.mikepenz.fastadapter.IItem;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by Michael on 20.05.2017.
  */
 
-public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettData extends ISettData<Integer, CLASS, SettData, VH>, VH extends SpinnerSettingItem.SpinnerViewHolder<Integer, CLASS,
-        SettData, VH>> extends
-        BaseSettingsItem<Parent, Integer, CLASS, SettData, VH> {
+public class SpinnerSettingItem<
+        Parent extends IItem & IExpandable,
+        CLASS,
+        SettData extends ISettData<Integer, CLASS, SettData, VH>,
+        VH extends SpinnerViewHolder<Integer, CLASS, SettData, VH>>
+        extends BaseSettingsItem<Parent, Integer, CLASS, SettData, VH> {
+
+    private int mSpinnerMode;
 
     // ------------------
     // Factory
     // ------------------
 
-    public SpinnerSettingItem(boolean globalSetting, boolean compact, BaseSetting<Integer, CLASS, SettData, VH> data, ISettCallback callback, boolean withBottomDivider) {
-        super(globalSetting, compact, data, callback, withBottomDivider);
+    public SpinnerSettingItem(int spinnerMode, boolean globalSetting, boolean compact, BaseSetting<Integer, CLASS, SettData, VH> data, ISettCallback callback, boolean flatStyle) {
+        super(globalSetting, compact, data, callback, flatStyle);
+        mSpinnerMode = spinnerMode;
     }
 
     // ------------------
@@ -47,7 +46,7 @@ public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettD
 
     @Override
     public VH getViewHolder(View v) {
-        VH vh = (VH) new SpinnerViewHolder(v, mGlobalSetting, mCompact);
+        VH vh = (VH) new SpinnerViewHolder<Integer, CLASS, SettData, VH>(v, mGlobalSetting, mCompact, mSpinnerMode);
         // prevent Spinner in Row2 from being editable
         vh.getValueBottomView().setOnTouchListener((view, motionEvent) -> true);
         return vh;
@@ -84,148 +83,6 @@ public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettD
     }
 
     // ------------------
-    // ViewHolder
-    // ------------------
-
-    public static class SpinnerViewHolder<Data, CLASS, SettData extends ISettData<Data, CLASS, SettData, VH>, VH extends SpinnerViewHolder<Data, CLASS, SettData, VH>> extends
-            BaseSettingViewHolder<ViewDataBinding, Data, CLASS, SettData, VH> {
-        public SpinnerViewHolder(View view, boolean globalSetting, boolean compact) {
-            super(view, globalSetting, compact);
-        }
-
-        @Override
-        public void onUpdateCustomViewDependencies(boolean globalSetting) {
-            super.onUpdateCustomViewDependencies(globalSetting);
-            // make sure, that spinner does not consume touches if disabled so that the click listener of row1 works
-            if (globalSetting) {
-                getValueTopView().setClickable(true);
-            } else {
-                boolean b = getUseCustomSwitch().isChecked();
-                getValueTopView().setClickable(b);
-            }
-        }
-
-        @Override
-        public void onShowChangeSetting(VH vh, BaseSetting<Data, CLASS, SettData, VH> data, Activity activity, ViewDataBinding binding,
-                SettData settData, boolean global, CLASS customSettingsObject) {
-            data.onShowChangeSetting(vh, activity, binding, settData, global, customSettingsObject);
-        }
-
-        @Override
-        public ViewDataBinding getBinding() {
-            return binding;
-        }
-
-        @Override
-        public FixedSwitch getUseCustomSwitch() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).swEnable;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).swEnable;
-            }
-        }
-
-        @Override
-        public TextView getTitleTextView() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).tvTitle;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).tvTitle;
-            }
-        }
-
-        @Override
-        public TextView getSubTitleTextView() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).tvSubTitle;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).tvSubTitle;
-            }
-        }
-
-        @Override
-        public LinearLayout getTopValueContainer() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).llCustomValueContainer;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).llCustomValueContainer;
-            }
-        }
-
-        @Override
-        public TextView getIsUsingGlobalTextView() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).tvIsUsingDefault;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).tvIsUsingDefault;
-            }
-        }
-
-        @Override
-        public ImageView getIconView() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).ivIcon;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).ivIcon;
-            }
-        }
-
-        @Override
-        public View getInfoButton() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).btInfo;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).btInfo;
-            }
-        }
-
-        @Override
-        public View getValueTopView() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).spValueTop;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).spValueTop;
-            }
-        }
-
-        @Override
-        public View getValueBottomView() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).spValueBottom;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).spValueBottom;
-            }
-        }
-
-        @Override
-        public View getInnerDivider() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).vDividerRow;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).vDividerRow;
-            }
-        }
-
-        @Override
-        public View getRow1() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).llRow1;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).llRow1;
-            }
-        }
-
-        @Override
-        public View getRow2() {
-            if (binding instanceof AdapterSettingItemSpinnerBinding) {
-                return ((AdapterSettingItemSpinnerBinding) binding).llRow2;
-            } else {
-                return ((AdapterSettingItemSpinnerDialogBinding) binding).llRow2;
-            }
-        }
-    }
-
-    // ------------------
     // Event Hooks
     // ------------------
 
@@ -233,11 +90,7 @@ public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettD
         @Override
         public View onBind(RecyclerView.ViewHolder viewHolder) {
             if (viewHolder instanceof SpinnerViewHolder) {
-                if (((SpinnerViewHolder) viewHolder).getBinding() instanceof AdapterSettingItemSpinnerBinding) {
-                    return ((AdapterSettingItemSpinnerBinding) ((SpinnerViewHolder) viewHolder).getBinding()).spValueTop;
-                } else {
-                    return ((AdapterSettingItemSpinnerDialogBinding) ((SpinnerViewHolder) viewHolder).getBinding()).spValueTop;
-                }
+                return ((SpinnerViewHolder) viewHolder).getValueTopView();
             }
             return null;
         }
@@ -266,11 +119,7 @@ public class SpinnerSettingItem<Parent extends IItem & IExpandable, CLASS, SettD
         @Override
         public View onBind(RecyclerView.ViewHolder viewHolder) {
             if (viewHolder instanceof SpinnerViewHolder) {
-                if (((SpinnerViewHolder) viewHolder).getBinding() instanceof AdapterSettingItemSpinnerBinding) {
-                    return ((AdapterSettingItemSpinnerBinding) ((SpinnerViewHolder) viewHolder).getBinding()).spValueBottom;
-                } else {
-                    return ((AdapterSettingItemSpinnerDialogBinding) ((SpinnerViewHolder) viewHolder).getBinding()).spValueBottom;
-                }
+                return ((SpinnerViewHolder) viewHolder).getValueBottomView();
             }
             return null;
         }

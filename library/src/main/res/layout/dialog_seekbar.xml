@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:paddingLeft="@dimen/md_dialog_frame_margin"
-              android:paddingRight="@dimen/md_dialog_frame_margin"
+              android:paddingLeft="@dimen/md_dialog_frame_margin_horizontal"
+              android:paddingRight="@dimen/md_dialog_frame_margin_horizontal"
+              android:paddingTop="@dimen/md_dialog_frame_margin_vertical"
+              android:paddingBottom="@dimen/md_dialog_frame_margin_vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical">

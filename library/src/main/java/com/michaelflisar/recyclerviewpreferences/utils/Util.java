@@ -2,9 +2,9 @@ package com.michaelflisar.recyclerviewpreferences.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import androidx.core.content.ContextCompat;
 
 public class Util {
 
@@ -35,12 +37,26 @@ public class Util {
         return color;
     }
 
-    public static int getTextColor() {
+    public static int getSecondaryTextColor() {
         // Default state color from primary_text_dark = android.R.color.background_light
         // Default state color from primary_text_light = android.R.color.background_dark
         return ContextCompat.getColor(SettingsManager.get().getContext(),
-                SettingsManager.get().getState().isDarkTheme() ? android.R.color.primary_text_dark : android.R.color.primary_text_light);
+                SettingsManager.get().getState().isDarkTheme() ? android.R.color.secondary_text_dark : android.R.color.secondary_text_light);
     }
+
+    public static int getTertiaryTextColor() {
+        return ContextCompat.getColor(SettingsManager.get().getContext(),
+                SettingsManager.get().getState().isDarkTheme() ? android.R.color.tertiary_text_dark : android.R.color.tertiary_text_light);
+    }
+
+//    public static int getBackgroundColor() {
+//        return SettingsManager.get().getState().isDarkTheme() ? android.R.color.background_dark : android.R.color.background_light;
+//    }
+
+    public static int getCardColor() {
+        return SettingsManager.get().getState().isDarkTheme() ? Color.BLACK : Color.WHITE;
+    }
+
 
 //    public static int getTextColorDefaultState() {
 //        return getTextColor();

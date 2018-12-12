@@ -1,7 +1,7 @@
 package com.michaelflisar.recyclerviewpreferences.fastadapter.header;
 
-import android.databinding.DataBindingUtil;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.michaelflisar.recyclerviewpreferences.R;

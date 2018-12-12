@@ -1,0 +1,45 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/llCustomValueContainer"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        style="@style/SettContainerCustomValue"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/llTitle"
+            style="@style/SettContainerTitle"
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/SettTitle"
+                tools:text="Einstellungsname" />
+
+            <TextView
+                android:id="@+id/tvSubTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/SettSubTitle"
+                tools:text="Details..." />
+
+        </LinearLayout>
+
+        <com.michaelflisar.recyclerviewpreferences.views.FixedSwitch
+            android:id="@+id/swValueTop"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical" />
+
+    </LinearLayout>
+
+</layout>

@@ -1,7 +1,7 @@
 package com.michaelflisar.recyclerviewpreferences.fastadapter.header;
 
-import android.databinding.DataBindingUtil;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.michaelflisar.recyclerviewpreferences.R;
@@ -9,6 +9,7 @@ import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.databinding.AdapterItemMultilevelHeaderBinding;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.mikepenz.fastadapter.items.AbstractItem;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.IIcon;
 
 import java.util.List;
@@ -21,15 +22,23 @@ public class SettingsMultilevelHeaderItem extends AbstractItem<SettingsMultileve
 
     private IIcon mIcon;
     private SettingsText mTitle;
+    private boolean mFlatStyle;
 
-    public SettingsMultilevelHeaderItem(IIcon icon, int title, int id, boolean showDivider) {
-        this(icon, new SettingsText(title), id);
+    public SettingsMultilevelHeaderItem(IIcon icon, int title, int id, boolean showDivider, boolean flatStyle) {
+        this(icon, new SettingsText(title), id, flatStyle);
     }
 
-    public SettingsMultilevelHeaderItem(IIcon icon, SettingsText title, int id) {
+    public SettingsMultilevelHeaderItem(IIcon icon, SettingsText title, int id, boolean flatStyle) {
         mIcon = icon;
         mTitle = title;
         withIdentifier(id);
+        if (flatStyle)
+            withFlatStyle();
+    }
+
+    public SettingsMultilevelHeaderItem withFlatStyle() {
+        mFlatStyle = true;
+        return this;
     }
 
     @Override
@@ -55,7 +64,28 @@ public class SettingsMultilevelHeaderItem extends AbstractItem<SettingsMultileve
     public void bindView(ViewHolder viewHolder, List<Object> payloads) {
         super.bindView(viewHolder, payloads);
         mTitle.display(viewHolder.binding.tvTitle);
-        Util.setCompoundIconLeftOrClear(viewHolder.binding.tvTitle, mIcon, 24, Util.getTextColor());
+
+        if (mIcon != null) {
+            viewHolder.binding.ivIcon.setVisibility(View.VISIBLE);
+            IconicsDrawable drawable = new IconicsDrawable(viewHolder.binding.ivIcon.getContext(), mIcon);
+//            drawable.paddingDp(data.getIconPaddingDp());
+//            if (data.getIconColor() != null) {
+//                drawable.color(data.getIconColor());
+//            } else {
+                drawable.color(Util.getSecondaryTextColor());
+//            }
+            viewHolder.binding.ivIcon.setIcon(drawable);
+
+//            IconicsDrawable d = ((IconicsDrawable) getIconView().getDrawable());
+//            d.icon(icon).color(Util.getTextColor()).paddingDp(data.getIconPaddingDp());
+        } else {
+            viewHolder.binding.ivIcon.setVisibility(View.GONE);
+        }
+
+//        Util.setCompoundIconLeftOrClear(viewHolder.binding.tvTitle, mIcon, 24, Util.getTextColor());
+
+        if (mFlatStyle)
+            viewHolder.binding.cardView.setElevation(0);
     }
 
     @Override

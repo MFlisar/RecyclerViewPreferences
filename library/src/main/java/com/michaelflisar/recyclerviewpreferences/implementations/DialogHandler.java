@@ -1,12 +1,10 @@
 package com.michaelflisar.recyclerviewpreferences.implementations;
 
 import android.app.Activity;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.RecyclerView;
 
 import com.michaelflisar.recyclerviewpreferences.SettingsFragment;
 import com.michaelflisar.recyclerviewpreferences.defaults.DefaultCustomDialogHandler;
-import com.michaelflisar.recyclerviewpreferences.fragments.NumberSettingsDialogFragmentBundleBuilder;
+import com.michaelflisar.recyclerviewpreferences.fragments.NumberSettingsDialogFragment;
 import com.michaelflisar.recyclerviewpreferences.interfaces.IDialogHandler;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
@@ -18,6 +16,9 @@ import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by flisar on 25.08.2017.
@@ -42,7 +43,7 @@ public class DialogHandler {
             VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, CLASS, SD, VH>>
     void showNumberPicker(Activity activity, NumberSetting.Mode mode, NumberSetting<CLASS, SD, VH> setting, boolean global, CLASS customSettingsObject) {
         if (mode.getSupportsDialog()) {
-            NumberSettingsDialogFragmentBundleBuilder builder = new NumberSettingsDialogFragmentBundleBuilder(
+            NumberSettingsDialogFragment.Companion.create(
                     mode.getNumberPickerType(),
                     setting.getSettingId(),
                     global,
@@ -50,12 +51,9 @@ public class DialogHandler {
                     setting.getMin(),
                     setting.getStepSize(),
                     setting.getMax(),
-                    setting.getTitle().getText()
-            );
-            if (setting.getUnitRes() != null) {
-                builder.withUnitRes(setting.getUnitRes());
-            }
-            builder.createFragment()
+                    setting.getTitle().getText(),
+                    setting.getUnitRes()
+            )
                     .show(((FragmentActivity) activity).getSupportFragmentManager(), null);
         }
     }
@@ -81,7 +79,8 @@ public class DialogHandler {
 
     protected <CLASS,
             SD extends ISettData<Integer, CLASS, SD, VH>,
-            VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, CLASS, SD, VH>, SDM extends ISettData<List<Integer>, CLASS, SDM, VHM>,
+            VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, CLASS, SD, VH>, SDM extends
+            ISettData<List<Integer>, CLASS, SDM, VHM>,
             VHM extends RecyclerView.ViewHolder & ISettingsViewHolder<List<Integer>, CLASS, SDM, VHM>>
     boolean handleCustomEvent(SettingsFragment settingsFragment, final int id, Activity activity, Object data, boolean global, CLASS customSettingsObject) {
         ISetting setting = Util.find(settingsFragment.getSettingsManager().getSettings(), sett -> sett.checkId(id));
@@ -102,7 +101,8 @@ public class DialogHandler {
 
     protected <CLASS,
             SD extends ISettData<Integer, CLASS, SD, VH>,
-            VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, CLASS, SD, VH>, SDM extends ISettData<List<Integer>, CLASS, SDM, VHM>,
+            VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Integer, CLASS, SD, VH>, SDM extends
+            ISettData<List<Integer>, CLASS, SDM, VHM>,
             VHM extends RecyclerView.ViewHolder & ISettingsViewHolder<List<Integer>, CLASS, SDM, VHM>>
     boolean handleNumberChanged(SettingsFragment settingsFragment, final int id, Activity activity, Integer number, boolean global, CLASS customSettingsObject) {
         ISetting setting = Util.find(settingsFragment.getSettingsManager().getSettings(), sett -> sett.checkId(id));

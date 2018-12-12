@@ -1,8 +1,6 @@
 package com.michaelflisar.recyclerviewpreferences.demo.custom;
 
 
-import android.support.v7.widget.RecyclerView;
-
 import com.michaelflisar.recyclerviewpreferences.demo.classes.DemoFolder;
 import com.michaelflisar.recyclerviewpreferences.demo.classes.DemoInMemoryStorage;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
@@ -11,8 +9,13 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FolderSettData<Value, SettData extends ISettData<Value, DemoFolder, SettData, VH>, VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, DemoFolder, SettData, VH>> implements
-        ISettData<Value, DemoFolder, SettData, VH> {
+import androidx.recyclerview.widget.RecyclerView;
+
+public class FolderSettData<
+        Value,
+        SettData extends ISettData<Value, DemoFolder, SettData, VH>,
+        VH extends RecyclerView.ViewHolder & ISettingsViewHolder<Value, DemoFolder, SettData, VH>>
+        implements ISettData<Value, DemoFolder, SettData, VH> {
 
     protected final String preferenceId;
     private final Class<?> mValueClass;

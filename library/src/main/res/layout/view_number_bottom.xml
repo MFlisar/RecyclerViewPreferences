@@ -1,0 +1,32 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/llRow2"
+        style="@style/SettRow2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvIsUsingDefault"
+            style="@style/SettDefaultValueTitle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/setting_info_is_using_default"/>
+
+        <TextView
+            android:id="@+id/tvValueBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            tools:text="Wert"/>
+
+
+    </LinearLayout>
+
+</layout>

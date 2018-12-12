@@ -4,10 +4,7 @@ package com.michaelflisar.recyclerviewpreferences.defaults;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
-
-import java.util.List;
 
 public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
 
@@ -26,14 +23,23 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
         Compact
     }
 
+    public enum DividerStyle {
+        None,
+        Always,
+        NotForSimpleOrCompactMode
+    }
+
     private SettingsStyle mSettingsStyle = SettingsStyle.ViewPager;
     private LayoutStyle mLayoutStyle = LayoutStyle.Normal;
     private boolean mUseExpandableHeaders = true;
     private boolean mDarkTheme = false;
     private boolean mScrollablePagerTabs = true;
     private boolean mHideEmptyHeaders = false;
+    private boolean mHideSingleHeader = false;
     private boolean mSupportSpinnerDropDownhighlighting = true; // buggy, currently does not update the current selected item if item is changed and dropdown is opened again
     private IFilter mFilter = null;
+    private boolean mFlatStyle = false;
+    private DividerStyle mDividerStyle = DividerStyle.None;
 
     public Setup() {
 
@@ -46,6 +52,11 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
         mSettingsStyle = SettingsStyle.values()[in.readInt()];
         mLayoutStyle = LayoutStyle.values()[in.readInt()];
         mSupportSpinnerDropDownhighlighting = in.readByte() != 0;
+        mHideEmptyHeaders = in.readByte() != 0;
+        mHideSingleHeader = in.readByte() != 0;
+        mFlatStyle = in.readByte() != 0;
+        mDividerStyle = DividerStyle.values()[in.readInt()];
+        mFilter = in.readParcelable(IFilter.class.getClassLoader());
     }
 
     @Override
@@ -56,6 +67,11 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
         dest.writeInt(mSettingsStyle.ordinal());
         dest.writeInt(mLayoutStyle.ordinal());
         dest.writeByte((byte) (mSupportSpinnerDropDownhighlighting ? 1 : 0));
+        dest.writeByte((byte) (mHideEmptyHeaders ? 1 : 0));
+        dest.writeByte((byte) (mHideSingleHeader ? 1 : 0));
+        dest.writeByte((byte) (mFlatStyle ? 1 : 0));
+        dest.writeInt(mDividerStyle.ordinal());
+        dest.writeParcelable(mFilter, 0);
     }
 
     @Override
@@ -101,13 +117,52 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
     }
 
     @Override
+    public Setup setHideSingleHeader(boolean enabled) {
+        mHideEmptyHeaders = enabled;
+        return this;
+    }
+
+    @Override
     public boolean isHideEmptyHeaders() {
         return mHideEmptyHeaders;
     }
 
     @Override
+    public boolean isHideSingleHeader() {
+        return mHideSingleHeader;
+    }
+
+    @Override
+    public Setup setHideEmptyHeaders(boolean enabled) {
+        mHideEmptyHeaders = enabled;
+        return this;
+    }
+
+    @Override
     public boolean supportSpinnerDropDownHighlighting() {
         return mSupportSpinnerDropDownhighlighting;
+    }
+
+    @Override
+    public Setup setFlatStyle(boolean value) {
+        mFlatStyle = value;
+        return this;
+    }
+
+    @Override
+    public boolean getFlatStyle() {
+        return mFlatStyle;
+    }
+
+    @Override
+    public Setup setDividerStyle(DividerStyle value) {
+        mDividerStyle = value;
+        return this;
+    }
+
+    @Override
+    public DividerStyle getDividerStyle() {
+        return mDividerStyle;
     }
 
     public void setIsDarkTheme(boolean dark) {

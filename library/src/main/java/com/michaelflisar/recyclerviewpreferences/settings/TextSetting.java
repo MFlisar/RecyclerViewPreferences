@@ -1,8 +1,8 @@
 package com.michaelflisar.recyclerviewpreferences.settings;
 
 import android.app.Activity;
-import android.databinding.ViewDataBinding;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,8 +22,11 @@ import com.mikepenz.iconics.typeface.IIcon;
  * Created by flisar on 16.05.2017.
  */
 
-public class TextSetting<CLASS, SettData extends ISettData<String, CLASS, SettData, VH>, VH extends RecyclerView.ViewHolder &
-        ISettingsViewHolder<String, CLASS, SettData, VH>> extends BaseSetting<String, CLASS, SettData, VH> {
+public class TextSetting<
+        CLASS,
+        SettData extends ISettData<String, CLASS, SettData, VH>,
+        VH extends RecyclerView.ViewHolder & ISettingsViewHolder<String, CLASS, SettData, VH>>
+        extends BaseSetting<String, CLASS, SettData, VH> {
 
     public TextSetting(Class<CLASS> clazz, SettData settData, int title, IIcon icon) {
         this(clazz, settData, new SettingsText(title), icon);
@@ -63,12 +66,11 @@ public class TextSetting<CLASS, SettData extends ISettData<String, CLASS, SettDa
 
     @Override
     public final int getLayout() {
-        return R.layout.adapter_setting_item_edittext;
+        return R.layout.adapter_base_setting_item;
     }
 
     @Override
-    public <P extends IItem & IExpandable> BaseSettingsItem<P, String, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback,
-            boolean withBottomDivider) {
-        return new EditTextSettingItem(global, compact, this, settingsCallback, withBottomDivider);
+    public <P extends IItem & IExpandable> BaseSettingsItem<P, String, CLASS, SettData, ?> createItem(boolean global, boolean compact, ISettCallback settingsCallback, boolean flatStyle) {
+        return new EditTextSettingItem(global, compact, this, settingsCallback, flatStyle);
     }
 }

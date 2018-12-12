@@ -1,24 +1,16 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.MFlisar'
 
 android {
 
-    if (project.hasProperty('setup.compileSdk')) {
-        compileSdkVersion setup.compileSdk
-        buildToolsVersion setup.buildTools
-        defaultConfig {
-            minSdkVersion setup.minSdk
-            targetSdkVersion setup.targetSdk
-        }
-    } else {
-        compileSdkVersion 27
-        buildToolsVersion "27.0.3"
-        defaultConfig {
-            minSdkVersion 16
-            targetSdkVersion 27
-        }
+    compileSdkVersion setup.compileSdk ?: 28
+    defaultConfig {
+        minSdkVersion setup.minSdk ?: 16
+        targetSdkVersion setup.targetSdk ?: 28
     }
 
     buildTypes {
@@ -37,48 +29,55 @@ android {
 }
 
 dependencies {
-    compile "com.android.support:appcompat-v7:27.1.0"
-    compile "com.android.support:recyclerview-v7:27.1.0"
-    compile "com.android.support:cardview-v7:27.1.0"
-    compile "com.android.support:design:27.1.0"
+
+    // ------------------------
+    // Kotlin
+    // ------------------------
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlinVersion ?: '1.3.10'}"
+
+    // ------------------------
+    // AndroidX
+    // ------------------------
+
+    implementation "androidx.appcompat:appcompat:${androidx.appcompat ?: '1.0.2'}"
+    implementation "androidx.recyclerview:recyclerview:${androidx.recyclerview ?: '1.0.0'}"
+    implementation "androidx.cardview:cardview:${androidx.cardview ?: '1.0.0'}"
+    implementation "com.google.android.material:material:${androidx.material ?: '1.0.0'}"
 
     // ----------------------
     // Libraries
     // ----------------------
 
-//    compile project(':session-manager')
-    compile 'com.github.Chingiz:SessionManager-Android:1.2'
+    implementation 'com.github.Chingiz:SessionManager-Android:1.2'
+    implementation 'com.github.zagum:Android-SwitchIcon:1.3.8'
 
-    compile("com.afollestad.material-dialogs:core:0.9.4.7") {
-        transitive = true
-        exclude group: 'com.android.support'
-    }
-    compile("com.afollestad.material-dialogs:commons:0.9.4.7") {
-        transitive = true
-        exclude group: 'com.android.support'
-    }
+//    api project(':core')
+//    api project(':input')
+//    api project(':color')
+    api "com.afollestad.material-dialogs:core:${versions.materialDialogs ?: '2.0.0-beta6'}"
+    api "com.afollestad.material-dialogs:input:${versions.materialDialogs ?: '2.0.0-beta6'}"
+    api "com.afollestad.material-dialogs:color:${versions.materialDialogs ?: '2.0.0-beta6'}"
 
     // ----------------------
     // Should (Could) be removed and replaced with manual written code
     // ----------------------
 
-    compile("com.mikepenz:fastadapter:3.2.2@aar") {
+    implementation("com.mikepenz:fastadapter:${mikepenz.fastAdapter ?: '3.3.1'}") {
         transitive = true
         exclude group: 'com.android.support'
     }
-    compile "com.mikepenz:fastadapter-commons:3.2.2@aar"
-    compile "com.mikepenz:fastadapter-extensions-expandable:3.2.2@aar"
+    implementation "com.mikepenz:fastadapter-commons:${mikepenz.fastAdapter ?: '3.3.1'}"
+    implementation "com.mikepenz:fastadapter-extensions-expandable:${mikepenz.fastAdapter ?: '3.3.1'}"
 
-    compile "com.mikepenz:iconics-core:3.0.2@aar"
-    compile "com.mikepenz:iconics-views:3.0.2@aar"
-    compile 'com.mikepenz:google-material-typeface:3.0.1.2.original@aar'
+    api "com.mikepenz:iconics-core:${mikepenz.iconics ?: '3.3.1'}"
+    api "com.mikepenz:iconics-views:${mikepenz.iconics ?: '3.3.1'}"
+    api "com.mikepenz:google-material-typeface:${mikepenz.iconicsMaterial?: '3.0.1.3.original'}"
 
     // ----------------------
     // Annotation Processors
     // ----------------------
 
-    compile 'com.github.MFlisar.BundleArgs:bundleargs-annotation:1.3'
-    annotationProcessor 'com.github.MFlisar.BundleArgs:bundleargs-processor:1.3'
-    compile "com.evernote:android-state:1.2.0"
-    annotationProcessor "com.evernote:android-state-processor:1.2.0"
+    implementation "com.evernote:android-state:${versions.androidState ?: '1.4.1'}"
+    kapt "com.evernote:android-state-processor:${versions.androidState ?: '1.4.1'}"
 }

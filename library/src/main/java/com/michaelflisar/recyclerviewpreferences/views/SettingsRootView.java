@@ -9,8 +9,8 @@ import android.graphics.ColorMatrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.support.v4.graphics.ColorUtils;
-import android.support.v7.widget.CardView;
+import androidx.core.graphics.ColorUtils;
+import androidx.cardview.widget.CardView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 

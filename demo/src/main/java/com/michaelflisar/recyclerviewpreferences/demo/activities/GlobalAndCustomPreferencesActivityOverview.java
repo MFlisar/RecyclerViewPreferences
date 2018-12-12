@@ -1,7 +1,6 @@
 package com.michaelflisar.recyclerviewpreferences.demo.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 

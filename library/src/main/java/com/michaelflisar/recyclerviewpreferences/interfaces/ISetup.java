@@ -31,9 +31,23 @@ public interface ISetup<S extends ISetup> extends Parcelable {
 
     boolean hasScrollablePagerTabs();
 
+    S setHideSingleHeader(boolean enabled);
+
+    boolean isHideSingleHeader();
+
+    S setHideEmptyHeaders(boolean enabled);
+
     boolean isHideEmptyHeaders();
 
     boolean supportSpinnerDropDownHighlighting();
+
+    S setFlatStyle(boolean value);
+
+    boolean getFlatStyle();
+
+    S setDividerStyle(Setup.DividerStyle value);
+
+    Setup.DividerStyle getDividerStyle();
 
     ISetup copy();
 

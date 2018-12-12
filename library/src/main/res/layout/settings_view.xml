@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSettings"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -16,10 +16,11 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.design.widget.TabLayout
+            <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:elevation="8dp"
                 app:tabGravity="fill"
                 app:tabIndicatorColor="?attr/colorPrimary"
                 app:tabIndicatorHeight="4dp"
@@ -27,7 +28,7 @@
                 app:tabSelectedTextColor="?android:textColorPrimary"
                 app:tabTextColor="?android:textColorPrimary" />
 
-            <android.support.v4.view.ViewPager
+            <androidx.viewpager.widget.ViewPager
                 android:id="@+id/vpSettings"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
