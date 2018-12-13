@@ -9,10 +9,10 @@ android {
 
 //    compileSdkVersion ((hasProperty('setupX') ? setupX?.compileSdk : null) ?: 28)
 //    compileSdkVersion (setupX?.compileSdk ?: 28)
-    compileSdkVersion setup.compileSdk
+    compileSdkVersion rootProject?.setup?.compileSdk ?: 28
     defaultConfig {
-        minSdkVersion setup.minSdk
-        targetSdkVersion setup.targetSdk
+        minSdkVersion rootProject?.setup?.minSdk ?: 16
+        targetSdkVersion rootProject?.setup?.targetSdk ?: 28
     }
 
     buildTypes {
