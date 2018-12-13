@@ -9,10 +9,10 @@ android {
 
 //    compileSdkVersion ((hasProperty('setupX') ? setupX?.compileSdk : null) ?: 28)
 //    compileSdkVersion (setupX?.compileSdk ?: 28)
-    compileSdkVersion hasProperty('setup') ? setup.compileSdk ?: 28 : 28
+    compileSdkVersion setup.compileSdk
     defaultConfig {
-        minSdkVersion hasProperty('setup') ? setup?.minSdk ?: 16 : 16
-        targetSdkVersion hasProperty('setup') ? setup?.targetSdk ?: 28 : 28
+        minSdkVersion setup.minSdk
+        targetSdkVersion setup.targetSdk
     }
 
     buildTypes {
@@ -22,7 +22,7 @@ android {
         }
     }
 
-    dataBinding.enabled = true
+    dataBinding.enabled = setup.enableDataBinding
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
