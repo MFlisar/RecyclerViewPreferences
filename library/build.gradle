@@ -10,7 +10,6 @@ android {
 //    compileSdkVersion ((hasProperty('setupX') ? setupX?.compileSdk : null) ?: 28)
 //    compileSdkVersion (setupX?.compileSdk ?: 28)
     compileSdkVersion hasProperty('setup') ? setup.compileSdk ?: 28 : 28
-    compileSdkVersion setup?.compileSdk ?: 28
     defaultConfig {
         minSdkVersion hasProperty('setup') ? setup?.minSdk ?: 16 : 16
         targetSdkVersion hasProperty('setup') ? setup?.targetSdk ?: 28 : 28
