@@ -48,7 +48,7 @@ if (!hasProperty('setup'))
 }
 
 android {
-    
+
     compileSdkVersion setup.compileSdk
     defaultConfig {
         minSdkVersion setup.minSdk

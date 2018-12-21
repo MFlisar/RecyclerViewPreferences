@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">RecyclervViewPreferences</string>
 
     <string name="color">Color</string>
     <string name="setting_info_is_using_default">Default value</string>

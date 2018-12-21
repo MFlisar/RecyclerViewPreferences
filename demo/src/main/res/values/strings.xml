@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Demo</string>
+    <string name="app_name">RecyclervViewPreferences Demo</string>
 
     <string name="unit_ms">%dms</string>
     <string name="unit_h">%d hours</string>
