@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cardView"
+    style="@style/SettCardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.michaelflisar.recyclerviewpreferences.views.SquareLinearLayout
+        style="@style/SettCardViewContent"
+        android:background="?selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.mikepenz.iconics.view.IconicsImageView
+            android:id="@+id/ivIcon"
+            style="@style/SettGridImage"/>
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/SettGridMultiLevelText"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="..."/>
+
+    </com.michaelflisar.recyclerviewpreferences.views.SquareLinearLayout>
+
+</androidx.cardview.widget.CardView>
