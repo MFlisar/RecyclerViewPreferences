@@ -62,7 +62,7 @@ public class NumberViewHolder<
     }
 
     @Override
-    public LinearLayout getTopValueContainer() {
+    public View getTopValueContainer() {
         return ((ViewNumberTopBinding) topBinding).llCustomValueContainer;
     }
 

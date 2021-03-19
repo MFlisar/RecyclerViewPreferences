@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.michaelflisar.recyclerviewpreferences.R;
-import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
+import com.michaelflisar.recyclerviewpreferences.kt.classes.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.databinding.AdapterItemHeaderBinding;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.utils.Definitions;
@@ -15,7 +15,6 @@ import com.mikepenz.fastadapter.expandable.items.AbstractExpandableItem;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-import com.mikepenz.iconics.typeface.IIcon;
 
 import java.util.List;
 
@@ -26,7 +25,6 @@ import java.util.List;
 public class SettingsHeaderItem<T extends BaseSettingsItem> extends AbstractExpandableItem<SettingsHeaderItem, SettingsHeaderItem.ViewHolder, T> {
 
     private boolean mExpandable;
-    private IIcon mIcon;
     private SettingsText mTitle;
     private OnClickListener<SettingsHeaderItem> mOnClickListener;
 
@@ -49,13 +47,12 @@ public class SettingsHeaderItem<T extends BaseSettingsItem> extends AbstractExpa
         }
     };
 
-    public SettingsHeaderItem(boolean expandable, IIcon icon, int title, int id, boolean flatStyle) {
-        this(expandable, icon, new SettingsText(title), id, flatStyle);
+    public SettingsHeaderItem(boolean expandable, int title, int id) {
+        this(expandable, new SettingsText(title), id);
     }
 
-    public SettingsHeaderItem(boolean expandable, IIcon icon, SettingsText title, int id, boolean flatStyle) {
+    public SettingsHeaderItem(boolean expandable, SettingsText title, int id) {
         mExpandable = expandable;
-        mIcon = icon;
         mTitle = title;
         withIdentifier(id);
         withIsExpanded(true);

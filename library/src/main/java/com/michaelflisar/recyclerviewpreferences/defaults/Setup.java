@@ -11,7 +11,9 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
     public enum SettingsStyle {
         ViewPager, // Pages will always use List currently and never a multi level list!
         List,
-        MultiLevelList;
+        MultiLevelList,
+        MultiLevelGrid
+        ;
 
         public SettingsStyle getPageStyle() {
             return List;
@@ -40,6 +42,7 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
     private IFilter mFilter = null;
     private boolean mFlatStyle = false;
     private DividerStyle mDividerStyle = DividerStyle.None;
+    private int mGridSpan = 3;
 
     public Setup() {
 
@@ -57,6 +60,7 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
         mFlatStyle = in.readByte() != 0;
         mDividerStyle = DividerStyle.values()[in.readInt()];
         mFilter = in.readParcelable(IFilter.class.getClassLoader());
+        mGridSpan = in.readInt();
     }
 
     @Override
@@ -72,6 +76,7 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
         dest.writeByte((byte) (mFlatStyle ? 1 : 0));
         dest.writeInt(mDividerStyle.ordinal());
         dest.writeParcelable(mFilter, 0);
+        dest.writeInt(mGridSpan);
     }
 
     @Override
@@ -118,7 +123,7 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
 
     @Override
     public Setup setHideSingleHeader(boolean enabled) {
-        mHideEmptyHeaders = enabled;
+        mHideSingleHeader = enabled;
         return this;
     }
 
@@ -163,6 +168,17 @@ public class Setup implements Cloneable, ISetup<Setup>, Parcelable {
     @Override
     public DividerStyle getDividerStyle() {
         return mDividerStyle;
+    }
+
+    @Override
+    public int getGridSpan() {
+        return mGridSpan;
+    }
+
+    @Override
+    public boolean setGridSpan(int span) {
+        mGridSpan = span;
+        return true;
     }
 
     public void setIsDarkTheme(boolean dark) {

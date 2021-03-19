@@ -99,16 +99,16 @@ class NumberSettingsDialogFragment : DialogFragment() {
                 .positiveButton(android.R.string.ok) {
                     when (type) {
                         NumberSettingsDialogFragment.Type.Input -> {
-                            val validInput = getValidInput(it.getInputField()!!.getText())
+                            val validInput = getValidInput(it.getInputField().getText())
                             if (validInput != null) {
                                 val newValue = Integer.parseInt(lastValue!!)
                                 SettingsManager.get().dispatchNumberChanged(id, activity, newValue, global)
                                 dismiss()
                             } else {
                                 if (stepSize == 1) {
-                                    Snackbar.make(it.getInputField()!!.parent as View, getString(R.string.number_dialog_info_no_steps, min, max), Snackbar.LENGTH_SHORT).show()
+                                    Snackbar.make(it.getInputField().parent as View, getString(R.string.number_dialog_info_no_steps, min, max), Snackbar.LENGTH_SHORT).show()
                                 } else {
-                                    Snackbar.make(it.getInputField()!!.parent as View, getString(R.string.number_dialog_info, min, max, stepSize), Snackbar.LENGTH_SHORT).show()
+                                    Snackbar.make(it.getInputField().parent as View, getString(R.string.number_dialog_info, min, max, stepSize), Snackbar.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -133,12 +133,12 @@ class NumberSettingsDialogFragment : DialogFragment() {
         }
 
         if (type == Type.Input) {
-            dialog.getInputField()!!.setSelectAllOnFocus(true)
+            dialog.getInputField().setSelectAllOnFocus(true)
         } else {
-            val seekbar: SeekBar = dialog.getCustomView()!!.findViewById(R.id.seekBar)
+            val seekbar: SeekBar = dialog.getCustomView().findViewById(R.id.seekBar)
             seekbar.setMax((max - min) / stepSize)
             seekbar.setProgress((value - min) / stepSize)
-            val textView: TextView = dialog.getCustomView()!!.findViewById(R.id.textView)
+            val textView: TextView = dialog.getCustomView().findViewById(R.id.textView)
             updateProgressDisplay(seekbar, textView)
             seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {

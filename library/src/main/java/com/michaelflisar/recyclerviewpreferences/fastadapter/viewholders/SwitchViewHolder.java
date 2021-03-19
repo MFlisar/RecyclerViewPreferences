@@ -65,7 +65,7 @@ public class SwitchViewHolder<
     }
 
     @Override
-    public LinearLayout getTopValueContainer() {
+    public View getTopValueContainer() {
         return ((ViewSwitchTopBinding) topBinding).llCustomValueContainer;
     }
 

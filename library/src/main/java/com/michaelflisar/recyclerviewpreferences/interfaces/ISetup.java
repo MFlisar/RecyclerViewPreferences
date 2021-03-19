@@ -49,6 +49,10 @@ public interface ISetup<S extends ISetup> extends Parcelable {
 
     Setup.DividerStyle getDividerStyle();
 
+    int getGridSpan();
+
+    boolean setGridSpan(int span);
+
     ISetup copy();
 
     Integer getActivityTheme();

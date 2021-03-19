@@ -3,9 +3,6 @@ package com.michaelflisar.recyclerviewpreferences.utils;
 
 import android.os.Bundle;
 
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.SettingsGroup;
 import com.michaelflisar.recyclerviewpreferences.classes.Dependency;
@@ -29,36 +26,41 @@ import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 public class SettingsUtil {
 
-    public static List<IItem> getAllSettingItems(boolean global, Object customSettingsObject, ISetup setup, ISettCallback settingsCallback, ArrayList<SettingsGroup> groups,
+    public static List<IItem> getAllSettingItems(boolean global, Object customSettingsObject, ISetup setup, String filter, ISettCallback settingsCallback, ArrayList<SettingsGroup> groups,
             boolean forceNoHeaders, Set<Integer> collapsedIds) {
         List<Integer> ids = Util.convertList(groups, group -> group.getGroupId());
-        return getSettingItems(global, customSettingsObject, setup, settingsCallback, groups, collapsedIds, forceNoHeaders, ids.toArray(new Integer[ids.size()]));
+        return getSettingItems(global, customSettingsObject, setup, filter, settingsCallback, groups, collapsedIds, forceNoHeaders, ids.toArray(new Integer[ids.size()]));
     }
 
-    public static List<IItem> getSettingItems(boolean global, Object customSettingsObject, ISetup setup, ISettCallback settingsCallback, Set<Integer> collapsedIds, boolean forceNoHeaders,
+    public static List<IItem> getSettingItems(boolean global, Object customSettingsObject, ISetup setup, String filter, ISettCallback settingsCallback, Set<Integer> collapsedIds, boolean forceNoHeaders,
             Integer... settingGroupIds) {
-        return getSettingItems(global, customSettingsObject, setup, settingsCallback, SettingsManager.get().getTopGroup(), collapsedIds, forceNoHeaders, settingGroupIds);
+        return getSettingItems(global, customSettingsObject, setup, filter, settingsCallback, SettingsManager.get().getTopGroup(), collapsedIds, forceNoHeaders, settingGroupIds);
     }
 
-    private static List<IItem> getSettingItems(boolean global, Object customSettingsObject, ISetup setup, ISettCallback settingsCallback, List<SettingsGroup> groups, Set<Integer> collapsedIds,
+    private static List<IItem> getSettingItems(boolean global, Object customSettingsObject, ISetup setup, String filter, ISettCallback settingsCallback, List<SettingsGroup> groups, Set<Integer> collapsedIds,
             boolean forceNoHeaders, Integer... settingGroupIds) {
         // Setup
         boolean addIfAnyParentIsInGroup = true;//setup.getSettingsStyle() != Setup.SettingsStyle.MultiLevelList;//global ? useViewPager : true;
         boolean addTopHeaders = settingGroupIds.length > 1;
-        boolean showHeadersAsButtons = setup.getSettingsStyle() == Setup.SettingsStyle.MultiLevelList;
+        boolean showHeadersAsButtons = setup.getSettingsStyle() == Setup.SettingsStyle.MultiLevelList || setup.getSettingsStyle() == Setup.SettingsStyle.MultiLevelGrid;
         AtomicInteger headerId = new AtomicInteger(-2);
+        boolean grid = setup.getSettingsStyle() == Setup.SettingsStyle.MultiLevelGrid;
+        boolean showTopGroupsInsideGrid = false; // TODO: make this a setup option
 
         // Function
         List<IItem> items = new ArrayList<>();
         for (Integer settingGroupId : settingGroupIds) {
-            items.addAll(getSettingItems(global, customSettingsObject, setup, settingsCallback, null, groups, settingGroupId, addIfAnyParentIsInGroup, addTopHeaders, showHeadersAsButtons, headerId,
-                    forceNoHeaders, collapsedIds));
+            items.addAll(getSettingItems(global, customSettingsObject, setup, filter, settingsCallback, null, groups, settingGroupId, addIfAnyParentIsInGroup, addTopHeaders, showHeadersAsButtons, headerId,
+                    forceNoHeaders, collapsedIds, grid, showTopGroupsInsideGrid));
         }
 
         if (setup.isHideSingleHeader()) {
@@ -76,7 +78,7 @@ public class SettingsUtil {
             if (countHeaders == 1) {
                 for (IItem item : items) {
                     if (item instanceof SettingsHeaderItem) {
-                        items = ((SettingsHeaderItem)item).getSubItems();
+                        items = ((SettingsHeaderItem) item).getSubItems();
                         break;
                     }
                 }
@@ -86,32 +88,82 @@ public class SettingsUtil {
         return items;
     }
 
-    private static List<IItem> getSettingItems(boolean global, Object customSettingsObject, ISetup setup, ISettCallback settingsCallback, Boolean anyParentIsGroup, List<SettingsGroup> groups,
-            Integer settingGroupId, boolean addIfAnyParentIsInGroup, boolean addTopHeaders, boolean showHeadersAsButtons, AtomicInteger headerId, boolean forceNoHeaders, Set<Integer> collapsedIds) {
+    private static List<IItem> getSettingItems(boolean global, Object customSettingsObject, ISetup setup, String filter, ISettCallback settingsCallback, Boolean anyParentIsGroup, List<SettingsGroup> groups,
+            Integer settingGroupId, boolean addIfAnyParentIsInGroup, boolean addTopHeaders, boolean showHeadersAsButtons, AtomicInteger headerId, boolean forceNoHeaders, Set<Integer> collapsedIds,
+            boolean grid, boolean showTopGroupsInsideGrid) {
 
         List<IItem> items = new ArrayList<>();
         for (SettingsGroup group : groups) {
+            // 1) check if any parent of this group is a group itself
             boolean localAnyParentIsGroup = (anyParentIsGroup == null || !anyParentIsGroup) ? settingGroupId == group.getGroupId() : anyParentIsGroup;
-            if (group.isGroupHolder()) {
+            // 2) check if this group holds sub groups
+            boolean holdsSubGroups = group.isGroupHolder();
+            // 3.1) Group holds sub groups
+            if (holdsSubGroups) {
+                boolean dontAddChildren = false;
                 if (!forceNoHeaders && addTopHeaders && localAnyParentIsGroup) {
                     if (!SettingsManager.get().getState().isHideEmptyHeaders() || group.getGroups().size() > 0) {
                         if (showHeadersAsButtons) {
-                            items.add(new SettingsHeaderItem(false, null /* no icon in headers of headers in multi level list */, group.getTitle(), headerId.getAndDecrement(), setup.getFlatStyle()));
+                            // we are at the very top level (group has no parent)
+                            if (!showTopGroupsInsideGrid && group.getParent() == null) {
+                                SettingsMultilevelHeaderItem header = new SettingsMultilevelHeaderItem(
+                                        grid,
+                                        group.getIcon(),
+                                        group.getTitle(),
+                                        headerId.getAndDecrement(),
+                                        setup.getFlatStyle()
+                                )
+                                        .withOnItemClickListener((view, iAdapter, item, i) -> {
+                                            settingsCallback.showMultiLevelSetting(group.getGroupId());
+                                            return true;
+                                        });
+                                items.add(header);
+                                dontAddChildren = true;
+                            } else {
+                                items.add(new SettingsHeaderItem(false, group.getTitle(), headerId.getAndDecrement()));
+                            }
                         } else {
                             items.add(new SettingsAlternativeHeaderItem(group.getTitle(), headerId.getAndDecrement()));
                         }
                     }
                 }
-                items.addAll(getSettingItems(global, customSettingsObject, setup, settingsCallback, localAnyParentIsGroup, group.getGroups(), settingGroupId, addIfAnyParentIsInGroup, addTopHeaders,
-                        showHeadersAsButtons, headerId, forceNoHeaders, collapsedIds));
-            } else {
+                if (!dontAddChildren) {
+                    items.addAll(
+                            getSettingItems(
+                                    global,
+                                    customSettingsObject,
+                                    setup,
+                                    filter,
+                                    settingsCallback,
+                                    localAnyParentIsGroup,
+                                    group.getGroups(),
+                                    settingGroupId,
+                                    addIfAnyParentIsInGroup,
+                                    addTopHeaders,
+                                    showHeadersAsButtons,
+                                    headerId,
+                                    forceNoHeaders,
+                                    collapsedIds,
+                                    grid,
+                                    showTopGroupsInsideGrid
+                            )
+                    );
+                }
+            }
+            // 3.2) group does not hold sub groups but only settings
+            else {
                 if (((addIfAnyParentIsInGroup && localAnyParentIsGroup) || group.check(settingGroupId))) {
                     if (showHeadersAsButtons) {
                         if (!forceNoHeaders) {
-                            List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, setup.getFilter(),
-                                    setup.getFlatStyle());
+                            List<BaseSettingsItem> itemsOfHeader = getItemsOfHeader(group, global, setup, settingsCallback, filter);
                             if (!SettingsManager.get().getState().isHideEmptyHeaders() || itemsOfHeader.size() > 0) {
-                                SettingsMultilevelHeaderItem header = new SettingsMultilevelHeaderItem(group.getIcon(), group.getTitle(), headerId.getAndDecrement(), setup.getFlatStyle())
+                                SettingsMultilevelHeaderItem header = new SettingsMultilevelHeaderItem(
+                                        grid,
+                                        group.getIcon(),
+                                        group.getTitle(),
+                                        headerId.getAndDecrement(),
+                                        setup.getFlatStyle()
+                                )
                                         .withOnItemClickListener((view, iAdapter, item, i) -> {
                                             settingsCallback.showMultiLevelSetting(group.getGroupId());
                                             return true;
@@ -121,21 +173,19 @@ public class SettingsUtil {
                         }
                     } else {
                         SettingsHeaderItem header = null;
-                        List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(global, setup.getLayoutStyle() == Setup.LayoutStyle.Compact, settingsCallback, setup.getFilter(), setup.getFlatStyle());
-
+                        List<BaseSettingsItem> itemsOfHeader = getItemsOfHeader(group, global, setup, settingsCallback, filter);
                         if (SettingsManager.get().getState().isHideEmptyHeaders() && itemsOfHeader.size() == 0) {
                             // skip, we don't need an empty header
                         } else {
                             if (!forceNoHeaders) {
-                                header = new SettingsHeaderItem(setup.isUseExpandableHeaders(), group.getIcon(), group.getTitle(), headerId.getAndDecrement(), setup.getFlatStyle());
-                                if (collapsedIds.contains(group.getGroupId())) {
+                                header = new SettingsHeaderItem(setup.isUseExpandableHeaders(), group.getTitle(), headerId.getAndDecrement());
+                                if ((filter == null || filter.length() == 0) && collapsedIds.contains(group.getGroupId())) {
                                     header.withIsExpanded(false);
                                 }
                                 if (!group.isHideInLayout()) {
                                     items.add(header);
                                 }
                             }
-
 
                             if (itemsOfHeader.size() > 0) {
                                 itemsOfHeader.get(itemsOfHeader.size() - 1);
@@ -150,7 +200,6 @@ public class SettingsUtil {
 //                    } else {
 //                        items.addAll(itemsOfHeader);
 //                    }
-
                                     header.setExpandable(setup.isUseExpandableHeaders());
                                 } else {
                                     items.addAll(itemsOfHeader);
@@ -216,18 +265,43 @@ public class SettingsUtil {
     // Hilfsfunktionen
     // ---------------------------
 
+    private static List<BaseSettingsItem> getItemsOfHeader(SettingsGroup group, boolean global, ISetup setup, ISettCallback settingsCallback, String filter) {
+        List<BaseSettingsItem> itemsOfHeader = group.getSettingItems(
+                global,
+                setup.getLayoutStyle() == Setup.LayoutStyle.Compact,
+                settingsCallback,
+                setup.getFilter(),
+                setup.getFlatStyle()
+        );
+        if (filter != null && filter.length() > 0) {
+            String filterLowercase = filter.toLowerCase();
+            Iterator<BaseSettingsItem> it = itemsOfHeader.iterator();
+            BaseSettingsItem item;
+            boolean valid;
+            while (it.hasNext()) {
+                item = it.next();
+                valid = false;
+                valid = valid || item.getSettings().getTitle().getText().toLowerCase().contains(filterLowercase);
+                valid = valid || (item.getSettings().getSubTitle() != null && item.getSettings().getSubTitle().getText().toLowerCase().contains(filterLowercase));
+                if (!valid)
+                    it.remove();
+            }
+        }
+        return itemsOfHeader;
+    }
+
     public static SettingsDividerDecorator addDecorator(RecyclerView rv, Setup.LayoutStyle layoutStyle, Setup.DividerStyle dividerStyle) {
         int dp1 = Util.convertDpToPixel(1, rv.getContext());
         rv.addItemDecoration(new SettingsSpaceDecorator(0, dp1 * 0, 0, dp1 * 8)); // row padding is part of the layouts
-       if (dividerStyle != Setup.DividerStyle.None) {
-           SettingsDividerDecorator dividerItemDecoration = new SettingsDividerDecorator(rv.getContext(), dp1 * 16);
-           if (layoutStyle == Setup.LayoutStyle.Normal || dividerStyle == Setup.DividerStyle.Always) {
-               rv.addItemDecoration(dividerItemDecoration);
-           }
-           return dividerItemDecoration;
-       } else {
-           return null;
-       }
+        if (dividerStyle != Setup.DividerStyle.None) {
+            SettingsDividerDecorator dividerItemDecoration = new SettingsDividerDecorator(rv.getContext(), dp1 * 16);
+            if (layoutStyle == Setup.LayoutStyle.Normal || dividerStyle == Setup.DividerStyle.Always) {
+                rv.addItemDecoration(dividerItemDecoration);
+            }
+            return dividerItemDecoration;
+        } else {
+            return null;
+        }
     }
 
     public static FastItemAdapter<IItem> initAdapter(FastItemAdapter<IItem> adapter, List<IItem> items, Bundle savedInstanceState, String fastAdapterBundlePrefix) {

@@ -37,7 +37,8 @@ public class SettingsDividerDecorator extends RecyclerView.ItemDecoration {
     private boolean isHeader(int type) {
         return type == R.id.id_adapter_setting_alternative_header_item ||
                 type == R.id.id_adapter_setting_header_item ||
-                type == R.id.id_adapter_setting_header_multi_level_item;
+                type == R.id.id_adapter_setting_header_multi_level_item ||
+                type == R.id.id_adapter_setting_header_grid_multi_level_item;
     }
 
     private int getViewType(int pos, int count, FastAdapter fa, RecyclerView parent) {

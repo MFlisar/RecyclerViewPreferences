@@ -11,7 +11,7 @@ import android.widget.Spinner;
 
 import com.michaelflisar.recyclerviewpreferences.R;
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
-import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
+import com.michaelflisar.recyclerviewpreferences.kt.classes.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.defaults.DefaultSpinnerLayoutProvider;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.SpinnerSettingItem;

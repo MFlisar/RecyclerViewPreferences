@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion setup.compileSdk
 
     // currently necessary, settings library uses DataBinding
-    dataBinding.enabled = true
+    dataBinding.enabled = setup.enableDataBinding
 
     defaultConfig {
         applicationId "com.michaelflisar.recyclerviewpreferences.simpledemo"
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion setup.minSdk
+        targetSdkVersion setup.targetSdk
         versionCode 1
         versionName "1.0"
     }
@@ -30,12 +30,24 @@ android {
 
 dependencies {
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.71"//$versions.kotlinVersion"
+    // ------------------------
+    // Kotlin
+    // ------------------------
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlinVersion}"
+
+    // ------------------------
+    // AndroidX
+    // ------------------------
+
+    implementation "androidx.appcompat:appcompat:${androidx.appcompat}"
+    implementation "androidx.recyclerview:recyclerview:${androidx.recyclerview}"
+    implementation "androidx.cardview:cardview:${androidx.cardview}"
+    implementation "com.google.android.material:material:${androidx.material}"
+
+    // ------------------------
+    // Library
+    // ------------------------
 
     implementation project(':library')
-
-    implementation "androidx.appcompat:appcompat:1.0.0"
-    implementation "androidx.recyclerview:recyclerview:1.0.0"
-    implementation "androidx.cardview:cardview:1.0.0"
-    implementation "com.google.android.material:material:1.0.0"
 }

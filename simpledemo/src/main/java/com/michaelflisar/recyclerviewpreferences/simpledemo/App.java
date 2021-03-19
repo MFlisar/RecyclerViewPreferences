@@ -50,7 +50,7 @@ public class App extends Application {
         // ---------------------------
 
         SettingsGroup group1 = new SettingsGroup("Group 1")
-                .add(new SettingsGroup(GoogleMaterial.Icon.gmd_android, "Sub group 1.1 - Icons")
+                .add(new SettingsGroup("Sub group 1.1 - Icons", GoogleMaterial.Icon.gmd_android)
                                 .add(new NumberSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref1_1", 1), "Icon Size (1-10) - Dialog Mode", GoogleMaterial.Icon.gmd_image,
                                         NumberSetting.Mode.DialogSeekbar, 1, 10, 1,
                                         R.string.unit_dp))
@@ -65,18 +65,18 @@ public class App extends Application {
                                 GoogleMaterial.Icon.gmd_image,
                                 new IconStyleWithIcon.EnumHelper()))
                 )
-                .add(new SettingsGroup(GoogleMaterial.Icon.gmd_android, "Sub group 1.2 - Sizes")
+                .add(new SettingsGroup("Sub group 1.2 - Sizes", GoogleMaterial.Icon.gmd_android)
                         .add(new NumberSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref2_1", 6), "Rows (1-20) - Seekbar and dialog mode",
                                 GoogleMaterial.Icon.gmd_warning, NumberSetting.Mode.SeekbarAndDialogInput, 1, 20, 1, null))
                         .add(new NumberSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref2_2", 4), "Cols (1-20) - Seekbar and dialog mode",
                                 GoogleMaterial.Icon.gmd_settings, NumberSetting.Mode.SeekbarAndDialogInput, 1, 20, 1, null))
                 )
-                .add(new SettingsGroup(GoogleMaterial.Icon.gmd_android, "Sub group 1.3 - Colors")
+                .add(new SettingsGroup("Sub group 1.3 - Colors", GoogleMaterial.Icon.gmd_android)
                         .add(new BooleanSetting(GlobalSetting.class, SharedPreferenceSettData.createBoolData("pref3_1"), "Use custom color", GoogleMaterial.Icon.gmd_settings))
                         .add(new ColorSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref3_2", Color.BLACK), "Color", GoogleMaterial.Icon.gmd_colorize))
                 );
         SettingsGroup group2 = new SettingsGroup("Group 2")
-                .add(new SettingsGroup(GoogleMaterial.Icon.gmd_android, "Sub group 2.1 - Various")
+                .add(new SettingsGroup("Sub group 2.1 - Various", GoogleMaterial.Icon.gmd_android)
                         .add(new NumberSetting(GlobalSetting.class, SharedPreferenceSettData.createIntData("pref4_1", 50), "Integer (0-100, steps 5)\nSeekbar and dialog mode",
                                 GoogleMaterial.Icon.gmd_warning,
                                 NumberSetting.Mode.SeekbarAndDialogInput, 0, 100, 5, null))

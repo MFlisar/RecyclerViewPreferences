@@ -1,6 +1,8 @@
 package com.michaelflisar.recyclerviewpreferences.classes;
 
 import android.graphics.Rect;
+
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
@@ -30,20 +32,38 @@ public class SettingsSpaceDecorator extends RecyclerView.ItemDecoration {
 
         int pos = parent.getChildAdapterPosition(view);
         int count = parent.getAdapter().getItemCount();
+        int span = parent.getLayoutManager() instanceof GridLayoutManager ? ((GridLayoutManager)parent.getLayoutManager()).getSpanCount() : 1;
 
         boolean alternativeHeaderAbove = pos > 0 && parent.getAdapter().getItemViewType(pos - 1) == R.id.id_adapter_setting_alternative_header_item;
         boolean headerAbove = pos > 0 && parent.getAdapter().getItemViewType(pos - 1) == R.id.id_adapter_setting_header_item;
+
+        boolean isLastRow = pos == count -1;
+        if (span != 1) {
+            GridLayoutManager glm = (GridLayoutManager)parent.getLayoutManager();
+            int rows = 0;
+            int spanCurrent = 0;
+            int spanSumTotal = 0;
+            int spanCount;
+            for (int i = 0; i < count; i++) {
+                spanCount = glm.getSpanSizeLookup().getSpanSize(i);
+                spanSumTotal += spanCount;
+                if (i == pos)
+                    spanCurrent = spanSumTotal;
+            }
+
+            isLastRow = Math.ceil((float)spanSumTotal / (float)span) == Math.ceil((float)spanCurrent / (float)span);
+        }
 
         // Space über jedem Header, falls dieser nicht unter alternativem oder anderem Header ist und nicht an erster Stelle ist
         if (pos > 0 && !alternativeHeaderAbove && !headerAbove&& parent.getChildViewHolder(view) instanceof SettingsHeaderItem.ViewHolder)  {
             outRect.top = paddingBeforeHeader;
         }
 
-        // First and last item padding top
+        // First and last item/row padding top
         if (pos == 0 && paddingTop != 0) {
             outRect.top = paddingTop;
         }
-        if (pos == count -1 && paddingBottom != 0) {
+        if (isLastRow && paddingBottom != 0) {
             outRect.bottom = paddingBottom;
         }
 

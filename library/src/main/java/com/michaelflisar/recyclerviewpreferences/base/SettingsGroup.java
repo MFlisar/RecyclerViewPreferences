@@ -4,6 +4,7 @@ package com.michaelflisar.recyclerviewpreferences.base;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetup;
+import com.michaelflisar.recyclerviewpreferences.kt.classes.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.utils.Util;
 import com.mikepenz.iconics.typeface.IIcon;
 
@@ -11,54 +12,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsGroup {
+    // general
     private IIcon mIcon;
     private int mId;
     private SettingsText mTitle;
     private SettingsGroup mParent;
-    private List<SettingsGroup> mGroups;
-    private List<BaseSetting> mSettings;
     private boolean mHideInLayout;
 
+    // Group Holder
+    private List<SettingsGroup> mGroups;
+
+    // Settings Holder
+    private List<BaseSetting> mSettings;
+
     public SettingsGroup(int title) {
-        mIcon = null;
-        mTitle = new SettingsText(title);
-        mParent = null;
-        mGroups = new ArrayList<>();
-        mSettings = null;
-        mId = -1;
-        mHideInLayout = false;
+        init(new SettingsText(title));
     }
 
     public SettingsGroup(String title) {
+        init(new SettingsText(title));
+    }
+
+    public SettingsGroup(int title, IIcon icon) {
+        init(new SettingsText(title));
+        setIcon(icon);
+    }
+
+    public SettingsGroup(String title, IIcon icon) {
+        init(new SettingsText(title));
+        setIcon(icon);
+    }
+
+    private void init(SettingsText title) {
         mIcon = null;
-        mTitle = new SettingsText(title);
+        mTitle = title;
         mParent = null;
-        mGroups = new ArrayList<>();
+        mId = -1;
+        mHideInLayout = false;
+
+        mGroups = null;
         mSettings = null;
-        mId = -1;
-        mHideInLayout = false;
     }
 
-    public SettingsGroup(IIcon icon, int title) {
-
+    void setIcon(IIcon icon) {
         mIcon = icon;
-        mTitle = new SettingsText(title);
-        mParent = null;
-        mGroups = null;
-        mSettings = new ArrayList<>();
-        mId = -1;
-        mHideInLayout = false;
-    }
-
-    public SettingsGroup(IIcon icon, String title) {
-
-        mIcon = icon;
-        mTitle = new SettingsText(title);
-        mParent = null;
-        mGroups = null;
-        mSettings = new ArrayList<>();
-        mId = -1;
-        mHideInLayout = false;
     }
 
     public void setGroupId(int id) {
@@ -66,12 +63,24 @@ public class SettingsGroup {
     }
 
     public SettingsGroup add(SettingsGroup group) {
+        if (mSettings != null) {
+            throw new RuntimeException("Either add settings or other groups to a SettingsGroup only, don't mix them!");
+        }
+        if (mGroups == null) {
+            mGroups = new ArrayList<>();
+        }
         mGroups.add(group);
         group.setParent(this);
         return this;
     }
 
     public SettingsGroup add(BaseSetting... setting) {
+        if (mGroups != null) {
+            throw new RuntimeException("Either add settings or other groups to a SettingsGroup only, don't mix them!");
+        }
+        if (mSettings == null) {
+            mSettings = new ArrayList<>();
+        }
         for (BaseSetting s : setting) {
             mSettings.add(s);
         }
@@ -83,7 +92,7 @@ public class SettingsGroup {
             return this;
         }
         for (BaseSetting s : setting) {
-            mSettings.add(s);
+            add(s);
         }
         return this;
     }

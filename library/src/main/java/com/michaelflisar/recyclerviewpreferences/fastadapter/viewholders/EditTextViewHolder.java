@@ -90,7 +90,7 @@ public class EditTextViewHolder<
     }
 
     @Override
-    public LinearLayout getTopValueContainer() {
+    public View getTopValueContainer() {
         return ((ViewEdittextTopBinding) topBinding).llCustomValueContainer;
     }
 

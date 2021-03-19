@@ -1,9 +1,10 @@
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/llRow2"
         style="@style/SettRow2"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -11,19 +12,28 @@
             android:id="@+id/tvIsUsingDefault"
             style="@style/SettDefaultValueTitle"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:text="@string/setting_info_is_using_default" />
+            android:layout_height="wrap_content"
+            android:text="@string/setting_info_is_using_default"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/swValueBottom"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <com.michaelflisar.recyclerviewpreferences.views.FixedSwitch
             android:id="@+id/swValueBottom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/tvIsUsingDefault"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="wrap"
+            app:layout_constraintWidth_percent="0.6"/>
 
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

@@ -51,7 +51,7 @@ public class CustomViewHolder<
     }
 
     @Override
-    public LinearLayout getTopValueContainer() {
+    public View getTopValueContainer() {
         return ((ViewCustomTopBinding) topBinding).llCustomValueContainer;
     }
 

@@ -102,6 +102,9 @@ public abstract class BasePreferenceActivity extends BaseThemedActivity implemen
             case ViewPager:
                 menu.findItem(R.id.menu_style_view_pager).setChecked(true);
                 break;
+            case MultiLevelGrid:
+                menu.findItem(R.id.menu_style_grid).setChecked(true);
+                break;
             case List:
                 menu.findItem(R.id.menu_style_list).setChecked(true);
                 break;
@@ -124,6 +127,11 @@ public abstract class BasePreferenceActivity extends BaseThemedActivity implemen
         switch (item.getItemId()) {
             case R.id.menu_style_view_pager:
                 mSetup.setSettingsStyle(Setup.SettingsStyle.ViewPager);
+                item.setChecked(true);
+                updateView(null, true);
+                break;
+            case R.id.menu_style_grid:
+                mSetup.setSettingsStyle(Setup.SettingsStyle.MultiLevelGrid);
                 item.setChecked(true);
                 updateView(null, true);
                 break;
@@ -153,31 +161,4 @@ public abstract class BasePreferenceActivity extends BaseThemedActivity implemen
         }
         return super.onOptionsItemSelected(item);
     }
-
-    /*
-    @Override
-    public void onColorSelection(@NonNull ColorChooserDialog colorChooserDialog, @ColorInt int color) {
-        int id = colorChooserDialog.getArguments().getInt(Definitions.DIALOG_SETTINGS_ID);
-        boolean global = colorChooserDialog.getArguments().getBoolean(Definitions.DIALOG_SETTING_IS_GLOBAL);
-        mSettingsFragment.getSettingsManager().handleColorSelected(id, this, color, global, getCustomSettingsObject());
-//        SettingsFragmentInstanceManager.get().dispatchHandleColorSelected(id, this, color, global);
-    }
-
-    @Override
-    public void onColorChooserDismissed(@NonNull ColorChooserDialog colorChooserDialog) {
-        // nothing to do...
-    }
-
-    @Override
-    public void onNumberSelected(int id, int value, boolean global) {
-        mSettingsFragment.getSettingsManager().handleNumberChanged(id, this, Arrays.asList(value), global, getCustomSettingsObject());
-//        SettingsFragmentInstanceManager.get().dispatchHandleNumberChanged(id, this, Arrays.asList(value), global);
-    }
-
-    @Override
-    public void onTextChanged(int id, String value, boolean global) {
-        mSettingsFragment.getSettingsManager().handleTextChanged(id, this, value, global, getCustomSettingsObject());
-//        SettingsFragmentInstanceManager.get().dispatchHandleNumberChanged(id, this, Arrays.asList(value), global);
-    }
-    */
 }

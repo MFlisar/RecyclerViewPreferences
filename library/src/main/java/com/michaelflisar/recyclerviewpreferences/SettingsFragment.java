@@ -16,6 +16,8 @@ import com.michaelflisar.recyclerviewpreferences.classes.SettingsFragmentManager
 import com.michaelflisar.recyclerviewpreferences.databinding.SettingsFragmentBinding;
 import com.michaelflisar.recyclerviewpreferences.databinding.SettingsViewpagerFragmentBinding;
 import com.michaelflisar.recyclerviewpreferences.defaults.Setup;
+import com.michaelflisar.recyclerviewpreferences.fastadapter.header.SettingsAlternativeHeaderItem;
+import com.michaelflisar.recyclerviewpreferences.fastadapter.header.SettingsHeaderItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsFragment;
@@ -39,6 +41,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -74,6 +77,8 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
     private SettingsFragmentManager mManager;
     private SettingsDividerDecorator mDividerDecorator;
 
+    String mFilter = null;
+
     public static SettingsFragment create(ISetup setup, boolean globalSetting, ArrayList<Integer> groupIds) {
         return create(setup, globalSetting, false, groupIds);
     }
@@ -105,6 +110,11 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
         isPage = getArguments().getBoolean("isPage");
         isMultiLevelPage = getArguments().getBoolean("isMultiLevelPage");
         groupIds = getArguments().getIntegerArrayList("groupIds");
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("mFilter"))
+                mFilter = savedInstanceState.getString("mFilter");
+        }
 
         mGroups = new ArrayList<>();
         mSettings = new ArrayList<>();
@@ -140,12 +150,7 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
             }
         } else {
             SettingsFragmentBinding binding = (SettingsFragmentBinding) mBinding;
-            ISetup pageSetup = setup;
-            // no view pager, pages always use a list!
-            if (pageSetup.getSettingsStyle() == Setup.SettingsStyle.ViewPager) {
-                pageSetup = setup.copy();
-                pageSetup.setSettingsStyle(pageSetup.getSettingsStyle().getPageStyle());
-            }
+            ISetup pageSetup = getPageSetup();
 
             if (init) {
                 mFastItemAdapter = new FastItemAdapter<>();
@@ -153,22 +158,43 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
                     ExpandableExtension expandableExtension = new ExpandableExtension<>();
                     mFastItemAdapter.addExtension(expandableExtension);
                 }
+//                mFastItemAdapter.getItemFilter().withFilterPredicate((IItemAdapter.Predicate<IItem>) (item, constraint) -> {
+//                    boolean keep = true;
+//                    if (constraint != null && constraint.length() > 0) {
+//                        if (item instanceof BaseSettingsItem) {
+//                            SettingsText title = ((BaseSettingsItem) item).getSettings().getTitle();
+//                            SettingsText subTitle = ((BaseSettingsItem) item).getSettings().getSubTitle();
+//                            keep = title.getText().toLowerCase().contains(constraint.toString().toLowerCase()) || (subTitle == null && subTitle.getText().contains(constraint.toString().toLowerCase()));
+//                        }
+//                    }
+//                    return keep;
+//                });
+//                mFastItemAdapter.filter(mFilter);
                 mManager = new SettingsFragmentManager(getActivity(), mFastItemAdapter, mSettings);
             }
 
-            mItems = SettingsUtil.getSettingItems(
-                    globalSetting,
-                    getCustomSettingsObject(),
-                    pageSetup,
-                    this,
-                    SettingsManager.get().getCollapsedSettingIds(),
-                    isMultiLevelPage,
-                    groupIds.toArray(new Integer[groupIds.size()])
-            );
+            updateItems(pageSetup);
 
             if (init) {
                 SettingsUtil.initAdapter(mFastItemAdapter, mItems, savedInstanceState, fastAdapterPrefix);
-                binding.rvSettings.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext(), RecyclerView.VERTICAL, false));
+                if (pageSetup.getSettingsStyle() == Setup.SettingsStyle.MultiLevelGrid) {
+                    int span = pageSetup.getGridSpan();
+                    GridLayoutManager lm = new GridLayoutManager(binding.getRoot().getContext(), span, RecyclerView.VERTICAL, false);
+                    lm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                        @Override
+                        public int getSpanSize(int position) {
+                            IItem item = mFastItemAdapter.getItem(position);
+                            if (item instanceof SettingsHeaderItem || item instanceof SettingsAlternativeHeaderItem) {
+                                return span;
+                            }
+                            return 1;
+                        }
+                    });
+                    binding.rvSettings.setLayoutManager(lm);
+                } else {
+                    binding.rvSettings.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext(), RecyclerView.VERTICAL, false));
+                }
+
                 binding.rvSettings.setAdapter(mFastItemAdapter);
                 mDividerDecorator = SettingsUtil.addDecorator(binding.rvSettings, pageSetup.getLayoutStyle(), pageSetup.getDividerStyle());
             } else {
@@ -229,15 +255,42 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
         }
     }
 
-//    public void setSettingsStyle(Setup.SettingsStyle style) {
-//        setup.setSettingsStyle(style);
-//        // recreate fragment view
-////        SettingsFragment newFragment = new SettingsFragment();
-////        newFragment.setArguments(getArguments());
-////        getActivity().getSupportFragmentManager().beginTransaction().detach(this).attach(this).commit();
-////        int containerId = getId();
-////        getActivity().getSupportFragmentManager().beginTransaction().replace(containerId, newFragment).commit();
-//    }
+    private ISetup getPageSetup() {
+        ISetup pageSetup = setup;
+        // no view pager, pages always use a list!
+        if (pageSetup.getSettingsStyle() == Setup.SettingsStyle.ViewPager) {
+            pageSetup = setup.copy();
+            pageSetup.setSettingsStyle(pageSetup.getSettingsStyle().getPageStyle());
+        }
+
+        return pageSetup;
+    }
+
+    private void updateItems(ISetup pageSetup) {
+        mItems = SettingsUtil.getSettingItems(
+                globalSetting,
+                getCustomSettingsObject(),
+                pageSetup,
+                mFilter,
+                this,
+                SettingsManager.get().getCollapsedSettingIds(),
+                false,
+                groupIds.toArray(new Integer[groupIds.size()])
+        );
+    }
+
+    public void setFilterText(String text) {
+        mFilter = text;
+//        mFastItemAdapter.filter(text);
+
+        updateItems(getPageSetup());
+        SettingsUtil.setNewList(mFastItemAdapter, mItems, null, fastAdapterPrefix);
+//        mFastItemAdapter.notifyAdapterDataSetChanged();
+    }
+
+    public String getFilter() {
+        return mFilter;
+    }
 
     public boolean updateViews(final Integer id) {
         if (id != null) {
@@ -249,9 +302,6 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
                     return true;
                 }
             }
-        } else {
-//            for (ISetting setting : mSettings)
-//                setting.init(mViews.get(setting.getParentId()), settData, global, this, this, this);
         }
         return false;
     }
@@ -280,6 +330,9 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
     public void onSaveInstanceState(Bundle outState) {
         if (mFastItemAdapter != null) {
             mFastItemAdapter.saveInstanceState(outState, fastAdapterPrefix);
+        }
+        if (mFilter != null) {
+            outState.putString("mFilter", mFilter);
         }
         super.onSaveInstanceState(outState);
     }
@@ -341,11 +394,19 @@ public class SettingsFragment extends Fragment implements ISettCallback, ISettin
     public void showMultiLevelSetting(int groupId) {
 
         ISetup s = setup.copy();
-        s.setSettingsStyle(Setup.SettingsStyle.List);
-        s.setUseExpandableHeaders(false);
+        //s.setSettingsStyle(Setup.SettingsStyle.List);
+        //s.setUseExpandableHeaders(false);
+
+        SettingsGroup group = SettingsManager.get().getGroupById(groupId);
+        boolean hasSubGroups = group.isGroupHolder();
+
+        // last level is shown as list
+        if (!hasSubGroups) {
+            s.setSettingsStyle(Setup.SettingsStyle.List);
+            s.setHideSingleHeader(true);
+        }
 
         MultiLevelSingleSettingsGroupActivity.start(getActivity(), groupId, s, globalSetting);
-//        Toast.makeText(getActivity(), "Group: " + groupId, Toast.LENGTH_SHORT).show();
     }
 
     public RecyclerView getRecyclerView() {

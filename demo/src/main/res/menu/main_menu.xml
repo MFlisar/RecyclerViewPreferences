@@ -22,10 +22,12 @@
         <item
             android:id="@+id/menu_style_list"
             android:title="List (1 Top Level)"/>
-
         <item
             android:id="@+id/menu_style_list_multi_level"
             android:title="List (Multi Level)"/>
+        <item
+            android:id="@+id/menu_style_grid"
+            android:title="Grid (Multi Level)"/>
     </group>
 
 </menu>

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.michaelflisar.recyclerviewpreferences.R;
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
-import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
+import com.michaelflisar.recyclerviewpreferences.kt.classes.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.EditTextSettingItem;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;

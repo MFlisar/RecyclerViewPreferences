@@ -65,7 +65,7 @@ public class ColorViewHolder<
     }
 
     @Override
-    public LinearLayout getTopValueContainer() {
+    public View getTopValueContainer() {
         return ((ViewColorTopBinding) topBinding).llCustomValueContainer;
     }
 

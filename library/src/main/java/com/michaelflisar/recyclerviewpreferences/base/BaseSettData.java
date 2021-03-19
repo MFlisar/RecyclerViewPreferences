@@ -15,7 +15,6 @@ import com.mikepenz.iconics.typeface.IIcon;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-/* TODO: create a builder base sett class based on this */
 public abstract class BaseSettData<
         Data,
         Value,

@@ -1,32 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cardView"
+    style="@style/SettCardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        style="@style/SettCardView"
+    <LinearLayout
+        style="@style/SettCardViewContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            style="@style/SettCardViewContent"
-            android:layout_width="match_parent"
+        <com.mikepenz.iconics.view.IconicsImageView
+            android:id="@+id/ivIcon"
+            style="@style/SettImage"/>
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/SettMultiLevelText"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:text="..."/>
 
-            <com.mikepenz.iconics.view.IconicsImageView
-                android:id="@+id/ivIcon"
-                style="@style/SettImage" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvTitle"
-                style="@style/SettMultiLevelText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="..." />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-</layout>
+</androidx.cardview.widget.CardView>

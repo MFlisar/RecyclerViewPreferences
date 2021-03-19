@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.michaelflisar.recyclerviewpreferences.R;
-import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
+import com.michaelflisar.recyclerviewpreferences.kt.classes.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.databinding.AdapterItemAlternativeHeaderBinding;
 import com.mikepenz.fastadapter.items.AbstractItem;
 

@@ -45,7 +45,7 @@ public class CustomDialogSetting {
         }
 
         public String getDisplayValue() {
-            return "Grid: " + rows + "x" + cols;
+            return "MulitLevelGrid: " + rows + "x" + cols;
         }
     }
 

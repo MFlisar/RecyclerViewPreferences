@@ -10,6 +10,7 @@ import com.michaelflisar.recyclerviewpreferences.interfaces.ISettCallback;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettData;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISetting;
 import com.michaelflisar.recyclerviewpreferences.interfaces.ISettingsViewHolder;
+import com.michaelflisar.recyclerviewpreferences.kt.classes.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.utils.SettingsId;
 import com.mikepenz.iconics.typeface.IIcon;
 

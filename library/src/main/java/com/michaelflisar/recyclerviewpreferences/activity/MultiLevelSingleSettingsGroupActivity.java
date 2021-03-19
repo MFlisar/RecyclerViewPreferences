@@ -22,11 +22,8 @@ import androidx.fragment.app.FragmentActivity;
  * Created by flisar on 24.05.2017.
  */
 
-public class MultiLevelSingleSettingsGroupActivity extends AppCompatActivity
-{
-
-    public static final void start(FragmentActivity parent, int groupId, ISetup setup, Boolean globalSetting)
-    {
+public class MultiLevelSingleSettingsGroupActivity extends AppCompatActivity {
+    public static final void start(FragmentActivity parent, int groupId, ISetup setup, Boolean globalSetting) {
         Intent intent = new Intent(parent, MultiLevelSingleSettingsGroupActivity.class);
         intent.putExtra("groupId", groupId);
         intent.putExtra("setup", setup);
@@ -42,11 +39,9 @@ public class MultiLevelSingleSettingsGroupActivity extends AppCompatActivity
     private Fragment f = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         Integer theme = SettingsManager.get().getState().getActivityTheme();
-        if (theme != null)
-        {
+        if (theme != null) {
             setTheme(theme);
         }
         super.onCreate(savedInstanceState);
@@ -58,14 +53,22 @@ public class MultiLevelSingleSettingsGroupActivity extends AppCompatActivity
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_multilevel_single_settings_group);
 
         SettingsGroup group = SettingsManager.get().getGroupById(groupId);
+        String parentGroupsInfo = null;
+        SettingsGroup parent = group.getParent();
+        while (parent != null) {
+            if (parentGroupsInfo == null) {
+                parentGroupsInfo = "";
+            } else {
+                parentGroupsInfo = " | " + parentGroupsInfo ;
+            }
+            parentGroupsInfo = parent.getTitle().getText() + parentGroupsInfo;
+            parent = parent.getParent();
+        }
 
-        if (getSupportActionBar() == null)
-        {
+        if (getSupportActionBar() == null) {
             setSupportActionBar(mBinding.toolbar);
 
-        }
-        else
-        {
+        } else {
             // we have already a toolbar in the theme
             mBinding.toolbar.setVisibility(View.GONE);
         }
@@ -73,10 +76,11 @@ public class MultiLevelSingleSettingsGroupActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(group.getTitle().getText());
+        if (parentGroupsInfo != null) {
+            getSupportActionBar().setSubtitle(parentGroupsInfo);
+        }
 
-        if (savedInstanceState == null)
-        {
-
+        if (savedInstanceState == null) {
             f = SettingsFragment.createMultiLevelPage(
                     setup,
                     globalSetting,
@@ -84,18 +88,14 @@ public class MultiLevelSingleSettingsGroupActivity extends AppCompatActivity
             );
 
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, f).commit();
-        }
-        else
-        {
+        } else {
             f = getSupportFragmentManager().findFragmentById(R.id.frame_container);
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;

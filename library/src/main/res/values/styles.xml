@@ -56,6 +56,22 @@
 
     </style>
 
+    <style name="SettGridImage">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="ico_icon">gmd-settings</item>
+        <!-- TODO: for dark themes this does not work, it's gray instead of white there although the same attribute works for textviews-->
+        <item name="ico_color">?android:attr/textColorPrimary</item>
+        <item name="ico_size">48dp</item>
+        <item name="iiv_color">?android:attr/textColorPrimary</item>
+        <item name="iiv_size">48dp</item>
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:padding">2dp</item>
+
+    </style>
+
     <style name="SettImageNew" parent="SettImage">
         <item name="android:layout_marginRight">0dp</item>
         <item name="android:layout_marginLeft">16dp</item>
@@ -121,6 +137,14 @@
         <item name="android:textStyle">bold</item>
         <item name="android:gravity">left|center_vertical</item>
         <item name="android:minHeight">36dp</item>
+    </style>
+
+    <style name="SettGridMultiLevelText">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">top|center_horizontal</item>
+        <item name="android:minHeight">36dp</item>
+        <item name="android:padding">4dp</item>
     </style>
 
     <!-- ******* -->

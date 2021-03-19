@@ -53,7 +53,7 @@ public class TextViewHolder<
     }
 
     @Override
-    public LinearLayout getTopValueContainer() {
+    public View getTopValueContainer() {
         return ((ViewTextTopBinding) topBinding).llCustomValueContainer;
     }
 

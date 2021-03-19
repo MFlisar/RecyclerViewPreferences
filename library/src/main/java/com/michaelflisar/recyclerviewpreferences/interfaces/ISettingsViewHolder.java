@@ -38,7 +38,7 @@ public interface ISettingsViewHolder<
     CardView getCardView();
     TextView getTitleTextView();
     TextView getSubTitleTextView();
-    LinearLayout getTopValueContainer();
+    View getTopValueContainer();
     TextView getIsUsingGlobalTextView();
 //    ImageView getIconView();
     ImageView getInnerIconView();

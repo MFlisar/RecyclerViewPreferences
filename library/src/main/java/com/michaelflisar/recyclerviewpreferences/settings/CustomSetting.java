@@ -6,7 +6,7 @@ import android.view.View;
 import com.michaelflisar.recyclerviewpreferences.R;
 import com.michaelflisar.recyclerviewpreferences.SettingsManager;
 import com.michaelflisar.recyclerviewpreferences.base.BaseSetting;
-import com.michaelflisar.recyclerviewpreferences.base.SettingsText;
+import com.michaelflisar.recyclerviewpreferences.kt.classes.SettingsText;
 import com.michaelflisar.recyclerviewpreferences.databinding.ViewCustomBottomBinding;
 import com.michaelflisar.recyclerviewpreferences.databinding.ViewCustomTopBinding;
 import com.michaelflisar.recyclerviewpreferences.fastadapter.settings.BaseSettingsItem;

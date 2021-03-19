@@ -79,7 +79,7 @@ public class SpinnerViewHolder<
     }
 
     @Override
-    public LinearLayout getTopValueContainer() {
+    public View getTopValueContainer() {
         if (topBinding instanceof ViewSpinnerTopBinding) {
             return ((ViewSpinnerTopBinding) topBinding).llCustomValueContainer;
         } else {
