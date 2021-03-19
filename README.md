@@ -1,3 +1,7 @@
+**[DEPRECATED] REPLACED by my newer library: https://github.com/MFlisar/Settings**
+
+---------------
+
 ### RecyclerViewPreferences [![Release](https://jitpack.io/v/MFlisar/RecyclerViewPreferences.svg)](https://jitpack.io/#MFlisar/RecyclerViewPreferences)
 A full recycler view based and NO XML preferences replacement with a lot of extra features
 
